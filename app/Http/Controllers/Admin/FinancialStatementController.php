@@ -27,7 +27,6 @@ class FinancialStatementController extends Controller
             ->with([
                 'week.tvde_month.year',
                 'activityPerOperators.tvde_operator',
-                'activityLaunchReceipts'
             ])
             ->orderBy('id', 'desc')
             ->get();
@@ -72,7 +71,6 @@ class FinancialStatementController extends Controller
                 'driver.operation',
                 'week.tvde_month.year',
                 'activityPerOperators.tvde_operator',
-                'activityLaunchReceipts'
             ])
             ->first();
 
@@ -85,14 +83,22 @@ class FinancialStatementController extends Controller
             $activityLaunch->others
         ];
         $sub = array_sum($sub);
-        $sum = [];
+        $net = [];
+        $taxes = [];
+        $totals = [];
         foreach ($activityLaunch->activityPerOperators as $activityPerOperator) {
             $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+            $net[] = $activityPerOperator->net;
+            $taxes[] = $activityPerOperator->taxes;
         }
         $sum = array_sum($sum);
+        $net = array_sum($net);
+        $taxes = array_sum($taxes);
         $activityLaunch->total = $sum - $sub + $activityLaunch->refund;
         $activityLaunch->sum = $sum;
         $activityLaunch->sub = $sub;
+        $activityLaunch->net = $net;
+        $activityLaunch->taxes = $taxes;
 
         //LAST 60 DAYS
         $activityLaunches60 = ActivityLaunch::where([
@@ -103,7 +109,6 @@ class FinancialStatementController extends Controller
             ->with([
                 'week.tvde_month.year',
                 'activityPerOperators.tvde_operator',
-                'activityLaunchReceipts'
             ])
             ->orderBy('id', 'desc')
             ->get();
@@ -134,6 +139,8 @@ class FinancialStatementController extends Controller
         ])->setOption([
             'isRemoteEnabled' => true,
         ]);
+
+        return $pdf->stream();
 
         return $pdf->download($activityLaunch->created_at . '.pdf');
     }

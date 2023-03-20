@@ -245,17 +245,6 @@
                                 </a>
                             </li>
                         @endcan
-                        @can('receipt_access')
-                            <li class="{{ request()->is("admin/receipts") || request()->is("admin/receipts/*") ? "active" : "" }}">
-                                <a href="{{ route("admin.receipts.index") }}">
-                                    <i class="fa-fw fas fa-file-signature">
-
-                                    </i>
-                                    <span>{{ trans('cruds.receipt.title') }}</span>
-
-                                </a>
-                            </li>
-                        @endcan
                         @can('document_access')
                             <li class="{{ request()->is("admin/documents") || request()->is("admin/documents/*") ? "active" : "" }}">
                                 <a href="{{ route("admin.documents.index") }}">

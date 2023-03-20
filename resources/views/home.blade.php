@@ -83,11 +83,6 @@
                                                     </tr>
                                                 </thead>
                                             </table>
-                                            @if ($activityLaunch->activityLaunchReceipts->count() > 0)
-                                            <button class="btn btn-success btn-sm" disabled>Inserir recibo</button>
-                                            @else
-                                            <a href="/admin/receipts/create2/{{ $activityLaunch->id }}" class="btn btn-success btn-sm">Inserir recibo</a>
-                                            @endif
                                         </div>
                                     </div>
                                 </div>

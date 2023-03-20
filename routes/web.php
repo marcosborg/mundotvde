@@ -310,14 +310,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Drivers Balance
     Route::get('drivers-balances', 'DriversBalanceController@index')->name('drivers-balances.index');
 
-    // Receipts
-    Route::delete('receipts/destroy', 'ReceiptsController@massDestroy')->name('receipts.massDestroy');
-    Route::post('receipts/media', 'ReceiptsController@storeMedia')->name('receipts.storeMedia');
-    Route::post('receipts/ckmedia', 'ReceiptsController@storeCKEditorImages')->name('receipts.storeCKEditorImages');
-    Route::resource('receipts', 'ReceiptsController');
-    Route::get('receipts/create2/{activity_launch_id}', 'ReceiptsController@create2');
-    Route::post('receipts/store2', 'ReceiptsController@store2')->name('receipts.store2');
-
     // Document
     Route::delete('documents/destroy', 'DocumentController@massDestroy')->name('documents.massDestroy');
     Route::post('documents/media', 'DocumentController@storeMedia')->name('documents.storeMedia');

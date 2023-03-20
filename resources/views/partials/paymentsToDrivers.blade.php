@@ -54,7 +54,6 @@
                             <th>Condutor</th>
                             <th>Semana</th>
                             <th>Valor</th>
-                            <th>Recibo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,11 +67,6 @@
                                     \Carbon\Carbon::parse($item->week->end_date)->format('d-m-Y')
                                     }}</small></td>
                             <td>{{ $item->total }}</td>
-                            <td>
-                                @if ($item->activityLaunchReceipts->count() > 0)
-                                <a class="btn btn-success btn-sm" href="/admin/receipts/{{ $item->activityLaunchReceipts[0]->id }}">Recibo</a>
-                                @endif
-                            </td>
                         </tr>
                         @endforeach
                     </tbody>

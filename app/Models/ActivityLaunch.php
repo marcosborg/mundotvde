@@ -60,8 +60,4 @@ class ActivityLaunch extends Model
         return $this->hasMany(ActivityPerOperator::class, 'activity_launch_id', 'id');
     }
 
-    public function activityLaunchReceipts()
-    {
-        return $this->hasMany(Receipt::class, 'activity_launch_id', 'id');
-    }
 }

@@ -22,7 +22,6 @@ class HomeController
             ->with([
                 'week',
                 'activityPerOperators.tvde_operator',
-                'activityLaunchReceipts'
             ])
             ->orderBy('id', 'desc')
             ->get();

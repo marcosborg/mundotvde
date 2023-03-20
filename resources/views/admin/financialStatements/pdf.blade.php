@@ -16,7 +16,7 @@
 
         th,
         td {
-            padding: 10px;
+            padding: 8px;
         }
 
         @page {
@@ -76,27 +76,35 @@
         </thead>
         <tbody>
             <tr style="border-bottom: solid 1px #cccccc;">
-                <td widtd="50%" style="text-align: left;">Aluguer</td>
+                <td widtd="50%" style="text-align: left;">Total de recebimentos liquido</td>
+                <td widtd="50%" style="text-align: right;">€ {{ number_format($activityLaunch->net, '2', '.') }}</td>
+            </tr>
+            <tr style="border-bottom: solid 1px #cccccc;">
+                <td widtd="50%" style="text-align: left;">Total de impostos a descontar (-)</td>
+                <td widtd="50%" style="text-align: right;">€ {{ number_format($activityLaunch->taxes, 2, '.') }}</td>
+            </tr>
+            <tr style="border-bottom: solid 1px #cccccc;">
+                <td widtd="50%" style="text-align: left;">Aluguer (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->rent }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
-                <td widtd="50%" style="text-align: left;">Gestão</td>
+                <td widtd="50%" style="text-align: left;">Gestão (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->management }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
-                <td widtd="50%" style="text-align: left;">Seguro</td>
+                <td widtd="50%" style="text-align: left;">Seguro (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->insurance }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
-                <td widtd="50%" style="text-align: left;">Combustivel</td>
+                <td widtd="50%" style="text-align: left;">Combustivel (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->fuel }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
-                <td widtd="50%" style="text-align: left;">Portagens</td>
+                <td widtd="50%" style="text-align: left;">Portagens (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->tolls }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
-                <td widtd="50%" style="text-align: left;">Débitos</td>
+                <td widtd="50%" style="text-align: left;">Débitos (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->others }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
@@ -169,15 +177,7 @@
             <tr style="text-align: center;">
                 <td>{{ \Carbon\Carbon::parse($activityLaunch60->created_at)->format('d-m-Y') }}</td>
                 <td>
-                    @if ($activityLaunch60->activityLaunchReceipts->count() > 0)
-                    Recibo enviado em {{
-                    \Carbon\Carbon::parse($activityLaunch60->activityLaunchReceipts[0]->created_at)->format('d-m-Y') }}
-                    @else
-                    @php
-                    $budget += $activityLaunch60->total;
-                    @endphp
-                    O recibo ainda não foi enviado
-                    @endif
+                    
                 </td>
                 <td>€ {{ $activityLaunch60->total }}</td>
                 <td>€ {{ $budget }}</td>
@@ -231,6 +231,3 @@
 </body>
 
 </html>
-<script>
-    console.log({!! $activityLaunch !!})
-</script>

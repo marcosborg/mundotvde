@@ -28,7 +28,6 @@ class PayoutsToDriversController extends Controller
                 'week',
                 'driver',
                 'activityPerOperators.tvde_operator',
-                'activityLaunchReceipts'
             ])
             ->get();
 
