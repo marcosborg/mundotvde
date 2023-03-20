@@ -93,6 +93,30 @@
                                         @endforeach
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.document.fields.iban') }}
+                                    </th>
+                                    <td>
+                                        @foreach($document->iban as $key => $media)
+                                            <a href="{{ $media->getUrl() }}" target="_blank">
+                                                {{ trans('global.view_file') }}
+                                            </a>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.document.fields.address') }}
+                                    </th>
+                                    <td>
+                                        @foreach($document->address as $key => $media)
+                                            <a href="{{ $media->getUrl() }}" target="_blank">
+                                                {{ trans('global.view_file') }}
+                                            </a>
+                                        @endforeach
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="form-group">
@@ -103,9 +127,6 @@
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div>
 </div>

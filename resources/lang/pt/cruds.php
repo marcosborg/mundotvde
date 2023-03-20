@@ -1233,6 +1233,10 @@ return [
             'updated_at_helper'              => ' ',
             'deleted_at'                     => 'Deleted at',
             'deleted_at_helper'              => ' ',
+            'iban'                           => 'Comprovativo de IBAN',
+            'iban_helper'                    => ' ',
+            'address'                        => 'Comprovativo de endereço',
+            'address_helper'                 => ' ',
         ],
     ],
     'myDocument' => [

@@ -49,6 +49,12 @@
                                         {{ trans('cruds.document.fields.driving_license') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.document.fields.iban') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('cruds.document.fields.address') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -98,6 +104,20 @@
                                         </td>
                                         <td>
                                             @foreach($document->driving_license as $key => $media)
+                                                <a href="{{ $media->getUrl() }}" target="_blank">
+                                                    {{ trans('global.view_file') }}
+                                                </a>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach($document->iban as $key => $media)
+                                                <a href="{{ $media->getUrl() }}" target="_blank">
+                                                    {{ trans('global.view_file') }}
+                                                </a>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach($document->address as $key => $media)
                                                 <a href="{{ $media->getUrl() }}" target="_blank">
                                                     {{ trans('global.view_file') }}
                                                 </a>

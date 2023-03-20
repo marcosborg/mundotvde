@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\MediaUploadingTrait;
-use App\Http\Requests\MassDestroyDocumentRequest;
-use App\Http\Requests\StoreDocumentRequest;
-use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
 use App\Models\Driver;
 use Gate;
@@ -101,6 +98,34 @@ class MyDocumentController extends Controller
         if (count($media) === 0 || ! in_array($file, $media)) {
         $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('driving_license');
         }
+        }
+
+        if (count($document->iban) > 0) {
+            foreach ($document->iban as $media) {
+                if (! in_array($media->file_name, $request->input('iban', []))) {
+                    $media->delete();
+                }
+            }
+        }
+        $media = $document->iban->pluck('file_name')->toArray();
+        foreach ($request->input('iban', []) as $file) {
+            if (count($media) === 0 || ! in_array($file, $media)) {
+                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('iban');
+            }
+        }
+
+        if (count($document->address) > 0) {
+            foreach ($document->address as $media) {
+                if (! in_array($media->file_name, $request->input('address', []))) {
+                    $media->delete();
+                }
+            }
+        }
+        $media = $document->address->pluck('file_name')->toArray();
+        foreach ($request->input('address', []) as $file) {
+            if (count($media) === 0 || ! in_array($file, $media)) {
+                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('address');
+            }
         }
         
         return redirect()->route('admin.my-documents.index');

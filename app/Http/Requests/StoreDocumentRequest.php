@@ -33,6 +33,12 @@ class StoreDocumentRequest extends FormRequest
             'driving_license' => [
                 'array',
             ],
+            'iban' => [
+                'array',
+            ],
+            'address' => [
+                'array',
+            ],
         ];
     }
 }

@@ -33,6 +33,12 @@ class UpdateDocumentRequest extends FormRequest
             'driving_license' => [
                 'array',
             ],
+            'iban' => [
+                'array',
+            ],
+            'address' => [
+                'array',
+            ],
         ];
     }
 }

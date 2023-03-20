@@ -35,6 +35,8 @@ class Document extends Model implements HasMedia
         'criminal_record',
         'profile_picture',
         'driving_license',
+        'iban',
+        'address',
     ];
 
     protected function serializeDate(DateTimeInterface $date)
@@ -83,5 +85,15 @@ class Document extends Model implements HasMedia
     public function getDrivingLicenseAttribute()
     {
         return $this->getMedia('driving_license');
+    }
+
+    public function getIbanAttribute()
+    {
+        return $this->getMedia('iban');
+    }
+
+    public function getAddressAttribute()
+    {
+        return $this->getMedia('address');
     }
 }
