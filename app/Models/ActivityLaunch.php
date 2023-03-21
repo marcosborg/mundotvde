@@ -29,7 +29,7 @@ class ActivityLaunch extends Model
         'tolls',
         'others',
         'refund',
-        'paid',
+        'send',
         'created_at',
         'updated_at',
         'deleted_at',

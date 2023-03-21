@@ -92,16 +92,16 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.activityLaunch.fields.refund_helper') }}</span>
                         </div>
-                        <div class="form-group {{ $errors->has('paid') ? 'has-error' : '' }}">
+                        <div class="form-group {{ $errors->has('send') ? 'has-error' : '' }}">
                             <div>
-                                <input type="hidden" name="paid" value="0">
-                                <input type="checkbox" name="paid" id="paid" value="1" {{ $activityLaunch->paid || old('paid', 0) === 1 ? 'checked' : '' }}>
-                                <label for="paid" style="font-weight: 400">{{ trans('cruds.activityLaunch.fields.paid') }}</label>
+                                <input type="hidden" name="send" value="0">
+                                <input type="checkbox" name="send" id="send" value="1" {{ $activityLaunch->send || old('send', 0) === 1 ? 'checked' : '' }}>
+                                <label for="send" style="font-weight: 400">{{ trans('cruds.activityLaunch.fields.send') }}</label>
                             </div>
-                            @if($errors->has('paid'))
-                                <span class="help-block" role="alert">{{ $errors->first('paid') }}</span>
+                            @if($errors->has('send'))
+                                <span class="help-block" role="alert">{{ $errors->first('send') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.activityLaunch.fields.paid_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.activityLaunch.fields.send_helper') }}</span>
                         </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">

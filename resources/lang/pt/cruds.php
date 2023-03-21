@@ -1167,8 +1167,8 @@ return [
             'others_helper'     => ' ',
             'refund'            => 'Devolução',
             'refund_helper'     => ' ',
-            'paid'              => 'Pago',
-            'paid_helper'       => ' ',
+            'send'              => 'Enviado',
+            'send_helper'       => ' ',
         ],
     ],
     'activityPerOperator' => [
@@ -1202,8 +1202,8 @@ return [
         'title_singular' => 'Gestão de condutores TVDE',
     ],
     'payoutsToDriver' => [
-        'title'          => 'Pagamentos aos motoristas',
-        'title_singular' => 'Pagamentos aos motorista',
+        'title'          => 'Extratos e pagamentos',
+        'title_singular' => 'Extrato e pagamento',
     ],
     'driversBalance' => [
         'title'          => 'Saldo dos motoristas',

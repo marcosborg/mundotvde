@@ -1,13 +1,13 @@
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#not-paid" aria-controls="not-paid" role="tab"
+        <li role="presentation" class="active"><a href="#not-send" aria-controls="not-send" role="tab"
                 data-toggle="tab">Extratos por enviar</a></li>
-        <li role="presentation"><a href="#paid" aria-controls="paid" role="tab" data-toggle="tab">Extratos enviados</a></li>
+        <li role="presentation"><a href="#send" aria-controls="send" role="tab" data-toggle="tab">Extratos enviados</a></li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="not-paid">
+        <div role="tabpanel" class="tab-pane active" id="not-send">
             <div class="table-responsive" style="margin-top: 20px;">
                 <table class=" table table-bordered table-striped table-hover datatable">
                     <thead>
@@ -20,7 +20,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($notPaid as $item)
+                        @foreach ($notSend as $item)
                         <tr>
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->driver->name }}</td>
@@ -45,7 +45,7 @@
             <button style="display: none;" id="paymentButton" onclick="confirmPay()" class="btn btn-success">Confirmar
                 envio de extrato</button>
         </div>
-        <div role="tabpanel" class="tab-pane" id="paid">
+        <div role="tabpanel" class="tab-pane" id="send">
             <div class="table-responsive" style="margin-top: 20px;">
                 <table class=" table table-bordered table-striped table-hover datatable">
                     <thead>
@@ -57,7 +57,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($paid as $item)
+                        @foreach ($send as $item)
                         <tr>
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->driver->name }}</td>

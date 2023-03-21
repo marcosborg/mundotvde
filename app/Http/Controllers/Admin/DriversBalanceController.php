@@ -37,7 +37,7 @@ class DriversBalanceController extends Controller
                 }
                 $sum = array_sum($sum);
                 $result = $sum - $sub + $activity_launch->refund;
-                if (!$activity_launch->paid) {
+                if (!$activity_launch->send) {
                     $balance[] = $result;
                 }
             }

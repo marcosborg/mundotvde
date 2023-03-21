@@ -63,7 +63,7 @@
                                     {{ trans('cruds.activityLaunch.fields.refund') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.activityLaunch.fields.paid') }}
+                                    {{ trans('cruds.activityLaunch.fields.send') }}
                                 </th>
                                 <th>
                                     &nbsp;
@@ -137,7 +137,7 @@
 { data: 'tolls', name: 'tolls' },
 { data: 'others', name: 'others' },
 { data: 'refund', name: 'refund' },
-{ data: 'paid', name: 'paid' },
+{ data: 'send', name: 'send' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

@@ -314,7 +314,7 @@ return array(
     'App\\Models\\TvdeYear' => $baseDir . '/app/Models/TvdeYear.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Models\\UserAlert' => $baseDir . '/app/Models/UserAlert.php',
-    'App\\Notifications\\ActivityLaunchesPaid' => $baseDir . '/app/Notifications/ActivityLaunchesPaid.php',
+    'App\\Notifications\\ActivityLaunchesSend' => $baseDir . '/app/Notifications/ActivityLaunchesSend.php',
     'App\\Notifications\\Newsletter' => $baseDir . '/app/Notifications/Newsletter.php',
     'App\\Notifications\\VerifyUserNotification' => $baseDir . '/app/Notifications/VerifyUserNotification.php',
     'App\\Notifications\\carRentalContact' => $baseDir . '/app/Notifications/carRentalContact.php',

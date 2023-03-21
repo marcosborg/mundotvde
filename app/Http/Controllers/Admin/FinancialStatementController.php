@@ -22,7 +22,7 @@ class FinancialStatementController extends Controller
 
         $activityLaunches = ActivityLaunch::where([
             'driver_id' => $driver->id,
-            'paid' => 1
+            'send' => 1
         ])
             ->with([
                 'week.tvde_month.year',
@@ -103,7 +103,7 @@ class FinancialStatementController extends Controller
         //LAST 60 DAYS
         $activityLaunches60 = ActivityLaunch::where([
             'driver_id' => $driver->id,
-            'paid' => 1
+            'send' => 1
         ])
             ->whereDate('created_at', '>=', now()->subDays(60))
             ->with([

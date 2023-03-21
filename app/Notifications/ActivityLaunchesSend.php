@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ActivityLaunchesPaid extends Notification
+class ActivityLaunchesSend extends Notification
 {
     use Queueable;
 

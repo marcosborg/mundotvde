@@ -99,10 +99,10 @@
                                 </tr>
                                 <tr>
                                     <th>
-                                        {{ trans('cruds.activityLaunch.fields.paid') }}
+                                        {{ trans('cruds.activityLaunch.fields.send') }}
                                     </th>
                                     <td>
-                                        <input type="checkbox" disabled="disabled" {{ $activityLaunch->paid ? 'checked' : '' }}>
+                                        <input type="checkbox" disabled="disabled" {{ $activityLaunch->send ? 'checked' : '' }}>
                                     </td>
                                 </tr>
                             </tbody>

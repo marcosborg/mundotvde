@@ -924,7 +924,7 @@ class ComposerStaticInit584b92956befcbf6f25acb86a38fb055
         'App\\Models\\TvdeYear' => __DIR__ . '/../..' . '/app/Models/TvdeYear.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\UserAlert' => __DIR__ . '/../..' . '/app/Models/UserAlert.php',
-        'App\\Notifications\\ActivityLaunchesPaid' => __DIR__ . '/../..' . '/app/Notifications/ActivityLaunchesPaid.php',
+        'App\\Notifications\\ActivityLaunchesSend' => __DIR__ . '/../..' . '/app/Notifications/ActivityLaunchesSend.php',
         'App\\Notifications\\Newsletter' => __DIR__ . '/../..' . '/app/Notifications/Newsletter.php',
         'App\\Notifications\\VerifyUserNotification' => __DIR__ . '/../..' . '/app/Notifications/VerifyUserNotification.php',
         'App\\Notifications\\carRentalContact' => __DIR__ . '/../..' . '/app/Notifications/carRentalContact.php',

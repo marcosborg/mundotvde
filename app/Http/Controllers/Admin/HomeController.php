@@ -17,7 +17,7 @@ class HomeController
 
         $activityLaunches = ActivityLaunch::where([
             'driver_id' => $driver->id,
-            'paid' => 1
+            'send' => 1
         ])
             ->with([
                 'week',

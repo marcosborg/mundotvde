@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLaunch;
-use App\Notifications\ActivityLaunchesPaid;
+use App\Notifications\ActivityLaunchesSend;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
@@ -50,12 +50,12 @@ class PayoutsToDriversController extends Controller
             $activityLaunch->total = $total;
         }
 
-        $paid = $activityLaunches->where('paid', 1);
-        $notPaid = $activityLaunches->where('paid', 0);
+        $send = $activityLaunches->where('send', 1);
+        $notSend = $activityLaunches->where('send', 0);
 
         return view('partials.paymentsToDrivers')->with([
-            'paid' => $paid,
-            'notPaid' => $notPaid
+            'send' => $send,
+            'notSend' => $notSend
         ]);
     }
 
@@ -73,7 +73,7 @@ class PayoutsToDriversController extends Controller
                     'week',
                 ])
                 ->first();
-            $activityLaunch->paid = true;
+            $activityLaunch->send = true;
             $activityLaunch->save();
             $activityLaunchesByDriver->add(collect([
                 'driver_id' => $activityLaunch->driver->id,
@@ -114,7 +114,7 @@ class PayoutsToDriversController extends Controller
             }
             //Enviar email
             $user = $activityLaunches[0]['user'];
-            $user->notify(new ActivityLaunchesPaid($data));
+            $user->notify(new ActivityLaunchesSend($data));
         }
 
     }

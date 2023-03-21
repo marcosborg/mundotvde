@@ -83,11 +83,11 @@ class ActivityLaunchController extends Controller
             $table->editColumn('refund', function ($row) {
                 return $row->refund ? $row->refund : '';
             });
-            $table->editColumn('paid', function ($row) {
-                return '<input type="checkbox" disabled ' . ($row->paid ? 'checked' : null) . '>';
+            $table->editColumn('send', function ($row) {
+                return '<input type="checkbox" disabled ' . ($row->send ? 'checked' : null) . '>';
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'driver', 'week', 'paid']);
+            $table->rawColumns(['actions', 'placeholder', 'driver', 'week', 'send']);
 
             return $table->make(true);
         }
