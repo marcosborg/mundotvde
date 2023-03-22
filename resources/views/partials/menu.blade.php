@@ -281,6 +281,17 @@
                     </a>
                 </li>
             @endcan
+            @can('my_receipt_access')
+                <li class="{{ request()->is("admin/my-receipts") || request()->is("admin/my-receipts/*") ? "active" : "" }}">
+                    <a href="{{ route("admin.my-receipts.index") }}">
+                        <i class="fa-fw fas fa-file-invoice-dollar">
+
+                        </i>
+                        <span>{{ trans('cruds.myReceipt.title') }}</span>
+
+                    </a>
+                </li>
+            @endcan
             @can('financial_statement_access')
                 <li class="{{ request()->is("admin/financial-statements") || request()->is("admin/financial-statements/*") ? "active" : "" }}">
                     <a href="{{ route("admin.financial-statements.index") }}">

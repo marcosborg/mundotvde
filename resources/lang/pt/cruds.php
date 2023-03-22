@@ -1204,12 +1204,12 @@ return [
         'title_singular' => 'Gestão de atividade',
     ],
     'tvdeDriverManagement' => [
-        'title'          => 'Gestão de condutores TVDE',
-        'title_singular' => 'Gestão de condutores TVDE',
+        'title'          => 'Gestão de atividades TVDE',
+        'title_singular' => 'Gestão de atividades TVDE',
     ],
     'payoutsToDriver' => [
-        'title'          => 'Pagamentos aos motoristas',
-        'title_singular' => 'Pagamentos aos motorista',
+        'title'          => 'Extratos e Pagamentos',
+        'title_singular' => 'Extratos e Pagamento',
     ],
     'driversBalance' => [
         'title'          => 'Saldo dos motoristas',
@@ -1272,6 +1272,10 @@ return [
             'deleted_at'        => 'Deleted at',
             'deleted_at_helper' => ' ',
         ],
+    ],
+    'myReceipt' => [
+        'title'          => 'Os meus recibos',
+        'title_singular' => 'Os meus recibo',
     ],
 
 ];

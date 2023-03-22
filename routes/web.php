@@ -291,6 +291,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('receipts/ckmedia', 'ReceiptController@storeCKEditorImages')->name('receipts.storeCKEditorImages');
     Route::resource('receipts', 'ReceiptController');
 
+    // My Receipts
+    Route::prefix('my-receipts')->group(function () {
+        Route::get('/', 'MyReceiptsController@index')->name('my-receipts.index');
+        Route::post('create', 'MyReceiptsController@create');
+    });
+
     // Tvde Driver Management
     Route::prefix('tvde-driver-managements')->group(
         function () {

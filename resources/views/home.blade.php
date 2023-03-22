@@ -12,18 +12,19 @@
                     @can('dashboard')
                     @if ($activityLaunches->count() > 0)
                     @php
-                        $total = 0;
+                    $total = 0;
                     @endphp
                     @foreach ($activityLaunches as $activityLaunch)
                     @if ($activityLaunch->paid == 0)
                     @php
-                        $total += $activityLaunch->total;
+                    $total += $activityLaunch->total;
                     @endphp
                     @endif
                     @endforeach
                     <span class="budget">Saldo: € {{ number_format($total, 2) }}<span>
-                    <button class="btn btn-success btn-sm" {{ $total == 0 ? 'disabled' : '' }}>Enviar recibo</button>
-                    </span></span>
+                            <button class="btn btn-success btn-sm" {{ $total==0 ? 'disabled' : '' }}
+                                onclick="openModalReceipt('{{ number_format($total, 2) }}')">Enviar recibo</button>
+                        </span></span>
                     <ul class="list-group">
                         @foreach ($activityLaunches as $activityLaunch)
                         <li class="list-group-item">
@@ -97,7 +98,7 @@
                                                 </thead>
                                             </table>
                                             @if ($activityLaunch->paid == 1)
-                                                <span class="badge">Pago</span>
+                                            <span class="badge">Pago</span>
                                             @endif
                                         </div>
                                     </div>
@@ -115,6 +116,36 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="receipt-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Enviar recibo</h4>
+            </div>
+            <form action="/admin/my-receipts/create" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Valor do recibo</label>
+                        <input type="text" class="form-control" value="0.00" name="value" id="value">
+                    </div>
+                    <div class="form-group">
+                        <label>Ficheiro</label>
+                        <div class="needsclick dropzone" id="file-dropzone">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 @section('styles')
 <style>
@@ -126,6 +157,7 @@
     table {
         margin-bottom: 10px !important;
     }
+
     .budget {
         font-size: 20px;
         font-weight: bold;
@@ -142,5 +174,59 @@
 @endsection
 @section('scripts')
 @parent
+<script>
+    Dropzone.options.fileDropzone = {
+    url: '{{ route('admin.receipts.storeMedia') }}',
+    maxFilesize: 2, // MB
+    maxFiles: 1,
+    addRemoveLinks: true,
+    headers: {
+      'X-CSRF-TOKEN': "{{ csrf_token() }}"
+    },
+    params: {
+      size: 2
+    },
+    success: function (file, response) {
+      $('form').find('input[name="file"]').remove()
+      $('form').append('<input type="hidden" name="file" value="' + response.name + '">')
+    },
+    removedfile: function (file) {
+      file.previewElement.remove()
+      if (file.status !== 'error') {
+        $('form').find('input[name="file"]').remove()
+        this.options.maxFiles = this.options.maxFiles + 1
+      }
+    },
+    init: function () {
+@if(isset($receipt) && $receipt->file)
+      var file = {!! json_encode($receipt->file) !!}
+          this.options.addedfile.call(this, file)
+      file.previewElement.classList.add('dz-complete')
+      $('form').append('<input type="hidden" name="file" value="' + file.file_name + '">')
+      this.options.maxFiles = this.options.maxFiles - 1
+@endif
+    },
+     error: function (file, response) {
+         if ($.type(response) === 'string') {
+             var message = response //dropzone sends it's own error messages in string
+         } else {
+             var message = response.errors.file
+         }
+         file.previewElement.classList.add('dz-error')
+         _ref = file.previewElement.querySelectorAll('[data-dz-errormessage]')
+         _results = []
+         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+             node = _ref[_i]
+             _results.push(node.textContent = message)
+         }
 
+         return _results
+     }
+}
+    openModalReceipt = (value) => {
+        $('#receipt-modal').modal('show');
+        $('#value').val(value);
+        console.log(value);
+    }
+</script>
 @endsection
