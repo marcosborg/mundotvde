@@ -285,6 +285,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('activity-per-operators/destroy', 'ActivityPerOperatorController@massDestroy')->name('activity-per-operators.massDestroy');
     Route::resource('activity-per-operators', 'ActivityPerOperatorController');
 
+    // Receipt
+    Route::delete('receipts/destroy', 'ReceiptController@massDestroy')->name('receipts.massDestroy');
+    Route::post('receipts/media', 'ReceiptController@storeMedia')->name('receipts.storeMedia');
+    Route::post('receipts/ckmedia', 'ReceiptController@storeCKEditorImages')->name('receipts.storeCKEditorImages');
+    Route::resource('receipts', 'ReceiptController');
+
     // Tvde Driver Management
     Route::prefix('tvde-driver-managements')->group(
         function () {

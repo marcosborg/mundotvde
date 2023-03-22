@@ -1253,5 +1253,25 @@ return [
         'title'          => 'Extratos',
         'title_singular' => 'Extrato',
     ],
+    'receipt' => [
+        'title'          => 'Recibos',
+        'title_singular' => 'Recibo',
+        'fields'         => [
+            'id'                => 'ID',
+            'id_helper'         => ' ',
+            'driver'            => 'Condutor',
+            'driver_helper'     => ' ',
+            'value'             => 'Valor',
+            'value_helper'      => ' ',
+            'file'              => 'Ficheiro',
+            'file_helper'       => ' ',
+            'created_at'        => 'Created at',
+            'created_at_helper' => ' ',
+            'updated_at'        => 'Updated at',
+            'updated_at_helper' => ' ',
+            'deleted_at'        => 'Deleted at',
+            'deleted_at_helper' => ' ',
+        ],
+    ],
 
 ];

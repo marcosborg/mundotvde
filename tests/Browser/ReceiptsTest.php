@@ -6,15 +6,15 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
-class ReceiptsTest extends DuskTestCase
+class ReceiptTest extends DuskTestCase
 {
     public function testIndex()
     {
         $admin = App\Models\User::find(1);
         $this->browse(function (Browser $browser) use ($admin) {
             $browser->loginAs($admin);
-            $browser->visit(route('admin.receipts.index'));
-            $browser->assertRouteIs('admin.receipts.index');
+            $browser->visit(route('admin.receipt.index'));
+            $browser->assertRouteIs('admin.receipt.index');
         });
     }
 }
