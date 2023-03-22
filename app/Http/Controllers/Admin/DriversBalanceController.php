@@ -17,6 +17,9 @@ class DriversBalanceController extends Controller
         $drivers = Driver::with([
             'activity_launches.activityPerOperators'
         ])
+            ->whereHas('activity_launches', function ($query) {
+                $query->where('paid', 0);
+            })
             ->get();
 
         foreach ($drivers as $driver) {
@@ -37,7 +40,7 @@ class DriversBalanceController extends Controller
                 }
                 $sum = array_sum($sum);
                 $result = $sum - $sub + $activity_launch->refund;
-                if (!$activity_launch->send) {
+                if (!$activity_launch->paid) {
                     $balance[] = $result;
                 }
             }

@@ -56,6 +56,7 @@
                             <th>Semana</th>
                             <th>Valor</th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,6 +74,9 @@
                                 @if ($item->paid == 0)
                                 <button class="btn btn-success btn-sm" id="pay-{{ $item->id }}" onclick="pay({{ $item->id }})" type="button">Pagar</button>
                                 @endif
+                            </td>
+                            <td>
+                                <a href="/admin/financial-statements/pdf/{{ $item->id }}" class="btn btn-success btn-sm">Extrato</a>
                             </td>
                         </tr>
                         @endforeach

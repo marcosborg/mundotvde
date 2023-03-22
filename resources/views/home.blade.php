@@ -11,6 +11,19 @@
                 <div class="panel-body">
                     @can('dashboard')
                     @if ($activityLaunches->count() > 0)
+                    @php
+                        $total = 0;
+                    @endphp
+                    @foreach ($activityLaunches as $activityLaunch)
+                    @if ($activityLaunch->paid == 0)
+                    @php
+                        $total += $activityLaunch->total;
+                    @endphp
+                    @endif
+                    @endforeach
+                    <span class="budget">Saldo: € {{ number_format($total, 2) }}<span>
+                    <button class="btn btn-success btn-sm" {{ $total == 0 ? 'disabled' : '' }}>Enviar recibo</button>
+                    </span></span>
                     <ul class="list-group">
                         @foreach ($activityLaunches as $activityLaunch)
                         <li class="list-group-item">
@@ -112,6 +125,17 @@
 
     table {
         margin-bottom: 10px !important;
+    }
+    .budget {
+        font-size: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        background: #eeeeee;
+        border: solid 1px #ccc;
+        padding: 10px;
+        display: flex;
+        margin-bottom: 10px;
+        justify-content: space-between;
     }
 </style>
 

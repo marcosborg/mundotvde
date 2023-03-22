@@ -146,10 +146,10 @@
                 <td>{{ $activityLaunch->driver->brand }}</td>
                 <td>{{ $activityLaunch->driver->model }}</td>
                 <td>{{ \Carbon\Carbon::parse($activityLaunch->week->start_date)->format('d-m-Y') }}</td>
-                <td></td>
+                <td>{{ $activityLaunch->initial_kilometers }}</td>
                 <td>{{ \Carbon\Carbon::parse($activityLaunch->week->end_date)->format('d-m-Y') }}</td>
-                <td></td>
-                <td></td>
+                <td>{{ $activityLaunch->final_kilometers }}</td>
+                <td>{{ $activityLaunch->final_kilometers - $activityLaunch->initial_kilometers }}</td>
                 <td>{{
                     \Carbon\Carbon::parse($activityLaunch->week->start_date)->diffInDays(\Carbon\Carbon::parse($activityLaunch->week->end_date))
                     }}</td>
@@ -164,7 +164,7 @@
             </tr>
             <tr>
                 <th>Data</th>
-                <th>Movimento</th>
+                <th>Estado do movimento</th>
                 <th>Valor</th>
                 <th>Saldo</th>
             </tr>
@@ -177,7 +177,14 @@
             <tr style="text-align: center;">
                 <td>{{ \Carbon\Carbon::parse($activityLaunch60->created_at)->format('d-m-Y') }}</td>
                 <td>
-                    
+                    @if ($activityLaunch60->paid == 0)
+                        @php
+                            $budget += $activityLaunch60->total;
+                        @endphp
+                        Em saldo
+                    @else
+                        Pago
+                    @endif
                 </td>
                 <td>€ {{ $activityLaunch60->total }}</td>
                 <td>€ {{ $budget }}</td>

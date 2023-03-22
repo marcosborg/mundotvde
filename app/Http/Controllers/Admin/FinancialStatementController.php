@@ -110,7 +110,7 @@ class FinancialStatementController extends Controller
                 'week.tvde_month.year',
                 'activityPerOperators.tvde_operator',
             ])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         foreach ($activityLaunches60 as $activityLaunch60) {
@@ -140,7 +140,7 @@ class FinancialStatementController extends Controller
             'isRemoteEnabled' => true,
         ]);
 
-        return $pdf->stream();
+        //return $pdf->stream();
 
         return $pdf->download($activityLaunch->created_at . '.pdf');
     }
