@@ -83,6 +83,9 @@
                                                     </tr>
                                                 </thead>
                                             </table>
+                                            @if ($activityLaunch->paid == 1)
+                                                <span class="badge">Pago</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

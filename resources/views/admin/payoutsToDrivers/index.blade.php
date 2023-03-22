@@ -49,7 +49,7 @@
             $('#paymentButton').hide();
         }
     }
-    confirmPay = () => {
+    confirmSend = () => {
         Swal.fire({
             title: 'Confirmar envio?',
             text: "Um email vai ser enviado e não poderá reverter o processo!",
@@ -68,7 +68,7 @@
                 var form = new FormData();
                 form.append("activityLaunches", JSON.stringify(activityLaunches));
                 var settings = {
-                    "url": "/admin/payouts-to-drivers/confirm-pay",
+                    "url": "/admin/payouts-to-drivers/confirm-send",
                     "method": "POST",
                     "timeout": 0,
                     "headers": {
@@ -89,6 +89,13 @@
                     );
                 });
             }
+        });
+    }
+    pay = (id) => {
+        $.LoadingOverlay('show');
+        $.get('/admin/payouts-to-drivers/pay/' + id).then((resp) => {
+            $.LoadingOverlay('hide');
+            $('#pay-' + id).hide();
         });
     }
 </script>

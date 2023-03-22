@@ -15,7 +15,7 @@ class PayoutsToDriversController extends Controller
     public function index()
     {
         abort_if(Gate::denies('payouts_to_driver_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
+
         return view('admin.payoutsToDrivers.index');
     }
 
@@ -59,7 +59,7 @@ class PayoutsToDriversController extends Controller
         ]);
     }
 
-    public function confirmPay(Request $request)
+    public function confirmSend(Request $request)
     {
 
         $activityLaunches = json_decode($request->activityLaunches);
@@ -117,6 +117,13 @@ class PayoutsToDriversController extends Controller
             $user->notify(new ActivityLaunchesSend($data));
         }
 
+    }
+
+    public function pay(Request $request)
+    {
+        $activityLaunch = ActivityLaunch::find($request->id);
+        $activityLaunch->paid = 1;
+        $activityLaunch->save();
     }
 
 

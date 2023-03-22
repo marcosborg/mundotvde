@@ -83,11 +83,20 @@ class ActivityLaunchController extends Controller
             $table->editColumn('refund', function ($row) {
                 return $row->refund ? $row->refund : '';
             });
+            $table->editColumn('initial_kilometers', function ($row) {
+                return $row->initial_kilometers ? $row->initial_kilometers : '';
+            });
+            $table->editColumn('final_kilometers', function ($row) {
+                return $row->final_kilometers ? $row->final_kilometers : '';
+            });
             $table->editColumn('send', function ($row) {
                 return '<input type="checkbox" disabled ' . ($row->send ? 'checked' : null) . '>';
             });
+            $table->editColumn('paid', function ($row) {
+                return '<input type="checkbox" disabled ' . ($row->paid ? 'checked' : null) . '>';
+            });
 
-            $table->rawColumns(['actions', 'placeholder', 'driver', 'week', 'send']);
+            $table->rawColumns(['actions', 'placeholder', 'driver', 'week', 'send', 'paid']);
 
             return $table->make(true);
         }
@@ -137,7 +146,7 @@ class ActivityLaunchController extends Controller
     {
         abort_if(Gate::denies('activity_launch_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $activityLaunch->load('driver', 'week', 'activityLaunchActivityPerOperators', 'activityLaunchReceipts');
+        $activityLaunch->load('driver', 'week', 'activityLaunchActivityPerOperators');
 
         return view('admin.activityLaunches.show', compact('activityLaunch'));
     }

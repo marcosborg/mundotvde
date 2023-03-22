@@ -46,6 +46,18 @@ class UpdateActivityLaunchRequest extends FormRequest
             'refund' => [
                 'required',
             ],
+            'initial_kilometers' => [
+                'nullable',
+                'integer',
+                'min:-2147483648',
+                'max:2147483647',
+            ],
+            'final_kilometers' => [
+                'nullable',
+                'integer',
+                'min:-2147483648',
+                'max:2147483647',
+            ],
         ];
     }
 }

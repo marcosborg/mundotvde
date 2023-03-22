@@ -92,6 +92,22 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.activityLaunch.fields.refund_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('initial_kilometers') ? 'has-error' : '' }}">
+                            <label for="initial_kilometers">{{ trans('cruds.activityLaunch.fields.initial_kilometers') }}</label>
+                            <input class="form-control" type="number" name="initial_kilometers" id="initial_kilometers" value="{{ old('initial_kilometers', $activityLaunch->initial_kilometers) }}" step="1">
+                            @if($errors->has('initial_kilometers'))
+                                <span class="help-block" role="alert">{{ $errors->first('initial_kilometers') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.activityLaunch.fields.initial_kilometers_helper') }}</span>
+                        </div>
+                        <div class="form-group {{ $errors->has('final_kilometers') ? 'has-error' : '' }}">
+                            <label for="final_kilometers">{{ trans('cruds.activityLaunch.fields.final_kilometers') }}</label>
+                            <input class="form-control" type="number" name="final_kilometers" id="final_kilometers" value="{{ old('final_kilometers', $activityLaunch->final_kilometers) }}" step="1">
+                            @if($errors->has('final_kilometers'))
+                                <span class="help-block" role="alert">{{ $errors->first('final_kilometers') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.activityLaunch.fields.final_kilometers_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('send') ? 'has-error' : '' }}">
                             <div>
                                 <input type="hidden" name="send" value="0">
@@ -102,6 +118,17 @@
                                 <span class="help-block" role="alert">{{ $errors->first('send') }}</span>
                             @endif
                             <span class="help-block">{{ trans('cruds.activityLaunch.fields.send_helper') }}</span>
+                        </div>
+                        <div class="form-group {{ $errors->has('paid') ? 'has-error' : '' }}">
+                            <div>
+                                <input type="hidden" name="paid" value="0">
+                                <input type="checkbox" name="paid" id="paid" value="1" {{ $activityLaunch->paid || old('paid', 0) === 1 ? 'checked' : '' }}>
+                                <label for="paid" style="font-weight: 400">{{ trans('cruds.activityLaunch.fields.paid') }}</label>
+                            </div>
+                            @if($errors->has('paid'))
+                                <span class="help-block" role="alert">{{ $errors->first('paid') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.activityLaunch.fields.paid_helper') }}</span>
                         </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">

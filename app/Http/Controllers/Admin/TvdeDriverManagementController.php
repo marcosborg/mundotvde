@@ -71,6 +71,8 @@ class TvdeDriverManagementController extends Controller
         $activityLaunch->tolls = $request->tolls ? $request->tolls : 0;
         $activityLaunch->others = $request->others ? $request->others : 0;
         $activityLaunch->refund = $request->refund ? $request->refund : 0;
+        $activityLaunch->initial_kilometers = $request->initial_kilometers ? $request->initial_kilometers : null;
+        $activityLaunch->final_kilometers = $request->final_kilometers ? $request->final_kilometers : null;
         $activityLaunch->save();
         foreach ($request->all() as $key => $value) {
             if (strstr($key, 'update')) {
@@ -108,6 +110,8 @@ class TvdeDriverManagementController extends Controller
         $activityLaunch->tolls = $request->tolls;
         $activityLaunch->others = $request->others;
         $activityLaunch->refund = $request->refund;
+        $activityLaunch->initial_kilometers = $request->initial_kilometers ? $request->initial_kilometers : null;
+        $activityLaunch->final_kilometers = $request->final_kilometers ? $request->final_kilometers : null;
         $activityLaunch->save();
 
         $operators = collect();

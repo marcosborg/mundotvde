@@ -65,6 +65,14 @@
                                             <label>Créditos</label>
                                             <input type="text" class="form-control" name="refund" value="0">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Quilómetros iniciais</label>
+                                            <input type="number" class="form-control" name="initial_kilometers" value="">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Quilómetros finais</label>
+                                            <input type="number" class="form-control" name="final_kilometers" value="">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -122,6 +130,14 @@
                                     <div class="form-group">
                                         <label>Créditos</label>
                                         <input type="text" class="form-control" name="refund">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Quilómetros iniciais</label>
+                                        <input type="number" class="form-control" name="initial_kilometers" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Quilómetros finais</label>
+                                        <input type="number" class="form-control" name="final_kilometers" value="">
                                     </div>
                                 </div>
                             </div>
@@ -249,6 +265,8 @@
             $('#updateActivityModal input[name=tolls]').val(activityLaunch.tolls);
             $('#updateActivityModal input[name=others]').val(activityLaunch.others);
             $('#updateActivityModal input[name=refund]').val(activityLaunch.refund);
+            $('#updateActivityModal input[name=initial_kilometers]').val(activityLaunch.initial_kilometers);
+            $('#updateActivityModal input[name=final_kilometers]').val(activityLaunch.final_kilometers);
             $('#updateActivityModal input[name=activity_launch_id').val(activityLaunch.id);
             let html = '';
             activityLaunch.activity_per_operators.forEach(activityPerOperator => {

@@ -63,7 +63,16 @@
                                     {{ trans('cruds.activityLaunch.fields.refund') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.activityLaunch.fields.initial_kilometers') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.activityLaunch.fields.final_kilometers') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.activityLaunch.fields.send') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.activityLaunch.fields.paid') }}
                                 </th>
                                 <th>
                                     &nbsp;
@@ -137,7 +146,10 @@
 { data: 'tolls', name: 'tolls' },
 { data: 'others', name: 'others' },
 { data: 'refund', name: 'refund' },
+{ data: 'initial_kilometers', name: 'initial_kilometers' },
+{ data: 'final_kilometers', name: 'final_kilometers' },
 { data: 'send', name: 'send' },
+{ data: 'paid', name: 'paid' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

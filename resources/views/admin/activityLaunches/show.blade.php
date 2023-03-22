@@ -99,10 +99,34 @@
                                 </tr>
                                 <tr>
                                     <th>
+                                        {{ trans('cruds.activityLaunch.fields.initial_kilometers') }}
+                                    </th>
+                                    <td>
+                                        {{ $activityLaunch->initial_kilometers }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.activityLaunch.fields.final_kilometers') }}
+                                    </th>
+                                    <td>
+                                        {{ $activityLaunch->final_kilometers }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
                                         {{ trans('cruds.activityLaunch.fields.send') }}
                                     </th>
                                     <td>
                                         <input type="checkbox" disabled="disabled" {{ $activityLaunch->send ? 'checked' : '' }}>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.activityLaunch.fields.paid') }}
+                                    </th>
+                                    <td>
+                                        <input type="checkbox" disabled="disabled" {{ $activityLaunch->paid ? 'checked' : '' }}>
                                     </td>
                                 </tr>
                             </tbody>
