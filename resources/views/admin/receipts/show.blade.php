@@ -30,7 +30,7 @@
                                         {{ trans('cruds.receipt.fields.driver') }}
                                     </th>
                                     <td>
-                                        {{ $receipt->driver->code ?? '' }}
+                                        {{ $receipt->driver->name ?? '' }}
                                     </td>
                                 </tr>
                                 <tr>

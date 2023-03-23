@@ -48,18 +48,12 @@ class ReceiptController extends Controller
             $table->editColumn('id', function ($row) {
                 return $row->id ? $row->id : '';
             });
-            $table->addColumn('driver_code', function ($row) {
-                return $row->driver ? $row->driver->code : '';
+            $table->addColumn('driver_name', function ($row) {
+                return $row->driver ? $row->driver->name : '';
             });
 
-            $table->editColumn('driver.name', function ($row) {
-                return $row->driver ? (is_string($row->driver) ? $row->driver : $row->driver->name) : '';
-            });
-            $table->editColumn('driver.payment_vat', function ($row) {
-                return $row->driver ? (is_string($row->driver) ? $row->driver : $row->driver->payment_vat) : '';
-            });
-            $table->editColumn('driver.email', function ($row) {
-                return $row->driver ? (is_string($row->driver) ? $row->driver : $row->driver->email) : '';
+            $table->editColumn('driver.code', function ($row) {
+                return $row->driver ? (is_string($row->driver) ? $row->driver : $row->driver->code) : '';
             });
             $table->editColumn('value', function ($row) {
                 return $row->value ? $row->value : '';
@@ -73,7 +67,9 @@ class ReceiptController extends Controller
             return $table->make(true);
         }
 
-        return view('admin.receipts.index');
+        $drivers = Driver::get();
+
+        return view('admin.receipts.index', compact('drivers'));
     }
 
     public function create()

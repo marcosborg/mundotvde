@@ -30,13 +30,7 @@
                                     {{ trans('cruds.receipt.fields.driver') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.driver.fields.name') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.driver.fields.payment_vat') }}
-                                </th>
-                                <th>
-                                    {{ trans('cruds.driver.fields.email') }}
+                                    {{ trans('cruds.driver.fields.code') }}
                                 </th>
                                 <th>
                                     {{ trans('cruds.receipt.fields.value') }}
@@ -45,8 +39,38 @@
                                     {{ trans('cruds.receipt.fields.file') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.receipt.fields.created_at') }}
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    <input class="search" type="text" placeholder="{{ trans('global.search') }}">
+                                </td>
+                                <td>
+                                    <select class="search">
+                                        <option value>{{ trans('global.all') }}</option>
+                                        @foreach($drivers as $key => $item)
+                                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    <input class="search" type="text" placeholder="{{ trans('global.search') }}">
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    <input class="search" type="text" placeholder="{{ trans('global.search') }}">
+                                </td>
+                                <td>
+                                </td>
                             </tr>
                         </thead>
                     </table>
@@ -104,12 +128,11 @@
     columns: [
       { data: 'placeholder', name: 'placeholder' },
 { data: 'id', name: 'id' },
-{ data: 'driver_code', name: 'driver.code' },
-{ data: 'driver.name', name: 'driver.name' },
-{ data: 'driver.payment_vat', name: 'driver.payment_vat' },
-{ data: 'driver.email', name: 'driver.email' },
+{ data: 'driver_name', name: 'driver.name' },
+{ data: 'driver.code', name: 'driver.code' },
 { data: 'value', name: 'value' },
 { data: 'file', name: 'file', sortable: false, searchable: false },
+{ data: 'created_at', name: 'created_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
@@ -122,6 +145,27 @@
           .columns.adjust();
   });
   
+let visibleColumnsIndexes = null;
+$('.datatable thead').on('input', '.search', function () {
+      let strict = $(this).attr('strict') || false
+      let value = strict && this.value ? "^" + this.value + "$" : this.value
+
+      let index = $(this).parent().index()
+      if (visibleColumnsIndexes !== null) {
+        index = visibleColumnsIndexes[index]
+      }
+
+      table
+        .column(index)
+        .search(value, strict)
+        .draw()
+  });
+table.on('column-visibility.dt', function(e, settings, column, state) {
+      visibleColumnsIndexes = []
+      table.columns(":visible").every(function(colIdx) {
+          visibleColumnsIndexes.push(colIdx);
+      });
+  })
 });
 
 </script>
