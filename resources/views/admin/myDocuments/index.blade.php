@@ -83,9 +83,6 @@
                     </form>
                 </div>
             </div>
-
-
-
         </div>
     </div>
 </div>
@@ -96,13 +93,13 @@
     var uploadedCitizenCardMap = {}
 Dropzone.options.citizenCardDropzone = {
     url: '{{ route('admin.my-documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: false,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 2
+      size: 5
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="citizen_card[]" value="' + response.name + '">')
@@ -152,7 +149,7 @@ Dropzone.options.citizenCardDropzone = {
     var uploadedTvdeDriverCertificateMap = {}
 Dropzone.options.tvdeDriverCertificateDropzone = {
     url: '{{ route('admin.my-documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: false,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -208,7 +205,7 @@ Dropzone.options.tvdeDriverCertificateDropzone = {
     var uploadedCriminalRecordMap = {}
 Dropzone.options.criminalRecordDropzone = {
     url: '{{ route('admin.my-documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: false,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -263,7 +260,7 @@ Dropzone.options.criminalRecordDropzone = {
 <script>
     Dropzone.options.profilePictureDropzone = {
     url: '{{ route('admin.my-documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     acceptedFiles: '.jpeg,.jpg,.png,.gif',
     maxFiles: 1,
     addRemoveLinks: false,
@@ -319,7 +316,7 @@ Dropzone.options.criminalRecordDropzone = {
     var uploadedDrivingLicenseMap = {}
 Dropzone.options.drivingLicenseDropzone = {
     url: '{{ route('admin.my-documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: false,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -375,7 +372,7 @@ Dropzone.options.drivingLicenseDropzone = {
     var uploadedIbanMap = {}
 Dropzone.options.ibanDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: false,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -431,7 +428,7 @@ Dropzone.options.ibanDropzone = {
     var uploadedAddressMap = {}
 Dropzone.options.addressDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: false,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
