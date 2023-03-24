@@ -235,6 +235,10 @@
                 html += '</div>';
                 html += '<div class="panel-body">';
                 html += '<div class="form-group">';
+                html += '<label>Bruto</label>';
+                html += '<input type="text" name="create-' + tvde_operator.id + '-gross" class="form-control" value="0">';
+                html += '</div>';
+                html += '<div class="form-group">';
                 html += '<label>Líquido</label>';
                 html += '<input type="text" name="create-' + tvde_operator.id + '-net" class="form-control" value="0">';
                 html += '</div>';
@@ -275,6 +279,10 @@
                 html += activityPerOperator.tvde_operator.name;
                 html += '</div>';
                 html += '<div class="panel-body">';
+                html += '<div class="form-group">';
+                html += '<label>Bruto</label>';
+                html += '<input type="text" name="update-' + activityPerOperator.id + '-gross" class="form-control" value="' + activityPerOperator.gross + '">';
+                html += '</div>';
                 html += '<div class="form-group">';
                 html += '<label>Líquido</label>';
                 html += '<input type="text" name="update-' + activityPerOperator.id + '-net" class="form-control" value="' + activityPerOperator.net + '">';

@@ -35,6 +35,14 @@
                                 </tr>
                                 <tr>
                                     <th>
+                                        {{ trans('cruds.activityPerOperator.fields.gross') }}
+                                    </th>
+                                    <td>
+                                        {{ $activityPerOperator->gross }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
                                         {{ trans('cruds.activityPerOperator.fields.net') }}
                                     </th>
                                     <td>

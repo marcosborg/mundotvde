@@ -80,6 +80,8 @@ class TvdeDriverManagementController extends Controller
                 $activityPerOperator = ActivityPerOperator::find($key[1]);
                 if ($key[2] == 'net') {
                     $activityPerOperator->net = $value ? $value : 0;
+                } elseif ($key[2] == 'gross') {
+                    $activityPerOperator->gross = $value ? $value : 0;
                 } else {
                     $activityPerOperator->taxes = $value ? $value : 0;
                 }
@@ -135,6 +137,8 @@ class TvdeDriverManagementController extends Controller
             foreach ($operator as $op) {
                 if ($op['type'] == 'net') {
                     $activityPerOperator->net = $op['value'];
+                } elseif ($op['type'] == 'gross') {
+                    $activityPerOperator->gross = $op['value'];
                 } else {
                     $activityPerOperator->taxes = $op['value'];
                 }

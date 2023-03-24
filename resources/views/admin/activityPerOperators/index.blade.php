@@ -42,7 +42,7 @@
                                     {{ trans('cruds.activityLaunch.fields.tolls') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.activityLaunch.fields.otthers') }}
+                                    {{ trans('cruds.activityPerOperator.fields.gross') }}
                                 </th>
                                 <th>
                                     {{ trans('cruds.activityPerOperator.fields.net') }}
@@ -118,7 +118,7 @@
 { data: 'activity_launch.insurance', name: 'activity_launch.insurance' },
 { data: 'activity_launch.fuel', name: 'activity_launch.fuel' },
 { data: 'activity_launch.tolls', name: 'activity_launch.tolls' },
-{ data: 'activity_launch.otthers', name: 'activity_launch.otthers' },
+{ data: 'gross', name: 'gross' },
 { data: 'net', name: 'net' },
 { data: 'taxes', name: 'taxes' },
 { data: 'tvde_operator_name', name: 'tvde_operator.name' },

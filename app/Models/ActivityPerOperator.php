@@ -21,6 +21,7 @@ class ActivityPerOperator extends Model
 
     protected $fillable = [
         'activity_launch_id',
+        'gross',
         'net',
         'taxes',
         'tvde_operator_id',

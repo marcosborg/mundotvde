@@ -24,6 +24,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.activityPerOperator.fields.activity_launch_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('gross') ? 'has-error' : '' }}">
+                            <label for="gross">{{ trans('cruds.activityPerOperator.fields.gross') }}</label>
+                            <input class="form-control" type="number" name="gross" id="gross" value="{{ old('gross', $activityPerOperator->gross) }}" step="0.01">
+                            @if($errors->has('gross'))
+                                <span class="help-block" role="alert">{{ $errors->first('gross') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.activityPerOperator.fields.gross_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('net') ? 'has-error' : '' }}">
                             <label for="net">{{ trans('cruds.activityPerOperator.fields.net') }}</label>
                             <input class="form-control" type="number" name="net" id="net" value="{{ old('net', $activityPerOperator->net) }}" step="0.01">

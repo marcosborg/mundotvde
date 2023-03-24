@@ -64,6 +64,9 @@ class ActivityPerOperatorController extends Controller
             $table->editColumn('activity_launch.otthers', function ($row) {
                 return $row->activity_launch ? (is_string($row->activity_launch) ? $row->activity_launch : $row->activity_launch->otthers) : '';
             });
+            $table->editColumn('gross', function ($row) {
+                return $row->gross ? $row->gross : '';
+            });
             $table->editColumn('net', function ($row) {
                 return $row->net ? $row->net : '';
             });

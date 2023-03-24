@@ -151,7 +151,7 @@
                 <td>{{ $activityLaunch->final_kilometers }}</td>
                 <td>{{ $activityLaunch->final_kilometers - $activityLaunch->initial_kilometers }}</td>
                 <td>{{
-                    \Carbon\Carbon::parse($activityLaunch->week->start_date)->diffInDays(\Carbon\Carbon::parse($activityLaunch->week->end_date))
+                    \Carbon\Carbon::parse($activityLaunch->week->start_date)->diffInDays(\Carbon\Carbon::parse($activityLaunch->week->end_date)) + 1
                     }}</td>
             </tr>
         </tbody>
@@ -210,16 +210,15 @@
                         <tbody>
                             <tr>
                                 <th>Bruto</th>
+                                <td>€ {{ $activityPerOperator->gross }}</td>
+                            </tr>
+                            <tr>
+                                <th>Líquido</th>
                                 <td>€ {{ $activityPerOperator->net }}</td>
                             </tr>
                             <tr>
                                 <th>Impostos</th>
                                 <td>€ {{ $activityPerOperator->taxes }}</td>
-                            </tr>
-                            <tr>
-                                <th>Líquido</th>
-                                <td>€ {{ number_format($activityPerOperator->net - $activityPerOperator->taxes, 2, '.',
-                                    '') }}</td>
                             </tr>
                         </tbody>
                     </table>

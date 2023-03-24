@@ -1197,6 +1197,8 @@ return [
             'activity_launch_helper' => ' ',
             'tvde_operator'          => 'Operador',
             'tvde_operator_helper'   => ' ',
+            'gross'                  => 'Bruto',
+            'gross_helper'           => ' ',
         ],
     ],
     'activityManagement' => [
@@ -1241,7 +1243,7 @@ return [
             'deleted_at_helper'              => ' ',
             'iban'                           => 'Comprovativo de IBAN',
             'iban_helper'                    => ' ',
-            'address'                        => 'Comprovativo de endereço',
+            'address'                        => 'Comprovativo de morada',
             'address_helper'                 => ' ',
         ],
     ],
