@@ -155,7 +155,7 @@ Dropzone.options.tvdeDriverCertificateDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 2
+      size: 5
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="tvde_driver_certificate[]" value="' + response.name + '">')
@@ -211,7 +211,7 @@ Dropzone.options.criminalRecordDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 2
+      size: 5
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="criminal_record[]" value="' + response.name + '">')
@@ -268,7 +268,7 @@ Dropzone.options.criminalRecordDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 2,
+      size: 5,
       width: 4096,
       height: 4096
     },
@@ -322,7 +322,7 @@ Dropzone.options.drivingLicenseDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 2
+      size: 5
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="driving_license[]" value="' + response.name + '">')
@@ -378,7 +378,7 @@ Dropzone.options.ibanDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 2
+      size: 5
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="iban[]" value="' + response.name + '">')
@@ -434,7 +434,7 @@ Dropzone.options.addressDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 2
+      size: 5
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="address[]" value="' + response.name + '">')
