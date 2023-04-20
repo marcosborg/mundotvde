@@ -39,9 +39,10 @@ Compre a sua viatura {{ $car->brand->name }} {{ $car->car_model->name }}
                                     @endif
                                 </div>
                                 <div class="row">
+                                    <script>console.log({!! $car !!})</script>
                                     <div class="col">
                                         <p><strong>Ano: </strong>{{ $car->year }} | {{ $car->month->name }}</p>
-                                        <p><strong>Quilómetros: </strong>{{ $car->year }}</p>
+                                        <p><strong>Quilómetros: </strong>{{ $car->kilometers }}</p>
                                         <p><strong>Caixa: </strong>{{ $car->transmision }}</p>
                                         <p><strong>Combustivel: </strong>{{ $car->fuel->name }}</p>
                                     </div>
