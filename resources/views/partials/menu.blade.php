@@ -855,6 +855,17 @@
                     </a>
                 </li>
             @endcan
+            @can('company_document_access')
+                <li class="{{ request()->is("admin/company-documents") || request()->is("admin/company-documents/*") ? "active" : "" }}">
+                    <a href="{{ route("admin.company-documents.index") }}">
+                        <i class="fa-fw fas fa-building">
+
+                        </i>
+                        <span>{{ trans('cruds.companyDocument.title') }}</span>
+
+                    </a>
+                </li>
+            @endcan
             <li class="{{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active" : "" }}">
                 <a href="{{ route("admin.systemCalendar") }}">
                     <i class="fas fa-fw fa-calendar">

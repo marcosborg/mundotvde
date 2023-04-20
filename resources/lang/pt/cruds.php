@@ -1279,5 +1279,23 @@ return [
         'title'          => 'Os meus recibos',
         'title_singular' => 'Os meus recibo',
     ],
+    'companyDocument' => [
+        'title'          => 'Documentos da empresa',
+        'title_singular' => 'Documentos da empresa',
+        'fields'         => [
+            'id'                => 'ID',
+            'id_helper'         => ' ',
+            'name'              => 'Nome do documento',
+            'name_helper'       => ' ',
+            'file'              => 'Ficheiro',
+            'file_helper'       => ' ',
+            'created_at'        => 'Created at',
+            'created_at_helper' => ' ',
+            'updated_at'        => 'Updated at',
+            'updated_at_helper' => ' ',
+            'deleted_at'        => 'Deleted at',
+            'deleted_at_helper' => ' ',
+        ],
+    ],
 
 ];

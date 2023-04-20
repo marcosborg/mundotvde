@@ -340,6 +340,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('financial-statements', 'FinancialStatementController@index')->name('financial-statements.index');
     Route::get('financial-statements/pdf/{id}', 'FinancialStatementController@pdf');
 
+    // Company Document
+    Route::delete('company-documents/destroy', 'CompanyDocumentController@massDestroy')->name('company-documents.massDestroy');
+    Route::post('company-documents/media', 'CompanyDocumentController@storeMedia')->name('company-documents.storeMedia');
+    Route::post('company-documents/ckmedia', 'CompanyDocumentController@storeCKEditorImages')->name('company-documents.storeCKEditorImages');
+    Route::resource('company-documents', 'CompanyDocumentController');
+
     Route::get('system-calendar', 'SystemCalendarController@index')->name('systemCalendar');
     Route::get('messenger', 'MessengerController@index')->name('messenger.index');
     Route::get('messenger/create', 'MessengerController@createTopic')->name('messenger.createTopic');
