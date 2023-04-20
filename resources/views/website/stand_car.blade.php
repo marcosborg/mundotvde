@@ -19,9 +19,9 @@ Compre a sua viatura {{ $car->brand->name }} {{ $car->car_model->name }}
                         <div class="gallery">
                             <div id="product-preview" class="vanilla-zoom">
                                 <div class="zoomed-image"></div>
-                                <div class="sidebar">
+                                <div class="sidebar" style="width: 100%; display: block;">
                                     @foreach ($car->images as $image)
-                                    <img class="img-fluid d-block small-preview" src="{{ $image->url }}">
+                                    <img class="img-fluid d-block small-preview" style="float: left;" src="{{ $image->url }}">
                                     @endforeach
                                 </div>
                             </div>
