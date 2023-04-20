@@ -48,6 +48,3 @@
     $('.datatable').DataTable();
 </script>
 @endsection
-<script>
-    console.log({!! $drivers !!})
-</script>

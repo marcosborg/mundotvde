@@ -62,7 +62,6 @@
 @endsection
 @section('scripts')
 <script>
-    console.log({!! $activityLaunches !!});
 
 $(() => {
     $('.datatable-financialStatement').DataTable();

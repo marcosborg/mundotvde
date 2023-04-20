@@ -43,7 +43,6 @@
 @section('scripts')
 @parent
 <script>
-    console.log({!! $receipts !!})
         $('#datatable-My-Receipt').DataTable();
 </script>
 @endsection

@@ -26,6 +26,7 @@
                                 onclick="openModalReceipt('{{ number_format($total, 2) }}')">Enviar recibo</button>
                         </span></span>
                     <ul class="list-group">
+                        <script>console.log({!! $activityLaunches !!})</script>
                         @foreach ($activityLaunches as $activityLaunch)
                         <li class="list-group-item">
                             <div class="row">
@@ -49,7 +50,7 @@
                                 <div class="col-md-3">
                                     <ul class="list-group">
                                         <li class="list-group-item"><strong>Combustivel: </strong>€ {{
-                                            $activityLaunch->rent }}</li>
+                                            $activityLaunch->fuel }}</li>
                                         <li class="list-group-item"><strong>Portagens: </strong>€ {{
                                             $activityLaunch->tolls }}</li>
                                         <li class="list-group-item"><strong>Débitos: </strong>€ {{

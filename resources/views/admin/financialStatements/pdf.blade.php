@@ -59,9 +59,8 @@
                         [de] YYYY') }}</strong>
                 </td>
                 <td width="50%" style="text-align: right; vertical-align: top;">
-                    <img src="https://mundotvde.pt/assets/website/img/logo-r.svg" width="250">
+                    <img src="https://mundotvde.pt/assets/website/img/logo.png" width="250">
                     <p>Praceta da Tabaqueira 2A 1950-256 Lisboa<br>
-                        960494213 (Custo de chamada para a rede móvel nacional.)<br>
                         geral@mundotvde.pt - www.mundotvde.pt</p>
                 </td>
             </tr>
@@ -151,7 +150,8 @@
                 <td>{{ $activityLaunch->final_kilometers }}</td>
                 <td>{{ $activityLaunch->final_kilometers - $activityLaunch->initial_kilometers }}</td>
                 <td>{{
-                    \Carbon\Carbon::parse($activityLaunch->week->start_date)->diffInDays(\Carbon\Carbon::parse($activityLaunch->week->end_date)) + 1
+                    \Carbon\Carbon::parse($activityLaunch->week->start_date)->diffInDays(\Carbon\Carbon::parse($activityLaunch->week->end_date))
+                    + 1
                     }}</td>
             </tr>
         </tbody>
@@ -178,12 +178,12 @@
                 <td>{{ \Carbon\Carbon::parse($activityLaunch60->created_at)->format('d-m-Y') }}</td>
                 <td>
                     @if ($activityLaunch60->paid == 0)
-                        @php
-                            $budget += $activityLaunch60->total;
-                        @endphp
-                        Em saldo
+                    @php
+                    $budget += $activityLaunch60->total;
+                    @endphp
+                    Em saldo
                     @else
-                        Pago
+                    Pago
                     @endif
                 </td>
                 <td>€ {{ $activityLaunch60->total }}</td>

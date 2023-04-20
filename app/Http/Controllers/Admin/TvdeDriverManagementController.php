@@ -34,7 +34,9 @@ class TvdeDriverManagementController extends Controller
 
     public function drivers()
     {
-        return Driver::get();
+        return Driver::with([
+            'card'
+        ])->get();
     }
 
     public function operators(Request $request)

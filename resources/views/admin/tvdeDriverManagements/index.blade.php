@@ -213,7 +213,7 @@
             let html = '<option selected disabled>Selecionar condutor</option>';
             let drivers = resp;
             $.each(drivers, (i, v) => {
-                html += '<option value="' + v.id + '">' + v.name + '</option>';
+                html += '<option value="' + v.id + '">' + v.name + ' - Cartão ' + v.card.code + '</option>';
             });
             $('#launchActivityModal select[name=driver_id]').html(html);
             $('#launchActivityModal').modal('show');
