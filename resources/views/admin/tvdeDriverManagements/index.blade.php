@@ -67,7 +67,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Quilómetros iniciais</label>
-                                            <input type="number" class="form-control" name="initial_kilometers" value="">
+                                            <input type="number" class="form-control" name="initial_kilometers"
+                                                value="">
                                         </div>
                                         <div class="form-group">
                                             <label>Quilómetros finais</label>
@@ -206,14 +207,21 @@
     }
     
     launchActivity = (week_id) => {
+        console.log(week_id);
         $('#launchActivityModal input[name=week_id]').val(week_id);
         $.LoadingOverlay('show');
         $.get('/admin/tvde-driver-managements/drivers').then((resp) => {
             $.LoadingOverlay('hide');
             let html = '<option selected disabled>Selecionar condutor</option>';
             let drivers = resp;
+            console.log(drivers);
             $.each(drivers, (i, v) => {
-                html += '<option value="' + v.id + '">' + v.name + ' - Cartão ' + v.card.code + '</option>';
+                let h1 = '<option value="' + v.id + '">' + v.name;
+                let h2 = '</option>';
+                if(v.card) {
+                    h2 = ' - Cartão ' + v.card.code + '</option>';
+                }
+                html += h1 + h2;
             });
             $('#launchActivityModal select[name=driver_id]').html(html);
             $('#launchActivityModal').modal('show');
