@@ -960,6 +960,41 @@
                 </ul>
             </li>
             @endcan
+            @can('contracts_menu_access')
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa-fw fas fa-file-signature">
+
+                        </i>
+                        <span>{{ trans('cruds.contractsMenu.title') }}</span>
+                        <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('statement_of_responsibility_access')
+                            <li class="{{ request()->is("admin/statement-of-responsibilities") || request()->is("admin/statement-of-responsibilities/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.statement-of-responsibilities.index") }}">
+                                    <i class="fa-fw fas fa-signature">
+
+                                    </i>
+                                    <span>{{ trans('cruds.statementOfResponsibility.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('contract_access')
+                            <li class="{{ request()->is("admin/contracts") || request()->is("admin/contracts/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.contracts.index") }}">
+                                    <i class="fa-fw fas fa-signature">
+
+                                    </i>
+                                    <span>{{ trans('cruds.contract.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan
             <li class="{{ request()->is(" admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active"
                 : "" }}">
                 <a href="{{ route("admin.systemCalendar") }}">

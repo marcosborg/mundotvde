@@ -1301,5 +1301,17 @@ return [
         'title'          => 'Website',
         'title_singular' => 'Website',
     ],
+    'statementOfResponsibility' => [
+        'title'          => 'Declaração de responsabilidade',
+        'title_singular' => 'Declaração de responsabilidade',
+    ],
+    'contractsMenu' => [
+        'title'          => 'Contratos',
+        'title_singular' => 'Contrato',
+    ],
+    'contract' => [
+        'title'          => 'Contrato',
+        'title_singular' => 'Contrato',
+    ],
 
 ];

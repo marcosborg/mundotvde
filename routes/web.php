@@ -357,6 +357,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('messenger/{topic}/reply', 'MessengerController@replyToTopic')->name('messenger.reply');
     Route::get('messenger/{topic}/reply', 'MessengerController@showReply')->name('messenger.showReply');
 
+    // Statement Of Responsibility
+    Route::delete('statement-of-responsibilities/destroy', 'StatementOfResponsibilityController@massDestroy')->name('statement-of-responsibilities.massDestroy');
+    Route::resource('statement-of-responsibilities', 'StatementOfResponsibilityController');
+
+    // Contract
+    Route::delete('contracts/destroy', 'ContractController@massDestroy')->name('contracts.massDestroy');
+    Route::resource('contracts', 'ContractController');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
