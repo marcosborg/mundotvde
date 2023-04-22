@@ -1297,5 +1297,9 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
+    'website' => [
+        'title'          => 'Website',
+        'title_singular' => 'Website',
+    ],
 
 ];
