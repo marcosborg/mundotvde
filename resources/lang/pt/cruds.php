@@ -1313,5 +1313,23 @@ return [
         'title'          => 'Contrato',
         'title_singular' => 'Contrato',
     ],
+    'adminStatementResponsibility' => [
+        'title'          => 'Declarações de responsabilidade',
+        'title_singular' => 'Declarações de responsabilidade',
+        'fields'         => [
+            'id'                     => 'ID',
+            'id_helper'              => ' ',
+            'contract_number'        => 'Contrato n.º',
+            'contract_number_helper' => ' ',
+            'driver'                 => 'Condutor',
+            'driver_helper'          => ' ',
+            'created_at'             => 'Created at',
+            'created_at_helper'      => ' ',
+            'updated_at'             => 'Updated at',
+            'updated_at_helper'      => ' ',
+            'deleted_at'             => 'Deleted at',
+            'deleted_at_helper'      => ' ',
+        ],
+    ],
 
 ];

@@ -995,6 +995,17 @@
                     </ul>
                 </li>
             @endcan
+            @can('admin_statement_responsibility_access')
+                <li class="{{ request()->is("admin/admin-statement-responsibilities") || request()->is("admin/admin-statement-responsibilities/*") ? "active" : "" }}">
+                    <a href="{{ route("admin.admin-statement-responsibilities.index") }}">
+                        <i class="fa-fw fas fa-signature">
+
+                        </i>
+                        <span>{{ trans('cruds.adminStatementResponsibility.title') }}</span>
+
+                    </a>
+                </li>
+            @endcan
             <li class="{{ request()->is(" admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active"
                 : "" }}">
                 <a href="{{ route("admin.systemCalendar") }}">
