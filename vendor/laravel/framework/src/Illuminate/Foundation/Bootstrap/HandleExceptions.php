@@ -68,10 +68,8 @@ class HandleExceptions
     public function handleError($level, $message, $file = '', $line = 0, $context = [])
     {
         if ($this->isDeprecation($level)) {
-            return $this->handleDeprecationError($message, $file, $line, $level);
-        }
-
-        if (error_reporting() & $level) {
+            $this->handleDeprecationError($message, $file, $line, $level);
+        } elseif (error_reporting() & $level) {
             throw new ErrorException($message, 0, $level, $file, $line);
         }
     }
@@ -199,11 +197,15 @@ class HandleExceptions
         try {
             $this->getExceptionHandler()->report($e);
         } catch (Exception $e) {
-            //
+            $exceptionHandlerFailed = true;
         }
 
         if (static::$app->runningInConsole()) {
             $this->renderForConsole($e);
+
+            if ($exceptionHandlerFailed ?? false) {
+                exit(1);
+            }
         } else {
             $this->renderHttpResponse($e);
         }

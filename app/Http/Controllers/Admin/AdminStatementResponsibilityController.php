@@ -11,6 +11,8 @@ use App\Models\Driver;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class AdminStatementResponsibilityController extends Controller
 {
@@ -59,11 +61,34 @@ class AdminStatementResponsibilityController extends Controller
 
     public function show(AdminStatementResponsibility $adminStatementResponsibility)
     {
+
         abort_if(Gate::denies('admin_statement_responsibility_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        setlocale(LC_TIME, 'pt_PT.utf8');
+        Carbon::setLocale('pt_PT');
+
+        $data = Carbon::now();
+
+        $mes = $data->formatLocalized('%B');
+
+        return $mes;
 
         $adminStatementResponsibility->load('driver');
 
-        return view('admin.adminStatementResponsibilities.show', compact('adminStatementResponsibility'));
+        return view('admin.adminStatementResponsibilities.show')->with([
+            'adminStatementResponsibility' => $adminStatementResponsibility,
+        ]);
+
+        $pdf = Pdf::loadView('admin.adminStatementResponsibilities.show', [
+            'adminStatementResponsibility' => $adminStatementResponsibility,
+        ])->setOption([
+            'isRemoteEnabled' => true,
+        ]);
+
+        return $pdf->stream();
+
+        //return $pdf->download($activityLaunch->created_at . '.pdf');
+
     }
 
     public function destroy(AdminStatementResponsibility $adminStatementResponsibility)
