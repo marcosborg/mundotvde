@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AdminStatementResponsibility extends Model
+class AdminContract extends Model
 {
     use SoftDeletes, HasFactory;
 
-    public $table = 'admin_statement_responsibilities';
+    public $table = 'admin_contracts';
 
     protected $dates = [
         'signed_at',
@@ -22,7 +22,7 @@ class AdminStatementResponsibility extends Model
     ];
 
     protected $fillable = [
-        'contract_number',
+        'number',
         'driver_id',
         'signed_at',
         'created_at',

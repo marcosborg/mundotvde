@@ -1,5 +1,3 @@
-<?php
-
 namespace App\Http\Requests;
 
 use App\Models\AdminStatementResponsibility;
@@ -26,6 +24,10 @@ class StoreAdminStatementResponsibilityRequest extends FormRequest
             'driver_id' => [
                 'required',
                 'integer',
+            ],
+            'signed_at' => [
+                'date_format:' . config('panel.date_format'),
+                'nullable',
             ],
         ];
     }

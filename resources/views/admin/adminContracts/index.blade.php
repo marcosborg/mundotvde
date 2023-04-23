@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 @section('content')
 <div class="content">
-    @can('admin_statement_responsibility_create')
+    @can('admin_contract_create')
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.admin-statement-responsibilities.create') }}">
-                    {{ trans('global.add') }} {{ trans('cruds.adminStatementResponsibility.title_singular') }}
+                <a class="btn btn-success" href="{{ route('admin.admin-contracts.create') }}">
+                    {{ trans('global.add') }} {{ trans('cruds.adminContract.title_singular') }}
                 </a>
             </div>
         </div>
@@ -14,24 +14,24 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {{ trans('cruds.adminStatementResponsibility.title_singular') }} {{ trans('global.list') }}
+                    {{ trans('cruds.adminContract.title_singular') }} {{ trans('global.list') }}
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class=" table table-bordered table-striped table-hover datatable datatable-AdminStatementResponsibility">
+                        <table class=" table table-bordered table-striped table-hover datatable datatable-AdminContract">
                             <thead>
                                 <tr>
                                     <th width="10">
 
                                     </th>
                                     <th>
-                                        {{ trans('cruds.adminStatementResponsibility.fields.id') }}
+                                        {{ trans('cruds.adminContract.fields.id') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.adminStatementResponsibility.fields.contract_number') }}
+                                        {{ trans('cruds.adminContract.fields.number') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.adminStatementResponsibility.fields.driver') }}
+                                        {{ trans('cruds.adminContract.fields.driver') }}
                                     </th>
                                     <th>
                                         {{ trans('cruds.driver.fields.code') }}
@@ -40,16 +40,10 @@
                                         {{ trans('cruds.driver.fields.start_date') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.driver.fields.email') }}
-                                    </th>
-                                    <th>
                                         {{ trans('cruds.driver.fields.driver_vat') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.driver.fields.license_plate') }}
-                                    </th>
-                                    <th>
-                                        {{ trans('cruds.adminStatementResponsibility.fields.signed_at') }}
+                                        {{ trans('cruds.adminContract.fields.signed_at') }}
                                     </th>
                                     <th>
                                         &nbsp;
@@ -57,53 +51,47 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($adminStatementResponsibilities as $key => $adminStatementResponsibility)
-                                    <tr data-entry-id="{{ $adminStatementResponsibility->id }}">
+                                @foreach($adminContracts as $key => $adminContract)
+                                    <tr data-entry-id="{{ $adminContract->id }}">
                                         <td>
 
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->id ?? '' }}
+                                            {{ $adminContract->id ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->contract_number ?? '' }}
+                                            {{ $adminContract->number ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->driver->name ?? '' }}
+                                            {{ $adminContract->driver->name ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->driver->code ?? '' }}
+                                            {{ $adminContract->driver->code ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->driver->start_date ?? '' }}
+                                            {{ $adminContract->driver->start_date ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->driver->email ?? '' }}
+                                            {{ $adminContract->driver->driver_vat ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->driver->driver_vat ?? '' }}
+                                            {{ $adminContract->signed_at ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $adminStatementResponsibility->driver->license_plate ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $adminStatementResponsibility->signed_at ?? '' }}
-                                        </td>
-                                        <td>
-                                            @can('admin_statement_responsibility_show')
-                                                <a class="btn btn-xs btn-primary" href="{{ route('admin.admin-statement-responsibilities.show', $adminStatementResponsibility->id) }}">
+                                            @can('admin_contract_show')
+                                                <a class="btn btn-xs btn-primary" href="{{ route('admin.admin-contracts.show', $adminContract->id) }}">
                                                     {{ trans('global.view') }}
                                                 </a>
                                             @endcan
 
-                                            @can('admin_statement_responsibility_edit')
-                                                <a class="btn btn-xs btn-info" href="{{ route('admin.admin-statement-responsibilities.edit', $adminStatementResponsibility->id) }}">
+                                            @can('admin_contract_edit')
+                                                <a class="btn btn-xs btn-info" href="{{ route('admin.admin-contracts.edit', $adminContract->id) }}">
                                                     {{ trans('global.edit') }}
                                                 </a>
                                             @endcan
 
-                                            @can('admin_statement_responsibility_delete')
-                                                <form action="{{ route('admin.admin-statement-responsibilities.destroy', $adminStatementResponsibility->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
+                                            @can('admin_contract_delete')
+                                                <form action="{{ route('admin.admin-contracts.destroy', $adminContract->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                     <input type="hidden" name="_method" value="DELETE">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                     <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
@@ -131,11 +119,11 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('admin_statement_responsibility_delete')
+@can('admin_contract_delete')
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
-    url: "{{ route('admin.admin-statement-responsibilities.massDestroy') }}",
+    url: "{{ route('admin.admin-contracts.massDestroy') }}",
     className: 'btn-danger',
     action: function (e, dt, node, config) {
       var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
@@ -166,7 +154,7 @@
     order: [[ 1, 'desc' ]],
     pageLength: 100,
   });
-  let table = $('.datatable-AdminStatementResponsibility:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+  let table = $('.datatable-AdminContract:not(.ajaxTable)').DataTable({ buttons: dtButtons })
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();

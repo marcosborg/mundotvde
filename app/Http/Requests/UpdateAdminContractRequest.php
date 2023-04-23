@@ -2,22 +2,22 @@
 
 namespace App\Http\Requests;
 
-use App\Models\AdminStatementResponsibility;
+use App\Models\AdminContract;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 
-class UpdateAdminStatementResponsibilityRequest extends FormRequest
+class UpdateAdminContractRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('admin_statement_responsibility_edit');
+        return Gate::allows('admin_contract_edit');
     }
 
     public function rules()
     {
         return [
-            'contract_number' => [
+            'number' => [
                 'required',
                 'integer',
                 'min:-2147483648',

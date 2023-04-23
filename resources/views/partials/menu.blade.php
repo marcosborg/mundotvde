@@ -1006,6 +1006,17 @@
                     </a>
                 </li>
             @endcan
+            @can('admin_contract_access')
+                <li class="{{ request()->is("admin/admin-contracts") || request()->is("admin/admin-contracts/*") ? "active" : "" }}">
+                    <a href="{{ route("admin.admin-contracts.index") }}">
+                        <i class="fa-fw fas fa-signature">
+
+                        </i>
+                        <span>{{ trans('cruds.adminContract.title') }}</span>
+
+                    </a>
+                </li>
+            @endcan
             <li class="{{ request()->is(" admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active"
                 : "" }}">
                 <a href="{{ route("admin.systemCalendar") }}">

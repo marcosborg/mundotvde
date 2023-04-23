@@ -369,6 +369,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('admin-statement-responsibilities/destroy', 'AdminStatementResponsibilityController@massDestroy')->name('admin-statement-responsibilities.massDestroy');
     Route::resource('admin-statement-responsibilities', 'AdminStatementResponsibilityController');
 
+    // Admin Contract
+    Route::delete('admin-contracts/destroy', 'AdminContractController@massDestroy')->name('admin-contracts.massDestroy');
+    Route::resource('admin-contracts', 'AdminContractController');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
