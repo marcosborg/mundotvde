@@ -120,7 +120,8 @@
         </tbody>
     </table>
     @else
-    <p style="text-align: left; font-size: 11px;"><strong>A DECLARAÇÃO AINDA NÃO FOI ASSINADA. O CONDUTOR DEVE ASSINAR EM "CONTRATOS/DECLARAÇÃO DE RESPONSABILIDADE".</strong></p>
+    <p style="text-align: left; font-size: 11px;"><strong>A DECLARAÇÃO AINDA NÃO FOI ASSINADA. O CONDUTOR DEVE ASSINAR
+            EM "CONTRATOS/DECLARAÇÃO DE RESPONSABILIDADE".</strong></p>
     @endif
     <footer>
         Mundo TVDE ©

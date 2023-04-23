@@ -11,6 +11,8 @@ use App\Models\Driver;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class AdminContractController extends Controller
 {
@@ -62,6 +64,20 @@ class AdminContractController extends Controller
         abort_if(Gate::denies('admin_contract_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $adminContract->load('driver');
+
+        setlocale(LC_TIME, 'pt_PT.utf8');
+        Carbon::setLocale('pt_PT');
+
+        $pdf = Pdf::loadView('admin.adminContracts.show', [
+            'adminContract' => $adminContract,
+        ])->setOption([
+            'isRemoteEnabled' => true,
+            'enable_html5_parser' => true,
+        ]);
+
+        return $pdf->stream();
+
+        //return $pdf->download($adminContract->created_at . '.pdf');
 
         return view('admin.adminContracts.show', compact('adminContract'));
     }

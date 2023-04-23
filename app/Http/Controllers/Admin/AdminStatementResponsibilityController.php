@@ -77,7 +77,7 @@ class AdminStatementResponsibilityController extends Controller
 
         return $pdf->stream();
 
-        //return $pdf->download($activityLaunch->created_at . '.pdf');
+        //return $pdf->download($adminStatementResponsibility->created_at . '.pdf');
 
     }
 
