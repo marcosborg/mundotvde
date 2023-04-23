@@ -69,10 +69,6 @@ class AdminStatementResponsibilityController extends Controller
 
         $adminStatementResponsibility->load('driver');
 
-        return view('admin.adminStatementResponsibilities.show')->with([
-            'adminStatementResponsibility' => $adminStatementResponsibility,
-        ]);
-
         $pdf = Pdf::loadView('admin.adminStatementResponsibilities.show', [
             'adminStatementResponsibility' => $adminStatementResponsibility,
         ])->setOption([

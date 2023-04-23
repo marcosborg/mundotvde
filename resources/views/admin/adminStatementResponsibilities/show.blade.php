@@ -91,8 +91,11 @@
     <p>Por ser da responsabilidade do condutor todos os custos associados à utilização e manutenção do veículo, o mesmo
         não integrará contrapartida financeira.</p>
     <br><br>
+    @if ($adminStatementResponsibility->signed_at)
     <p>Assinado eletronicamente em, {{ $adminStatementResponsibility->driver->city }}, {{
-        \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->day }} de {{ \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->formatLocalized('%B') }} de 2023</p>
+        \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->day }} de {{
+        \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->formatLocalized('%B') }} de {{
+        \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->year }}</p>
     <br>
     <table style="width: 100%">
         <thead>
@@ -116,6 +119,9 @@
             </tr>
         </tbody>
     </table>
+    @else
+    <p style="text-align: left; font-size: 11px;"><strong>A DECLARAÇÃO AINDA NÃO FOI ASSINADA. O CONDUTOR DEVE ASSINAR EM "CONTRATOS/DECLARAÇÃO DE RESPONSABILIDADE".</strong></p>
+    @endif
     <footer>
         Mundo TVDE ©
         <?php echo date("Y");?>
