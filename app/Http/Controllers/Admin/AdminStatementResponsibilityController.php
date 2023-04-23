@@ -64,7 +64,7 @@ class AdminStatementResponsibilityController extends Controller
 
         abort_if(Gate::denies('admin_statement_responsibility_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        //setlocale(LC_TIME, 'pt_PT.utf8');
+        setlocale(LC_TIME, 'pt_PT.utf8');
         Carbon::setLocale('pt_PT');
 
         $data = Carbon::now();
