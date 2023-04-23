@@ -67,12 +67,6 @@ class AdminStatementResponsibilityController extends Controller
         setlocale(LC_TIME, 'pt_PT.utf8');
         Carbon::setLocale('pt_PT');
 
-        $data = Carbon::now();
-
-        $mes = $data->formatLocalized('%B');
-
-        return $mes;
-
         $adminStatementResponsibility->load('driver');
 
         return view('admin.adminStatementResponsibilities.show')->with([
