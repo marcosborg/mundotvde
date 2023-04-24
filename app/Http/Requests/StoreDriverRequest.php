@@ -51,6 +51,10 @@ class StoreDriverRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'citizen_card' => [
+                'string',
+                'nullable',
+            ],
             'iban' => [
                 'string',
                 'nullable',

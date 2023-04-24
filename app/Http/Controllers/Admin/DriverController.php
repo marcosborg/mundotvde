@@ -94,6 +94,9 @@ class DriverController extends Controller
             $table->editColumn('payment_vat', function ($row) {
                 return $row->payment_vat ? $row->payment_vat : '';
             });
+            $table->editColumn('citizen_card', function ($row) {
+                return $row->citizen_card ? $row->citizen_card : '';
+            });
             $table->editColumn('email', function ($row) {
                 return $row->email ? $row->email : '';
             });

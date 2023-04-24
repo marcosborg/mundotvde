@@ -34,6 +34,7 @@ class Driver extends Model
         'reason',
         'phone',
         'payment_vat',
+        'citizen_card',
         'email',
         'iban',
         'address',
@@ -114,5 +115,15 @@ class Driver extends Model
     public function admin_contract()
     {
         return $this->hasOne(AdminContract::class);
+    }
+
+    public function driverDocuments()
+    {
+        return $this->hasMany(Document::class, 'driver_id', 'id');
+    }
+
+    public function driverReceipts()
+    {
+        return $this->hasMany(Receipt::class, 'driver_id', 'id');
     }
 }

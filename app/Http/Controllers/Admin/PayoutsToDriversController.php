@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLaunch;
 use App\Notifications\ActivityLaunchesSend;
+use App\Notifications\PaidReceipt;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
@@ -121,9 +122,15 @@ class PayoutsToDriversController extends Controller
 
     public function pay(Request $request)
     {
-        $activityLaunch = ActivityLaunch::find($request->id);
+        $activityLaunch = ActivityLaunch::with([
+            'driver.user'
+        ])->where('id', $request->id)->first();
         $activityLaunch->paid = 1;
         $activityLaunch->save();
+
+        //SEND EMAIL
+        $activityLaunch->driver->user->notify(new PaidReceipt());
+
     }
 
 

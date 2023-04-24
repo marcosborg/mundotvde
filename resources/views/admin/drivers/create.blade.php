@@ -131,6 +131,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.driver.fields.payment_vat_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('citizen_card') ? 'has-error' : '' }}">
+                            <label for="citizen_card">{{ trans('cruds.driver.fields.citizen_card') }}</label>
+                            <input class="form-control" type="text" name="citizen_card" id="citizen_card" value="{{ old('citizen_card', '') }}">
+                            @if($errors->has('citizen_card'))
+                                <span class="help-block" role="alert">{{ $errors->first('citizen_card') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.citizen_card_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
                             <label for="email">{{ trans('cruds.driver.fields.email') }}</label>
                             <input class="form-control" type="email" name="email" id="email" value="{{ old('email') }}">

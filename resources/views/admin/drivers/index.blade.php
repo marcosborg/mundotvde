@@ -70,6 +70,9 @@
                                     {{ trans('cruds.driver.fields.payment_vat') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.citizen_card') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.driver.fields.email') }}
                                 </th>
                                 <th>
@@ -178,6 +181,7 @@
 { data: 'reason', name: 'reason' },
 { data: 'phone', name: 'phone' },
 { data: 'payment_vat', name: 'payment_vat' },
+{ data: 'citizen_card', name: 'citizen_card' },
 { data: 'email', name: 'email' },
 { data: 'iban', name: 'iban' },
 { data: 'address', name: 'address' },

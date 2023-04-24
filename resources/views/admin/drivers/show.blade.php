@@ -125,6 +125,14 @@
                                 </tr>
                                 <tr>
                                     <th>
+                                        {{ trans('cruds.driver.fields.citizen_card') }}
+                                    </th>
+                                    <td>
+                                        {{ $driver->citizen_card }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
                                         {{ trans('cruds.driver.fields.email') }}
                                     </th>
                                     <td>
@@ -240,10 +248,18 @@
                             {{ trans('cruds.document.title') }}
                         </a>
                     </li>
+                    <li role="presentation">
+                        <a href="#driver_receipts" aria-controls="driver_receipts" role="tab" data-toggle="tab">
+                            {{ trans('cruds.receipt.title') }}
+                        </a>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane" role="tabpanel" id="driver_documents">
                         @includeIf('admin.drivers.relationships.driverDocuments', ['documents' => $driver->driverDocuments])
+                    </div>
+                    <div class="tab-pane" role="tabpanel" id="driver_receipts">
+                        @includeIf('admin.drivers.relationships.driverReceipts', ['receipts' => $driver->driverReceipts])
                     </div>
                 </div>
             </div>
