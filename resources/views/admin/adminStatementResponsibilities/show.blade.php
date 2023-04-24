@@ -1,9 +1,5 @@
 <!doctype html>
 <html lang="en">
-<script>
-    console.log({!! $adminStatementResponsibility !!})
-</script>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -110,7 +106,7 @@
         <tbody>
             <tr>
                 <td class="text-center">
-                    <strong>Nome:</strong> André Saraiva<br>
+                    <strong>Nome:</strong> Orlando Saraiva<br>
                     <strong>Título: </strong> Gerente<br>
                     <strong><small><small>(Assinado eletronicamente)</small></small></strong>
                 </td>

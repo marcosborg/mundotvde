@@ -138,7 +138,7 @@
     <br>
     <div class="text-center">
         <p><strong>O 1.º Contratante</strong></p>
-        <strong></strong>André Saraiva<br>
+        <strong></strong>Orlando Saraiva<br>
         <strong></strong><small>Gerente</small><br>
         <strong><small><small>(Assinado eletronicamente)</small></small></strong>
         <br>

@@ -358,8 +358,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('messenger/{topic}/reply', 'MessengerController@showReply')->name('messenger.showReply');
 
     // Statement Of Responsibility
-    Route::delete('statement-of-responsibilities/destroy', 'StatementOfResponsibilityController@massDestroy')->name('statement-of-responsibilities.massDestroy');
-    Route::resource('statement-of-responsibilities', 'StatementOfResponsibilityController');
+    Route::prefix('statement-of-responsibilities')->group(function () {
+        Route::get('/', 'StatementOfResponsibilityController@index')->name('statement-of-responsibilities.index');
+        Route::get('pdf/{download?}', 'StatementOfResponsibilityController@pdf');
+        Route::get('signContract', 'StatementOfResponsibilityController@signContract');
+    });
 
     // Contract
     Route::prefix('contracts')->group(function () {

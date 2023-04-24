@@ -9,6 +9,9 @@
                     {{ trans('cruds.contract.title') }}
                 </div>
                 <div class="panel-body">
+                    @if (!$adminContract)
+                    <p>Ainda não existe contrato para assinar</p>
+                    @else
                     <a href="/admin/contracts/pdf" class="btn btn-primary btn-lg">Ler Contrato</a>
                     <a href="/admin/contracts/pdf/download" class="btn btn-success btn-lg">Download do Contrato</a>
                     <br>
@@ -22,7 +25,7 @@
                         Contratuais",
                         você estará confirmando que leu e concorda com todas as cláusulas do contrato.</p>
                     <p>Ressaltamos que a assinatura digital é tão válida quanto uma assinatura física, e será
-                        considerada
+                        considerado
                         um documento legalmente assinado. Portanto, pedimos que leia atentamente todas as cláusulas
                         antes de
                         clicar no botão de concordância.</p>
@@ -37,6 +40,8 @@
                         validade jurídica. Qualquer solicitação de rescisão ou alteração do contrato deve ser realizada
                         por meio de contato com a Opinião e Consenso Unipessoal Lda.</p>
                     @endif
+                    @endif
+
                 </div>
             </div>
         </div>

@@ -17,7 +17,9 @@ class ContractController extends Controller
     {
         abort_if(Gate::denies('contract_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $driver = Driver::find(auth()->user()->id);
+        $driver = Driver::where([
+            'user_id' => auth()->user()->id
+        ])->first();
 
         $adminContract = AdminContract::where([
             'driver_id' => $driver->id
@@ -31,7 +33,9 @@ class ContractController extends Controller
     public function pdf(Request $request)
     {
 
-        $driver = Driver::find(auth()->user()->id);
+        $driver = Driver::where([
+            'user_id' => auth()->user()->id
+        ])->first();
 
         $adminContract = AdminContract::where([
             'driver_id' => $driver->id
@@ -57,7 +61,9 @@ class ContractController extends Controller
 
     public function signContract()
     {
-        $driver = Driver::find(auth()->user()->id);
+        $driver = Driver::where([
+            'user_id' => auth()->user()->id
+        ])->first();
 
         $adminContract = AdminContract::where([
             'driver_id' => $driver->id
