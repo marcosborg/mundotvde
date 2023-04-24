@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
 <div class="content">
-
+<script>console.log({!! $drivers !!})</script>
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -22,8 +22,9 @@
                         <div class="form-group {{ $errors->has('driver') ? 'has-error' : '' }}">
                             <label class="required" for="driver_id">{{ trans('cruds.adminContract.fields.driver') }}</label>
                             <select class="form-control select2" name="driver_id" id="driver_id" required>
-                                @foreach($drivers as $id => $entry)
-                                    <option value="{{ $id }}" {{ old('driver_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                                <option selected disabled>{{ trans('global.pleaseSelect') }}</option>
+                                @foreach($drivers as $driver)
+                                    <option value="{{ $driver->id }}" {{ old('driver_id') == $driver->id ? 'selected' : '' }}>{{ $driver->name }} - NIF: {{ $driver->driver_vat }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('driver'))

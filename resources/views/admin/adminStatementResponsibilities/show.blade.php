@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Contrato de Prestação de Serviços</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <style>
@@ -58,20 +58,23 @@
     <br>
     <p>Opinião e Consenso Unipessoal Lda, com sede Largo do Rossio, nº16 Loja A, 3515-138 Viseu, NIF: 515544930, neste
         ato representada pelo seu Gerente com poderes para o ato, Sr. Orlando Rodrigo Castro Saraiva, declara para os
-        devidos efeitos que autoriza, (Nome) {{ $adminStatementResponsibility->driver->name }},
-        (Morada) {{ $adminStatementResponsibility->driver->address }}, {{ $adminStatementResponsibility->driver->zip }},
-        {{ $adminStatementResponsibility->driver->city }}, Portugal, (NIF) {{
+        devidos efeitos que autoriza, {{ $adminStatementResponsibility->driver->name }},
+        com morada em {{ $adminStatementResponsibility->driver->address }}, {{
+        $adminStatementResponsibility->driver->zip }},
+        {{ $adminStatementResponsibility->driver->city }}, Portugal, com NIF {{
         $adminStatementResponsibility->driver->driver_vat }}, a conduzir e utilizar a viatura
-        (Marca) {{ $adminStatementResponsibility->driver->brand }}, (Modelo) {{
-        $adminStatementResponsibility->driver->model }}, (Matricula) {{
+        {{ $adminStatementResponsibility->driver->brand }}, {{
+        $adminStatementResponsibility->driver->model }}, {{
         $adminStatementResponsibility->driver->license_plate }}, no âmbito do contrato de prestação de
-        serviços n.º _________/ 2023, assinado entre as partes.</p>
+        serviços n.º {{ $adminStatementResponsibility->driver->admin_contract->number }}/ 2023, assinado entre as
+        partes.</p>
     <br>
     <p class="text-center"><strong>Clausula 1.ª</strong></p>
     <br>
     <p>A utilização do veículo acima referido, destina-se única e exclusivamente para fins da atividade de TVDE no
         âmbito da Lei 45/2018 de 10/08 e Declaração de Retificação de 10/08, transferes e passeios turísticos em
-        automóvel conforme contrato de prestação de serviços n.___________/ 2023, assinado entre as partes bem como para
+        automóvel conforme contrato de prestação de serviços n.{{
+        $adminStatementResponsibility->driver->admin_contract->number }}/ 2023, assinado entre as partes bem como para
         seu uso pessoal quando não estiver a ser utilizado no âmbito da atividade profissional.</p>
     <br>
     <p class="text-center"><strong>Clausula 2.ª</strong></p>

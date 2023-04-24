@@ -29,7 +29,7 @@ class AdminStatementResponsibilityController extends Controller
     {
         abort_if(Gate::denies('admin_statement_responsibility_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $drivers = Driver::all();
 
         return view('admin.adminStatementResponsibilities.create', compact('drivers'));
     }
@@ -45,7 +45,7 @@ class AdminStatementResponsibilityController extends Controller
     {
         abort_if(Gate::denies('admin_statement_responsibility_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $drivers = Driver::all();
 
         $adminStatementResponsibility->load('driver');
 
@@ -67,13 +67,19 @@ class AdminStatementResponsibilityController extends Controller
         setlocale(LC_TIME, 'pt_PT.utf8');
         Carbon::setLocale('pt_PT');
 
-        $adminStatementResponsibility->load('driver');
+        $adminStatementResponsibility->load('driver.admin_contract');
 
         $pdf = Pdf::loadView('admin.adminStatementResponsibilities.show', [
             'adminStatementResponsibility' => $adminStatementResponsibility,
         ])->setOption([
             'isRemoteEnabled' => true,
         ]);
+
+        /*
+        return view('admin.adminStatementResponsibilities.show')->with([
+            'adminStatementResponsibility' => $adminStatementResponsibility,
+        ]);
+        */
 
         return $pdf->stream();
 

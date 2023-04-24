@@ -1,13 +1,9 @@
 <!doctype html>
 <html lang="en">
-<script>
-    console.log({!! $adminContract !!})
-</script>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Contrato de prestação de serviços</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <style>
@@ -57,9 +53,9 @@
     <p>1.º: Opinião e Consenso Unipessoal Lda, com sede Largo do Rossio, nº16 Loja A, 3515-138 Viseu, NIF: 515544930,
         neste ato representada pelo seu gerente com poderes para o ato, Orlando Rodrigo Castro Saraiva, doravante
         designado por 1.º Outorgante,</p>
-    <p>2.º: Outorgante: (Nome) {{ $adminContract->driver->name }},
-        (Morada) {{ $adminContract->driver->address }}, {{ $adminContract->driver->zip }}, {{
-        $adminContract->driver->city }}, Portugal, (NIF) {{ $adminContract->driver->driver_vat }},
+    <p>2.º: Outorgante: {{ $adminContract->driver->name }},
+        morador em {{ $adminContract->driver->address }}, {{ $adminContract->driver->zip }}, {{
+        $adminContract->driver->city }}, Portugal, com NIF {{ $adminContract->driver->driver_vat }},
         doravante designado por 2.º
         Outorgante,</p>
     <br>

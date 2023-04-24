@@ -110,4 +110,9 @@ class Driver extends Model
     {
         return $this->hasMany(ActivityLaunch::class);
     }
+
+    public function admin_contract()
+    {
+        return $this->hasOne(AdminContract::class);
+    }
 }

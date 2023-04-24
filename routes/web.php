@@ -362,8 +362,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('statement-of-responsibilities', 'StatementOfResponsibilityController');
 
     // Contract
-    Route::delete('contracts/destroy', 'ContractController@massDestroy')->name('contracts.massDestroy');
-    Route::resource('contracts', 'ContractController');
+    Route::prefix('contracts')->group(function () {
+        Route::get('/', 'ContractController@index')->name('contracts.index');
+        Route::get('pdf/{download?}', 'ContractController@pdf');
+        Route::get('signContract', 'ContractController@signContract');
+    });
 
     // Admin Statement Responsibility
     Route::delete('admin-statement-responsibilities/destroy', 'AdminStatementResponsibilityController@massDestroy')->name('admin-statement-responsibilities.massDestroy');

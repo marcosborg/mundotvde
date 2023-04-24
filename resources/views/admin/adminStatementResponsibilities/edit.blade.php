@@ -9,28 +9,37 @@
                     {{ trans('global.edit') }} {{ trans('cruds.adminStatementResponsibility.title_singular') }}
                 </div>
                 <div class="panel-body">
-                    <form method="POST" action="{{ route("admin.admin-statement-responsibilities.update", [$adminStatementResponsibility->id]) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route("admin.admin-statement-responsibilities.update",
+                        [$adminStatementResponsibility->id]) }}" enctype="multipart/form-data">
                         @method('PUT')
                         @csrf
                         <div class="form-group {{ $errors->has('contract_number') ? 'has-error' : '' }}">
-                            <label class="required" for="contract_number">{{ trans('cruds.adminStatementResponsibility.fields.contract_number') }}</label>
-                            <input class="form-control" type="number" name="contract_number" id="contract_number" value="{{ old('contract_number', $adminStatementResponsibility->contract_number) }}" step="1" required>
+                            <label class="required" for="contract_number">{{
+                                trans('cruds.adminStatementResponsibility.fields.contract_number') }}</label>
+                            <input class="form-control" type="number" name="contract_number" id="contract_number"
+                                value="{{ old('contract_number', $adminStatementResponsibility->contract_number) }}"
+                                step="1" required>
                             @if($errors->has('contract_number'))
-                                <span class="help-block" role="alert">{{ $errors->first('contract_number') }}</span>
+                            <span class="help-block" role="alert">{{ $errors->first('contract_number') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.adminStatementResponsibility.fields.contract_number_helper') }}</span>
+                            <span class="help-block">{{
+                                trans('cruds.adminStatementResponsibility.fields.contract_number_helper') }}</span>
                         </div>
                         <div class="form-group {{ $errors->has('driver') ? 'has-error' : '' }}">
-                            <label class="required" for="driver_id">{{ trans('cruds.adminStatementResponsibility.fields.driver') }}</label>
+                            <label class="required" for="driver_id">{{
+                                trans('cruds.adminStatementResponsibility.fields.driver') }}</label>
                             <select class="form-control select2" name="driver_id" id="driver_id" required>
-                                @foreach($drivers as $id => $entry)
-                                    <option value="{{ $id }}" {{ (old('driver_id') ? old('driver_id') : $adminStatementResponsibility->driver->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                                @foreach($drivers as $driver)
+                                <option value="{{ $driver->id }}" {{ (old('driver_id') ? old('driver_id') :
+                                    $adminStatementResponsibility->driver->id ?? '') == $driver->id ? 'selected' : ''
+                                    }}>{{ $driver->name }} - NIF: {{ $driver->driver_vat }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('driver'))
-                                <span class="help-block" role="alert">{{ $errors->first('driver') }}</span>
+                            <span class="help-block" role="alert">{{ $errors->first('driver') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.adminStatementResponsibility.fields.driver_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.adminStatementResponsibility.fields.driver_helper')
+                                }}</span>
                         </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">

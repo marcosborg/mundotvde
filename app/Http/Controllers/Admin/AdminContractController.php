@@ -29,7 +29,7 @@ class AdminContractController extends Controller
     {
         abort_if(Gate::denies('admin_contract_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $drivers = Driver::all();
 
         return view('admin.adminContracts.create', compact('drivers'));
     }
@@ -45,7 +45,7 @@ class AdminContractController extends Controller
     {
         abort_if(Gate::denies('admin_contract_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $drivers = Driver::all();
 
         $adminContract->load('driver');
 
@@ -79,7 +79,7 @@ class AdminContractController extends Controller
 
         //return $pdf->download($adminContract->created_at . '.pdf');
 
-        return view('admin.adminContracts.show', compact('adminContract'));
+        //return view('admin.adminContracts.show', compact('adminContract'));
     }
 
     public function destroy(AdminContract $adminContract)
