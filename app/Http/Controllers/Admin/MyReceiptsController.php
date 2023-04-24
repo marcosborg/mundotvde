@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Driver;
+use App\Models\User;
+use App\Notifications\NewReceipt;
 use Gate;
 use App\Models\Receipt;
 use Illuminate\Http\Request;
@@ -50,6 +52,9 @@ class MyReceiptsController extends Controller
         if ($media = $request->input('ck-media', false)) {
             Media::whereIn('id', $media)->update(['model_id' => $receipt->id]);
         }
+
+        //SEND EMAIL TO ADMIN
+        User::find(2)->notify(new NewReceipt($driver));
 
         return redirect()->back()->with('message', 'Enviado com sucesso');
     }

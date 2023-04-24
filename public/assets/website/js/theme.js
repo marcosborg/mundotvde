@@ -333,12 +333,18 @@ $(function () {
             });
         }, 500);
     };
+    $('.dropdown').hover(function () {
+        $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeIn(200);
+    }, function () {
+        $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(200);
+    });
+
 });
 
-goStandCar = function(id) {
+goStandCar = function (id) {
     window.location.href = '/tvde/stand/' + id;
 }
 
-openstandCarModal = function() {
+openstandCarModal = function () {
     $('#standCarModal').modal('show');
 }
