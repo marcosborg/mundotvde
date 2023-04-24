@@ -17,6 +17,7 @@
                             <th>Condutor</th>
                             <th>Semana</th>
                             <th>Valor</th>
+                            <th></th>
                             <th>Selecionar para enviar</th>
                         </tr>
                     </thead>
@@ -31,6 +32,7 @@
                                     \Carbon\Carbon::parse($item->week->end_date)->format('d-m-Y')
                                     }}</small></td>
                             <td>{{ $item->total }}</td>
+                            <td><a href="/admin/financial-statements/pdf/{{ $item->id }}/stream" class="btn btn-success btn-sm">Extrato</a></td>
                             <td>
                                 <div class="checkbox">
                                     <label>

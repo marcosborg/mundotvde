@@ -140,9 +140,12 @@ class FinancialStatementController extends Controller
             'isRemoteEnabled' => true,
         ]);
 
-        //return $pdf->stream();
-
-        return $pdf->download($activityLaunch->created_at . '.pdf');
+        if ($request->stream) {
+            return $pdf->stream();
+        } else {
+            return $pdf->download($activityLaunch->created_at . '.pdf');
+        }
+        
     }
 
 }

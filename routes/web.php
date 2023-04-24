@@ -338,7 +338,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Financial Statement
     Route::get('financial-statements', 'FinancialStatementController@index')->name('financial-statements.index');
-    Route::get('financial-statements/pdf/{id}', 'FinancialStatementController@pdf');
+    Route::get('financial-statements/pdf/{id}/{stream?}', 'FinancialStatementController@pdf');
 
     // Company Document
     Route::delete('company-documents/destroy', 'CompanyDocumentController@massDestroy')->name('company-documents.massDestroy');
