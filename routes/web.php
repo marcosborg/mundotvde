@@ -379,6 +379,32 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('admin-contracts/destroy', 'AdminContractController@massDestroy')->name('admin-contracts.massDestroy');
     Route::resource('admin-contracts', 'AdminContractController');
 
+    // Vehicle Brand
+    Route::delete('vehicle-brands/destroy', 'VehicleBrandController@massDestroy')->name('vehicle-brands.massDestroy');
+    Route::resource('vehicle-brands', 'VehicleBrandController');
+
+    // Vehicle Model
+    Route::delete('vehicle-models/destroy', 'VehicleModelController@massDestroy')->name('vehicle-models.massDestroy');
+    Route::resource('vehicle-models', 'VehicleModelController');
+
+    // Vehicle Event Type
+    Route::delete('vehicle-event-types/destroy', 'VehicleEventTypeController@massDestroy')->name('vehicle-event-types.massDestroy');
+    Route::resource('vehicle-event-types', 'VehicleEventTypeController');
+
+    // Vehicle Event Warning Time
+    Route::delete('vehicle-event-warning-times/destroy', 'VehicleEventWarningTimeController@massDestroy')->name('vehicle-event-warning-times.massDestroy');
+    Route::resource('vehicle-event-warning-times', 'VehicleEventWarningTimeController');
+
+    // Vehicle Event
+    Route::delete('vehicle-events/destroy', 'VehicleEventController@massDestroy')->name('vehicle-events.massDestroy');
+    Route::resource('vehicle-events', 'VehicleEventController');
+
+    // Vehicle Item
+    Route::delete('vehicle-items/destroy', 'VehicleItemController@massDestroy')->name('vehicle-items.massDestroy');
+    Route::post('vehicle-items/media', 'VehicleItemController@storeMedia')->name('vehicle-items.storeMedia');
+    Route::post('vehicle-items/ckmedia', 'VehicleItemController@storeCKEditorImages')->name('vehicle-items.storeCKEditorImages');
+    Route::resource('vehicle-items', 'VehicleItemController');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
