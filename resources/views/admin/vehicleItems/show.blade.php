@@ -71,9 +71,9 @@
                                     </th>
                                     <td>
                                         @foreach($vehicleItem->documents as $key => $media)
-                                            <a href="{{ $media->getUrl() }}" target="_blank">
-                                                {{ trans('global.view_file') }}
-                                            </a>
+                                        <a class="btn btn-success btn-sm" href="{{ $media->getUrl() }}" target="_blank">
+                                            {{ ucfirst(str_replace('_', '', strstr($media->name, '_', false))) }}
+                                        </a>
                                         @endforeach
                                     </td>
                                 </tr>
@@ -94,14 +94,16 @@
                 </div>
                 <ul class="nav nav-tabs" role="tablist" id="relationship-tabs">
                     <li role="presentation">
-                        <a href="#vehicle_item_vehicle_events" aria-controls="vehicle_item_vehicle_events" role="tab" data-toggle="tab">
+                        <a href="#vehicle_item_vehicle_events" aria-controls="vehicle_item_vehicle_events" role="tab"
+                            data-toggle="tab">
                             {{ trans('cruds.vehicleEvent.title') }}
                         </a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane" role="tabpanel" id="vehicle_item_vehicle_events">
-                        @includeIf('admin.vehicleItems.relationships.vehicleItemVehicleEvents', ['vehicleEvents' => $vehicleItem->vehicleItemVehicleEvents])
+                        @includeIf('admin.vehicleItems.relationships.vehicleItemVehicleEvents', ['vehicleEvents' =>
+                        $vehicleItem->vehicleItemVehicleEvents])
                     </div>
                 </div>
             </div>

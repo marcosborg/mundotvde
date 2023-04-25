@@ -28,6 +28,7 @@ class VehicleEvent extends Model
         'vehicle_event_warning_time_id',
         'date',
         'vehicle_item_id',
+        'sent',
         'created_at',
         'updated_at',
         'deleted_at',

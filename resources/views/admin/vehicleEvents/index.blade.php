@@ -49,6 +49,9 @@
                                         {{ trans('cruds.vehicleEvent.fields.vehicle_item') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.vehicleEvent.fields.sent') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -82,6 +85,10 @@
                                         </td>
                                         <td>
                                             {{ $vehicleEvent->vehicle_item->license_plate ?? '' }}
+                                        </td>
+                                        <td>
+                                            <span style="display:none">{{ $vehicleEvent->sent ?? '' }}</span>
+                                            <input type="checkbox" disabled="disabled" {{ $vehicleEvent->sent ? 'checked' : '' }}>
                                         </td>
                                         <td>
                                             @can('vehicle_event_show')

@@ -1449,8 +1449,10 @@ return [
             'deleted_at_helper'                 => ' ',
             'date'                              => 'Data e hora',
             'date_helper'                       => ' ',
-            'vehicle_items'                     => 'Viaturas',
-            'vehicle_items_helper'              => ' ',
+            'vehicle_item'                      => 'Viatura',
+            'vehicle_item_helper'               => ' ',
+            'sent'                              => 'Enviado',
+            'sent_helper'                       => ' ',
         ],
     ],
     'vehicleItem' => [

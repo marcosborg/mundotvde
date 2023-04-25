@@ -8,6 +8,14 @@ use Carbon\Carbon;
 class SystemCalendarController extends Controller
 {
     public $sources = [
+        [
+            'model'      => '\App\Models\VehicleEvent',
+            'date_field' => 'date',
+            'field'      => 'name',
+            'prefix'     => '',
+            'suffix'     => '',
+            'route'      => 'admin.vehicle-events.edit',
+        ],
     ];
 
     public function index()
@@ -17,7 +25,7 @@ class SystemCalendarController extends Controller
             foreach ($source['model']::all() as $model) {
                 $crudFieldValue = $model->getAttributes()[$source['date_field']];
 
-                if (!$crudFieldValue) {
+                if (! $crudFieldValue) {
                     continue;
                 }
 

@@ -73,6 +73,14 @@
                                         {{ $vehicleEvent->vehicle_item->license_plate ?? '' }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.vehicleEvent.fields.sent') }}
+                                    </th>
+                                    <td>
+                                        <input type="checkbox" disabled="disabled" {{ $vehicleEvent->sent ? 'checked' : '' }}>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="form-group">

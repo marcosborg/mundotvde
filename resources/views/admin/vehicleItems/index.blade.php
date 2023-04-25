@@ -2,13 +2,13 @@
 @section('content')
 <div class="content">
     @can('vehicle_item_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.vehicle-items.create') }}">
-                    {{ trans('global.add') }} {{ trans('cruds.vehicleItem.title_singular') }}
-                </a>
-            </div>
+    <div style="margin-bottom: 10px;" class="row">
+        <div class="col-lg-12">
+            <a class="btn btn-success" href="{{ route('admin.vehicle-items.create') }}">
+                {{ trans('global.add') }} {{ trans('cruds.vehicleItem.title_singular') }}
+            </a>
         </div>
+    </div>
     @endcan
     <div class="row">
         <div class="col-lg-12">
@@ -61,68 +61,73 @@
                             </thead>
                             <tbody>
                                 @foreach($vehicleItems as $key => $vehicleItem)
-                                    <tr data-entry-id="{{ $vehicleItem->id }}">
-                                        <td>
+                                <tr data-entry-id="{{ $vehicleItem->id }}">
+                                    <td>
 
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->id ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->driver->name ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->driver->code ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->driver->email ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->driver->driver_license ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->vehicle_brand->name ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->vehicle_model->name ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->year ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleItem->license_plate ?? '' }}
-                                        </td>
-                                        <td>
-                                            @foreach($vehicleItem->documents as $key => $media)
-                                                <a href="{{ $media->getUrl() }}" target="_blank">
-                                                    {{ trans('global.view_file') }}
-                                                </a>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @can('vehicle_item_show')
-                                                <a class="btn btn-xs btn-primary" href="{{ route('admin.vehicle-items.show', $vehicleItem->id) }}">
-                                                    {{ trans('global.view') }}
-                                                </a>
-                                            @endcan
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->id ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->driver->name ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->driver->code ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->driver->email ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->driver->driver_license ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->vehicle_brand->name ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->vehicle_model->name ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->year ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleItem->license_plate ?? '' }}
+                                    </td>
+                                    <td>
+                                        @foreach($vehicleItem->documents as $key => $media)
+                                        <a class="btn btn-success btn-sm" href="{{ $media->getUrl() }}" target="_blank">
+                                            {{ ucfirst(str_replace('_', '', strstr($media->name, '_', false))) }}
+                                        </a>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @can('vehicle_item_show')
+                                        <a class="btn btn-xs btn-primary"
+                                            href="{{ route('admin.vehicle-items.show', $vehicleItem->id) }}">
+                                            {{ trans('global.view') }}
+                                        </a>
+                                        @endcan
 
-                                            @can('vehicle_item_edit')
-                                                <a class="btn btn-xs btn-info" href="{{ route('admin.vehicle-items.edit', $vehicleItem->id) }}">
-                                                    {{ trans('global.edit') }}
-                                                </a>
-                                            @endcan
+                                        @can('vehicle_item_edit')
+                                        <a class="btn btn-xs btn-info"
+                                            href="{{ route('admin.vehicle-items.edit', $vehicleItem->id) }}">
+                                            {{ trans('global.edit') }}
+                                        </a>
+                                        @endcan
 
-                                            @can('vehicle_item_delete')
-                                                <form action="{{ route('admin.vehicle-items.destroy', $vehicleItem->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                    <input type="hidden" name="_method" value="DELETE">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                </form>
-                                            @endcan
+                                        @can('vehicle_item_delete')
+                                        <form action="{{ route('admin.vehicle-items.destroy', $vehicleItem->id) }}"
+                                            method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');"
+                                            style="display: inline-block;">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                            <input type="submit" class="btn btn-xs btn-danger"
+                                                value="{{ trans('global.delete') }}">
+                                        </form>
+                                        @endcan
 
-                                        </td>
+                                    </td>
 
-                                    </tr>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>

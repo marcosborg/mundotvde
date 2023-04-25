@@ -1106,18 +1106,18 @@
                                 </a>
                             </li>
                         @endcan
+                        <li class="{{ request()->is(" admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active"
+                            : "" }}">
+                            <a href="{{ route("admin.systemCalendar") }}">
+                                <i class="fas fa-fw fa-calendar">
+            
+                                </i>
+                                <span>{{ trans('global.systemCalendar') }}</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             @endcan
-            <li class="{{ request()->is(" admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active"
-                : "" }}">
-                <a href="{{ route("admin.systemCalendar") }}">
-                    <i class="fas fa-fw fa-calendar">
-
-                    </i>
-                    <span>{{ trans('global.systemCalendar') }}</span>
-                </a>
-            </li>
             @php($unread = \App\Models\QaTopic::unreadCount())
             <li class="{{ request()->is(" admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
                 <a href="{{ route("admin.messenger.index") }}">
