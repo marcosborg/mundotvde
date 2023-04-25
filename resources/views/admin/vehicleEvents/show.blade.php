@@ -67,12 +67,10 @@
                                 </tr>
                                 <tr>
                                     <th>
-                                        {{ trans('cruds.vehicleEvent.fields.vehicle_items') }}
+                                        {{ trans('cruds.vehicleEvent.fields.vehicle_item') }}
                                     </th>
                                     <td>
-                                        @foreach($vehicleEvent->vehicle_items as $key => $vehicle_items)
-                                            <span class="label label-info">{{ $vehicle_items->license_plate }}</span>
-                                        @endforeach
+                                        {{ $vehicleEvent->vehicle_item->license_plate ?? '' }}
                                     </td>
                                 </tr>
                             </tbody>

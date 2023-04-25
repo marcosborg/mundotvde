@@ -60,21 +60,17 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.vehicleEvent.fields.date_helper') }}</span>
                         </div>
-                        <div class="form-group {{ $errors->has('vehicle_items') ? 'has-error' : '' }}">
-                            <label for="vehicle_items">{{ trans('cruds.vehicleEvent.fields.vehicle_items') }}</label>
-                            <div style="padding-bottom: 4px">
-                                <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
-                                <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
-                            </div>
-                            <select class="form-control select2" name="vehicle_items[]" id="vehicle_items" multiple>
-                                @foreach($vehicle_items as $id => $vehicle_item)
-                                    <option value="{{ $id }}" {{ (in_array($id, old('vehicle_items', [])) || $vehicleEvent->vehicle_items->contains($id)) ? 'selected' : '' }}>{{ $vehicle_item }}</option>
+                        <div class="form-group {{ $errors->has('vehicle_item') ? 'has-error' : '' }}">
+                            <label class="required" for="vehicle_item_id">{{ trans('cruds.vehicleEvent.fields.vehicle_item') }}</label>
+                            <select class="form-control select2" name="vehicle_item_id" id="vehicle_item_id" required>
+                                @foreach($vehicle_items as $id => $entry)
+                                    <option value="{{ $id }}" {{ (old('vehicle_item_id') ? old('vehicle_item_id') : $vehicleEvent->vehicle_item->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
                                 @endforeach
                             </select>
-                            @if($errors->has('vehicle_items'))
-                                <span class="help-block" role="alert">{{ $errors->first('vehicle_items') }}</span>
+                            @if($errors->has('vehicle_item'))
+                                <span class="help-block" role="alert">{{ $errors->first('vehicle_item') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.vehicleEvent.fields.vehicle_items_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.vehicleEvent.fields.vehicle_item_helper') }}</span>
                         </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">

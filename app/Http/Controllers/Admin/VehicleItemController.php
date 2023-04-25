@@ -97,7 +97,7 @@ class VehicleItemController extends Controller
     {
         abort_if(Gate::denies('vehicle_item_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vehicleItem->load('driver', 'vehicle_brand', 'vehicle_model');
+        $vehicleItem->load('driver', 'vehicle_brand', 'vehicle_model', 'vehicleItemVehicleEvents');
 
         return view('admin.vehicleItems.show', compact('vehicleItem'));
     }

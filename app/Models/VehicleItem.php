@@ -48,6 +48,11 @@ class VehicleItem extends Model implements HasMedia
         $this->addMediaConversion('preview')->fit('crop', 120, 120);
     }
 
+    public function vehicleItemVehicleEvents()
+    {
+        return $this->hasMany(VehicleEvent::class, 'vehicle_item_id', 'id');
+    }
+
     public function driver()
     {
         return $this->belongsTo(Driver::class, 'driver_id');

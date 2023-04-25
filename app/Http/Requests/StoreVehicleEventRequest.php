@@ -29,11 +29,9 @@ class StoreVehicleEventRequest extends FormRequest
                 'required',
                 'date_format:' . config('panel.date_format') . ' ' . config('panel.time_format'),
             ],
-            'vehicle_items.*' => [
+            'vehicle_item_id' => [
+                'required',
                 'integer',
-            ],
-            'vehicle_items' => [
-                'array',
             ],
         ];
     }

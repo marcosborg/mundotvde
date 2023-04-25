@@ -1,5 +1,3 @@
-@extends('layouts.admin')
-@section('content')
 <div class="content">
     @can('vehicle_event_create')
         <div style="margin-bottom: 10px;" class="row">
@@ -12,13 +10,15 @@
     @endcan
     <div class="row">
         <div class="col-lg-12">
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {{ trans('cruds.vehicleEvent.title_singular') }} {{ trans('global.list') }}
                 </div>
                 <div class="panel-body">
+
                     <div class="table-responsive">
-                        <table class=" table table-bordered table-striped table-hover datatable datatable-VehicleEvent">
+                        <table class=" table table-bordered table-striped table-hover datatable datatable-vehicleItemVehicleEvents">
                             <thead>
                                 <tr>
                                     <th width="10">
@@ -111,15 +111,13 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
-
-
 
         </div>
     </div>
 </div>
-@endsection
 @section('scripts')
 @parent
 <script>
@@ -160,7 +158,7 @@
     order: [[ 1, 'desc' ]],
     pageLength: 100,
   });
-  let table = $('.datatable-VehicleEvent:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+  let table = $('.datatable-vehicleItemVehicleEvents:not(.ajaxTable)').DataTable({ buttons: dtButtons })
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();

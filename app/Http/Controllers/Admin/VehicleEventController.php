@@ -20,7 +20,7 @@ class VehicleEventController extends Controller
     {
         abort_if(Gate::denies('vehicle_event_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vehicleEvents = VehicleEvent::with(['vehicle_event_type', 'vehicle_event_warning_time', 'vehicle_items'])->get();
+        $vehicleEvents = VehicleEvent::with(['vehicle_event_type', 'vehicle_event_warning_time', 'vehicle_item'])->get();
 
         return view('admin.vehicleEvents.index', compact('vehicleEvents'));
     }
@@ -33,7 +33,7 @@ class VehicleEventController extends Controller
 
         $vehicle_event_warning_times = VehicleEventWarningTime::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $vehicle_items = VehicleItem::pluck('license_plate', 'id');
+        $vehicle_items = VehicleItem::pluck('license_plate', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         return view('admin.vehicleEvents.create', compact('vehicle_event_types', 'vehicle_event_warning_times', 'vehicle_items'));
     }
@@ -41,7 +41,6 @@ class VehicleEventController extends Controller
     public function store(StoreVehicleEventRequest $request)
     {
         $vehicleEvent = VehicleEvent::create($request->all());
-        $vehicleEvent->vehicle_items()->sync($request->input('vehicle_items', []));
 
         return redirect()->route('admin.vehicle-events.index');
     }
@@ -54,9 +53,9 @@ class VehicleEventController extends Controller
 
         $vehicle_event_warning_times = VehicleEventWarningTime::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $vehicle_items = VehicleItem::pluck('license_plate', 'id');
+        $vehicle_items = VehicleItem::pluck('license_plate', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $vehicleEvent->load('vehicle_event_type', 'vehicle_event_warning_time', 'vehicle_items');
+        $vehicleEvent->load('vehicle_event_type', 'vehicle_event_warning_time', 'vehicle_item');
 
         return view('admin.vehicleEvents.edit', compact('vehicleEvent', 'vehicle_event_types', 'vehicle_event_warning_times', 'vehicle_items'));
     }
@@ -64,7 +63,6 @@ class VehicleEventController extends Controller
     public function update(UpdateVehicleEventRequest $request, VehicleEvent $vehicleEvent)
     {
         $vehicleEvent->update($request->all());
-        $vehicleEvent->vehicle_items()->sync($request->input('vehicle_items', []));
 
         return redirect()->route('admin.vehicle-events.index');
     }
@@ -73,7 +71,7 @@ class VehicleEventController extends Controller
     {
         abort_if(Gate::denies('vehicle_event_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $vehicleEvent->load('vehicle_event_type', 'vehicle_event_warning_time', 'vehicle_items');
+        $vehicleEvent->load('vehicle_event_type', 'vehicle_event_warning_time', 'vehicle_item');
 
         return view('admin.vehicleEvents.show', compact('vehicleEvent'));
     }

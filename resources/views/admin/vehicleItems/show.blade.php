@@ -88,7 +88,23 @@
                 </div>
             </div>
 
-
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{ trans('global.relatedData') }}
+                </div>
+                <ul class="nav nav-tabs" role="tablist" id="relationship-tabs">
+                    <li role="presentation">
+                        <a href="#vehicle_item_vehicle_events" aria-controls="vehicle_item_vehicle_events" role="tab" data-toggle="tab">
+                            {{ trans('cruds.vehicleEvent.title') }}
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" role="tabpanel" id="vehicle_item_vehicle_events">
+                        @includeIf('admin.vehicleItems.relationships.vehicleItemVehicleEvents', ['vehicleEvents' => $vehicleItem->vehicleItemVehicleEvents])
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
