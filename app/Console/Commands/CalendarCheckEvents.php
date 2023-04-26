@@ -46,7 +46,7 @@ class CalendarCheckEvents extends Command
             $limit = Carbon::now()->addDays($days)->format('Y-m-d H:i:s');
             if($event->date < $limit){
                 //SEND EMAIL
-                \App\Models\User::find(1)->notify(new CalendarEvent($event));
+                \App\Models\User::find(2)->notify(new CalendarEvent($event));
                 //FLAG AS SEND
                 $event->sent = true;
                 $event->save();
