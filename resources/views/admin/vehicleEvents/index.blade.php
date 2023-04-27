@@ -2,13 +2,13 @@
 @section('content')
 <div class="content">
     @can('vehicle_event_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.vehicle-events.create') }}">
-                    {{ trans('global.add') }} {{ trans('cruds.vehicleEvent.title_singular') }}
-                </a>
-            </div>
+    <div style="margin-bottom: 10px;" class="row">
+        <div class="col-lg-12">
+            <a class="btn btn-success" href="{{ route('admin.vehicle-events.create') }}">
+                {{ trans('global.add') }} {{ trans('cruds.vehicleEvent.title_singular') }}
+            </a>
         </div>
+    </div>
     @endcan
     <div class="row">
         <div class="col-lg-12">
@@ -58,62 +58,70 @@
                             </thead>
                             <tbody>
                                 @foreach($vehicleEvents as $key => $vehicleEvent)
-                                    <tr data-entry-id="{{ $vehicleEvent->id }}">
-                                        <td>
+                                <tr data-entry-id="{{ $vehicleEvent->id }}">
+                                    <td>
 
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->id ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->name ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->description ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->vehicle_event_type->name ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->vehicle_event_warning_time->name ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->vehicle_event_warning_time->days ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->date ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $vehicleEvent->vehicle_item->license_plate ?? '' }}
-                                        </td>
-                                        <td>
-                                            <span style="display:none">{{ $vehicleEvent->sent ?? '' }}</span>
-                                            <input type="checkbox" disabled="disabled" {{ $vehicleEvent->sent ? 'checked' : '' }}>
-                                        </td>
-                                        <td>
-                                            @can('vehicle_event_show')
-                                                <a class="btn btn-xs btn-primary" href="{{ route('admin.vehicle-events.show', $vehicleEvent->id) }}">
-                                                    {{ trans('global.view') }}
-                                                </a>
-                                            @endcan
+                                    </td>
+                                    <td>
+                                        {{ $vehicleEvent->id ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleEvent->name ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleEvent->description ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleEvent->vehicle_event_type->name ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleEvent->vehicle_event_warning_time->name ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleEvent->vehicle_event_warning_time->days ?? '' }}
+                                    </td>
+                                    <td>
+                                        {{ $vehicleEvent->date ?? '' }}
+                                    </td>
+                                    <td>
+                                        <a href="/admin/vehicle-items/{{ $vehicleEvent->vehicle_item->id ?? '' }}"
+                                            class="btn btn-success btn-sm">{{ $vehicleEvent->vehicle_item->license_plate
+                                            ?? '' }}</a>
+                                    </td>
+                                    <td>
+                                        <span style="display:none">{{ $vehicleEvent->sent ?? '' }}</span>
+                                        <input type="checkbox" disabled="disabled" {{ $vehicleEvent->sent ? 'checked' :
+                                        '' }}>
+                                    </td>
+                                    <td>
+                                        @can('vehicle_event_show')
+                                        <a class="btn btn-xs btn-primary"
+                                            href="{{ route('admin.vehicle-events.show', $vehicleEvent->id) }}">
+                                            {{ trans('global.view') }}
+                                        </a>
+                                        @endcan
 
-                                            @can('vehicle_event_edit')
-                                                <a class="btn btn-xs btn-info" href="{{ route('admin.vehicle-events.edit', $vehicleEvent->id) }}">
-                                                    {{ trans('global.edit') }}
-                                                </a>
-                                            @endcan
+                                        @can('vehicle_event_edit')
+                                        <a class="btn btn-xs btn-info"
+                                            href="{{ route('admin.vehicle-events.edit', $vehicleEvent->id) }}">
+                                            {{ trans('global.edit') }}
+                                        </a>
+                                        @endcan
 
-                                            @can('vehicle_event_delete')
-                                                <form action="{{ route('admin.vehicle-events.destroy', $vehicleEvent->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                                    <input type="hidden" name="_method" value="DELETE">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                                </form>
-                                            @endcan
+                                        @can('vehicle_event_delete')
+                                        <form action="{{ route('admin.vehicle-events.destroy', $vehicleEvent->id) }}"
+                                            method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');"
+                                            style="display: inline-block;">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                            <input type="submit" class="btn btn-xs btn-danger"
+                                                value="{{ trans('global.delete') }}">
+                                        </form>
+                                        @endcan
 
-                                        </td>
+                                    </td>
 
-                                    </tr>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>

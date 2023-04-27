@@ -70,7 +70,7 @@
                                         {{ trans('cruds.vehicleEvent.fields.vehicle_item') }}
                                     </th>
                                     <td>
-                                        {{ $vehicleEvent->vehicle_item->license_plate ?? '' }}
+                                        <a href="/admin/vehicle-items/{{ $vehicleEvent->vehicle_item->id ?? '' }}" class="btn btn-success btn-sm">{{ $vehicleEvent->vehicle_item->license_plate ?? '' }}</a>
                                     </td>
                                 </tr>
                                 <tr>
