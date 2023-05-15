@@ -995,6 +995,8 @@ return [
             'model_helper'          => ' ',
             'citizen_card'          => 'Cartão de cidadão',
             'citizen_card_helper'   => ' ',
+            'notes'                 => 'Notas',
+            'notes_helper'          => ' ',
         ],
     ],
     'card' => [
@@ -1247,6 +1249,8 @@ return [
             'iban_helper'                    => ' ',
             'address'                        => 'Comprovativo de morada',
             'address_helper'                 => ' ',
+            'notes'                          => 'Notas',
+            'notes_helper'                   => ' ',
         ],
     ],
     'myDocument' => [

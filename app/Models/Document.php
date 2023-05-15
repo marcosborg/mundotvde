@@ -24,6 +24,7 @@ class Document extends Model implements HasMedia
 
     protected $fillable = [
         'driver_id',
+        'notes',
         'created_at',
         'updated_at',
         'deleted_at',

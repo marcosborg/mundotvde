@@ -47,6 +47,7 @@ class Driver extends Model
         'license_plate',
         'brand',
         'model',
+        'notes',
         'created_at',
         'updated_at',
         'deleted_at',

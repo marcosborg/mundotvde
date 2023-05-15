@@ -226,7 +226,7 @@
 }
     openModalReceipt = (value) => {
         $('#receipt-modal').modal('show');
-        $('#value').val(value);
+        $('#value').val(value.replace(/,/g, ""));
         console.log(value);
     }
 </script>

@@ -109,6 +109,9 @@
                                     {{ trans('cruds.driver.fields.model') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.notes') }}
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -194,6 +197,7 @@
 { data: 'license_plate', name: 'license_plate' },
 { data: 'brand', name: 'brand' },
 { data: 'model', name: 'model' },
+{ data: 'notes', name: 'notes' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

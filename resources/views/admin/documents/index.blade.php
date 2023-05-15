@@ -55,6 +55,9 @@
                                         {{ trans('cruds.document.fields.address') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.document.fields.notes') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -122,6 +125,9 @@
                                                     {{ trans('global.view_file') }}
                                                 </a>
                                             @endforeach
+                                        </td>
+                                        <td>
+                                            {{ $document->notes ?? '' }}
                                         </td>
                                         <td>
                                             @can('document_show')

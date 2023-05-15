@@ -87,6 +87,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.document.fields.address_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('notes') ? 'has-error' : '' }}">
+                            <label for="notes">{{ trans('cruds.document.fields.notes') }}</label>
+                            <textarea class="form-control" name="notes" id="notes">{{ old('notes', $document->notes) }}</textarea>
+                            @if($errors->has('notes'))
+                                <span class="help-block" role="alert">{{ $errors->first('notes') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.document.fields.notes_helper') }}</span>
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}
@@ -108,13 +116,13 @@
     var uploadedCitizenCardMap = {}
 Dropzone.options.citizenCardDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 2
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="citizen_card[]" value="' + response.name + '">')
@@ -164,13 +172,13 @@ Dropzone.options.citizenCardDropzone = {
     var uploadedTvdeDriverCertificateMap = {}
 Dropzone.options.tvdeDriverCertificateDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 2
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="tvde_driver_certificate[]" value="' + response.name + '">')
@@ -220,13 +228,13 @@ Dropzone.options.tvdeDriverCertificateDropzone = {
     var uploadedCriminalRecordMap = {}
 Dropzone.options.criminalRecordDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 2
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="criminal_record[]" value="' + response.name + '">')
@@ -275,7 +283,7 @@ Dropzone.options.criminalRecordDropzone = {
 <script>
     Dropzone.options.profilePictureDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     acceptedFiles: '.jpeg,.jpg,.png,.gif',
     maxFiles: 1,
     addRemoveLinks: true,
@@ -283,7 +291,7 @@ Dropzone.options.criminalRecordDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5,
+      size: 2,
       width: 4096,
       height: 4096
     },
@@ -331,13 +339,13 @@ Dropzone.options.criminalRecordDropzone = {
     var uploadedDrivingLicenseMap = {}
 Dropzone.options.drivingLicenseDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 2
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="driving_license[]" value="' + response.name + '">')
@@ -387,13 +395,13 @@ Dropzone.options.drivingLicenseDropzone = {
     var uploadedIbanMap = {}
 Dropzone.options.ibanDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 2
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="iban[]" value="' + response.name + '">')
@@ -443,13 +451,13 @@ Dropzone.options.ibanDropzone = {
     var uploadedAddressMap = {}
 Dropzone.options.addressDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 2
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="address[]" value="' + response.name + '">')

@@ -117,6 +117,14 @@
                                         @endforeach
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.document.fields.notes') }}
+                                    </th>
+                                    <td>
+                                        {{ $document->notes }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="form-group">
@@ -127,6 +135,9 @@
                     </div>
                 </div>
             </div>
+
+
+
         </div>
     </div>
 </div>

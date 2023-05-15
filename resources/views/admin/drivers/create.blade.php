@@ -239,6 +239,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.driver.fields.model_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('notes') ? 'has-error' : '' }}">
+                            <label for="notes">{{ trans('cruds.driver.fields.notes') }}</label>
+                            <textarea class="form-control" name="notes" id="notes">{{ old('notes') }}</textarea>
+                            @if($errors->has('notes'))
+                                <span class="help-block" role="alert">{{ $errors->first('notes') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.notes_helper') }}</span>
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}

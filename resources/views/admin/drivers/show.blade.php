@@ -227,6 +227,14 @@
                                         {{ $driver->model }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.driver.fields.notes') }}
+                                    </th>
+                                    <td>
+                                        {{ $driver->notes }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="form-group">
