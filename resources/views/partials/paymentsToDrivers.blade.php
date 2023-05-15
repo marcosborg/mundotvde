@@ -1,14 +1,14 @@
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#not-send" aria-controls="not-send" role="tab"
+        <li role="presentation"><a href="#not-send" aria-controls="not-send" role="tab"
                 data-toggle="tab">Extratos por enviar</a></li>
-        <li role="presentation"><a href="#send" aria-controls="send" role="tab" data-toggle="tab">Extratos enviados</a>
+        <li role="presentation" class="active"><a href="#send" aria-controls="send" role="tab" data-toggle="tab">Extratos enviados</a>
         </li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="not-send">
+        <div role="tabpanel" class="tab-pane" id="not-send">
             <div class="table-responsive" style="margin-top: 20px;">
                 <table class=" table table-bordered table-striped table-hover datatable">
                     <thead>
@@ -48,7 +48,7 @@
             <button style="display: none;" id="paymentButton" onclick="confirmSend()" class="btn btn-success">Confirmar
                 envio de extrato</button>
         </div>
-        <div role="tabpanel" class="tab-pane" id="send">
+        <div role="tabpanel" class="tab-pane active" id="send">
             <div class="table-responsive" style="margin-top: 20px;">
                 <table class=" table table-bordered table-striped table-hover datatable">
                     <thead>
