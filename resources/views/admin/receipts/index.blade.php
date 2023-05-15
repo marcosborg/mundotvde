@@ -39,6 +39,9 @@
                                     {{ trans('cruds.receipt.fields.file') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.receipt.fields.paid') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.receipt.fields.created_at') }}
                                 </th>
                                 <th>
@@ -63,6 +66,8 @@
                                 </td>
                                 <td>
                                     <input class="search" type="text" placeholder="{{ trans('global.search') }}">
+                                </td>
+                                <td>
                                 </td>
                                 <td>
                                 </td>
@@ -132,6 +137,7 @@
 { data: 'driver.code', name: 'driver.code' },
 { data: 'value', name: 'value' },
 { data: 'file', name: 'file', sortable: false, searchable: false },
+{ data: 'paid', name: 'paid' },
 { data: 'created_at', name: 'created_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],

@@ -29,6 +29,7 @@ class Receipt extends Model implements HasMedia
     protected $fillable = [
         'driver_id',
         'value',
+        'paid',
         'created_at',
         'updated_at',
         'deleted_at',

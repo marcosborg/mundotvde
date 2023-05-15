@@ -40,6 +40,17 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.receipt.fields.file_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('paid') ? 'has-error' : '' }}">
+                            <div>
+                                <input type="hidden" name="paid" value="0">
+                                <input type="checkbox" name="paid" id="paid" value="1" {{ old('paid', 0) == 1 ? 'checked' : '' }}>
+                                <label for="paid" style="font-weight: 400">{{ trans('cruds.receipt.fields.paid') }}</label>
+                            </div>
+                            @if($errors->has('paid'))
+                                <span class="help-block" role="alert">{{ $errors->first('paid') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.receipt.fields.paid_helper') }}</span>
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}
@@ -60,14 +71,14 @@
 <script>
     Dropzone.options.fileDropzone = {
     url: '{{ route('admin.receipts.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 2, // MB
     maxFiles: 1,
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 2
     },
     success: function (file, response) {
       $('form').find('input[name="file"]').remove()

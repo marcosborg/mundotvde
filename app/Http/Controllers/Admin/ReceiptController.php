@@ -61,8 +61,11 @@ class ReceiptController extends Controller
             $table->editColumn('file', function ($row) {
                 return $row->file ? '<a href="' . $row->file->getUrl() . '" target="_blank">' . trans('global.downloadFile') . '</a>' : '';
             });
+            $table->editColumn('paid', function ($row) {
+                return '<input type="checkbox" disabled ' . ($row->paid ? 'checked' : null) . '>';
+            });
 
-            $table->rawColumns(['actions', 'placeholder', 'driver', 'file']);
+            $table->rawColumns(['actions', 'placeholder', 'driver', 'file', 'paid']);
 
             return $table->make(true);
         }
