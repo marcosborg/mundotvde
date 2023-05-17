@@ -2,13 +2,13 @@
 @section('content')
 <div class="content">
     @can('receipt_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.receipts.create') }}">
-                    {{ trans('global.add') }} {{ trans('cruds.receipt.title_singular') }}
-                </a>
-            </div>
+    <div style="margin-bottom: 10px;" class="row">
+        <div class="col-lg-12">
+            <a class="btn btn-success" href="{{ route('admin.receipts.create') }}">
+                {{ trans('global.add') }} {{ trans('cruds.receipt.title_singular') }}
+            </a>
         </div>
+    </div>
     @endcan
     <div class="row">
         <div class="col-lg-12">
@@ -17,7 +17,8 @@
                     {{ trans('cruds.receipt.title_singular') }} {{ trans('global.list') }}
                 </div>
                 <div class="panel-body">
-                    <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Receipt">
+                    <table
+                        class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Receipt">
                         <thead>
                             <tr>
                                 <th width="10">
@@ -58,7 +59,7 @@
                                     <select class="search">
                                         <option value>{{ trans('global.all') }}</option>
                                         @foreach($drivers as $key => $item)
-                                            <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                        <option value="{{ $item->name }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -174,5 +175,13 @@ table.on('column-visibility.dt', function(e, settings, column, state) {
   })
 });
 
+</script>
+<script>
+    checkPay = (receipt_id) => {
+        $('#check-' + receipt_id).attr('disabled', 'true');
+        $.get('/admin/receipts/checkPay/' + receipt_id).then((resp) => {
+            console.log(resp);
+        });
+    }
 </script>
 @endsection

@@ -289,6 +289,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('receipts/destroy', 'ReceiptController@massDestroy')->name('receipts.massDestroy');
     Route::post('receipts/media', 'ReceiptController@storeMedia')->name('receipts.storeMedia');
     Route::post('receipts/ckmedia', 'ReceiptController@storeCKEditorImages')->name('receipts.storeCKEditorImages');
+    ROute::get('receipts/checkPay/{receipt_id}', 'ReceiptController@checkPay');
     Route::resource('receipts', 'ReceiptController');
 
     // My Receipts

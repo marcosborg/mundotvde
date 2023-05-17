@@ -62,7 +62,7 @@ class ReceiptController extends Controller
                 return $row->file ? '<a href="' . $row->file->getUrl() . '" target="_blank">' . trans('global.downloadFile') . '</a>' : '';
             });
             $table->editColumn('paid', function ($row) {
-                return '<input type="checkbox" disabled ' . ($row->paid ? 'checked' : null) . '>';
+                return '<input id="check-' . $row->id . '" onclick="checkPay(' . $row->id . ')" type="checkbox" ' . ($row->paid ? 'disabled' : '') . ' ' . ($row->paid ? 'checked' : null) . '>';
             });
 
             $table->rawColumns(['actions', 'placeholder', 'driver', 'file', 'paid']);
@@ -167,5 +167,13 @@ class ReceiptController extends Controller
         $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
+    }
+
+    public function checkPay(Request $request)
+    {
+        $receipt = Receipt::find($request->receipt_id);
+        $receipt->paid = true;
+        $receipt->save();
+
     }
 }
