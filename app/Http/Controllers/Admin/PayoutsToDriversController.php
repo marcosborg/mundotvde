@@ -24,8 +24,7 @@ class PayoutsToDriversController extends Controller
     {
         abort_if(Gate::denies('payouts_to_driver_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $activityLaunches = ActivityLaunch::limit(200)
-            ->with([
+        $activityLaunches = ActivityLaunch::with([
                 'week',
                 'driver',
                 'activityPerOperators.tvde_operator',
