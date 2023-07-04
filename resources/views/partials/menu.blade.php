@@ -20,7 +20,7 @@
                 </a>
                 <ul class="treeview-menu">
                     @can('permission_access')
-                    <li class="{{ request()->is(" admin/permissions") || request()->is("admin/permissions/*") ? "active"
+                    <li class="{{ request()->is("admin/permissions") || request()->is("admin/permissions/*") ? "active"
                         : "" }}">
                         <a href="{{ route("admin.permissions.index") }}">
                             <i class="fa-fw fas fa-unlock-alt">
@@ -32,7 +32,7 @@
                     </li>
                     @endcan
                     @can('role_access')
-                    <li class="{{ request()->is(" admin/roles") || request()->is("admin/roles/*") ? "active" : "" }}">
+                    <li class="{{ request()->is("admin/roles") || request()->is("admin/roles/*") ? "active" : "" }}">
                         <a href="{{ route("admin.roles.index") }}">
                             <i class="fa-fw fas fa-briefcase">
 
@@ -43,7 +43,7 @@
                     </li>
                     @endcan
                     @can('user_access')
-                    <li class="{{ request()->is(" admin/users") || request()->is("admin/users/*") ? "active" : "" }}">
+                    <li class="{{ request()->is("admin/users") || request()->is("admin/users/*") ? "active" : "" }}">
                         <a href="{{ route("admin.users.index") }}">
                             <i class="fa-fw fas fa-user">
 
@@ -67,7 +67,7 @@
                 </a>
                 <ul class="treeview-menu">
                     @can('driver_access')
-                    <li class="{{ request()->is(" admin/drivers") || request()->is("admin/drivers/*") ? "active" : ""
+                    <li class="{{ request()->is("admin/drivers") || request()->is("admin/drivers/*") ? "active" : ""
                         }}">
                         <a href="{{ route("admin.drivers.index") }}">
                             <i class="fa-fw fas fa-address-card">
@@ -89,7 +89,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('card_access')
-                            <li class="{{ request()->is(" admin/cards") || request()->is("admin/cards/*") ? "active" :
+                            <li class="{{ request()->is("admin/cards") || request()->is("admin/cards/*") ? "active" :
                                 "" }}">
                                 <a href="{{ route("admin.cards.index") }}">
                                     <i class="fa-fw fas fa-credit-card">
@@ -101,7 +101,7 @@
                             </li>
                             @endcan
                             @can('operation_access')
-                            <li class="{{ request()->is(" admin/operations") || request()->is("admin/operations/*") ?
+                            <li class="{{ request()->is("admin/operations") || request()->is("admin/operations/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.operations.index") }}">
                                     <i class="fa-fw fas fa-list">
@@ -113,7 +113,7 @@
                             </li>
                             @endcan
                             @can('local_access')
-                            <li class="{{ request()->is(" admin/locals") || request()->is("admin/locals/*") ? "active" :
+                            <li class="{{ request()->is("admin/locals") || request()->is("admin/locals/*") ? "active" :
                                 "" }}">
                                 <a href="{{ route("admin.locals.index") }}">
                                     <i class="fa-fw fas fa-map-marked">
@@ -125,7 +125,7 @@
                             </li>
                             @endcan
                             @can('state_access')
-                            <li class="{{ request()->is(" admin/states") || request()->is("admin/states/*") ? "active" :
+                            <li class="{{ request()->is("admin/states") || request()->is("admin/states/*") ? "active" :
                                 "" }}">
                                 <a href="{{ route("admin.states.index") }}">
                                     <i class="fa-fw fas fa-plug">
@@ -137,7 +137,7 @@
                             </li>
                             @endcan
                             @can('tvde_operator_access')
-                            <li class="{{ request()->is(" admin/tvde-operators") || request()->
+                            <li class="{{ request()->is("admin/tvde-operators") || request()->
                                 is("admin/tvde-operators/*") ? "active" : "" }}">
                                 <a href="{{ route("admin.tvde-operators.index") }}">
                                     <i class="fa-fw fas fa-car">
@@ -162,7 +162,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('tvde_year_access')
-                            <li class="{{ request()->is(" admin/tvde-years") || request()->is("admin/tvde-years/*") ?
+                            <li class="{{ request()->is("admin/tvde-years") || request()->is("admin/tvde-years/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.tvde-years.index") }}">
                                     <i class="fa-fw far fa-calendar-alt">
@@ -174,7 +174,7 @@
                             </li>
                             @endcan
                             @can('tvde_month_access')
-                            <li class="{{ request()->is(" admin/tvde-months") || request()->is("admin/tvde-months/*") ?
+                            <li class="{{ request()->is("admin/tvde-months") || request()->is("admin/tvde-months/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.tvde-months.index") }}">
                                     <i class="fa-fw far fa-calendar-alt">
@@ -186,7 +186,7 @@
                             </li>
                             @endcan
                             @can('tvde_week_access')
-                            <li class="{{ request()->is(" admin/tvde-weeks") || request()->is("admin/tvde-weeks/*") ?
+                            <li class="{{ request()->is("admin/tvde-weeks") || request()->is("admin/tvde-weeks/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.tvde-weeks.index") }}">
                                     <i class="fa-fw far fa-calendar-alt">
@@ -198,7 +198,7 @@
                             </li>
                             @endcan
                             @can('activity_launch_access')
-                            <li class="{{ request()->is(" admin/activity-launches") || request()->
+                            <li class="{{ request()->is("admin/activity-launches") || request()->
                                 is("admin/activity-launches/*") ? "active" : "" }}">
                                 <a href="{{ route("admin.activity-launches.index") }}">
                                     <i class="fa-fw fas fa-check">
@@ -210,7 +210,7 @@
                             </li>
                             @endcan
                             @can('activity_per_operator_access')
-                            <li class="{{ request()->is(" admin/activity-per-operators") || request()->
+                            <li class="{{ request()->is("admin/activity-per-operators") || request()->
                                 is("admin/activity-per-operators/*") ? "active" : "" }}">
                                 <a href="{{ route("admin.activity-per-operators.index") }}">
                                     <i class="fa-fw fas fa-tasks">
@@ -225,7 +225,7 @@
                     </li>
                     @endcan
                     @can('tvde_driver_management_access')
-                    <li class="{{ request()->is(" admin/tvde-driver-managements") || request()->
+                    <li class="{{ request()->is("admin/tvde-driver-managements") || request()->
                         is("admin/tvde-driver-managements/*") ? "active" : "" }}">
                         <a href="{{ route("admin.tvde-driver-managements.index") }}">
                             <i class="fa-fw fas fa-users">
@@ -237,7 +237,7 @@
                     </li>
                     @endcan
                     @can('payouts_to_driver_access')
-                    <li class="{{ request()->is(" admin/payouts-to-drivers") || request()->
+                    <li class="{{ request()->is("admin/payouts-to-drivers") || request()->
                         is("admin/payouts-to-drivers/*") ? "active" : "" }}">
                         <a href="{{ route("admin.payouts-to-drivers.index") }}">
                             <i class="fa-fw fas fa-tasks">
@@ -249,7 +249,7 @@
                     </li>
                     @endcan
                     @can('drivers_balance_access')
-                    <li class="{{ request()->is(" admin/drivers-balances") || request()->is("admin/drivers-balances/*")
+                    <li class="{{ request()->is("admin/drivers-balances") || request()->is("admin/drivers-balances/*")
                         ? "active" : "" }}">
                         <a href="{{ route("admin.drivers-balances.index") }}">
                             <i class="fa-fw fas fa-euro-sign">
@@ -261,7 +261,7 @@
                     </li>
                     @endcan
                     @can('document_access')
-                    <li class="{{ request()->is(" admin/documents") || request()->is("admin/documents/*") ? "active" :
+                    <li class="{{ request()->is("admin/documents") || request()->is("admin/documents/*") ? "active" :
                         "" }}">
                         <a href="{{ route("admin.documents.index") }}">
                             <i class="fa-fw far fa-file">
@@ -273,7 +273,7 @@
                     </li>
                     @endcan
                     @can('receipt_access')
-                    <li class="{{ request()->is(" admin/receipts") || request()->is("admin/receipts/*") ? "active" : ""
+                    <li class="{{ request()->is("admin/receipts") || request()->is("admin/receipts/*") ? "active" : ""
                         }}">
                         <a href="{{ route("admin.receipts.index") }}">
                             <i class="fa-fw fas fa-file-invoice-dollar">
@@ -288,7 +288,7 @@
             </li>
             @endcan
             @can('my_document_access')
-            <li class="{{ request()->is(" admin/my-documents") || request()->is("admin/my-documents/*") ? "active" : ""
+            <li class="{{ request()->is("admin/my-documents") || request()->is("admin/my-documents/*") ? "active" : ""
                 }}">
                 <a href="{{ route("admin.my-documents.index") }}">
                     <i class="fa-fw far fa-file">
@@ -300,7 +300,7 @@
             </li>
             @endcan
             @can('my_receipt_access')
-            <li class="{{ request()->is(" admin/my-receipts") || request()->is("admin/my-receipts/*") ? "active" : ""
+            <li class="{{ request()->is("admin/my-receipts") || request()->is("admin/my-receipts/*") ? "active" : ""
                 }}">
                 <a href="{{ route("admin.my-receipts.index") }}">
                     <i class="fa-fw fas fa-file-invoice-dollar">
@@ -312,7 +312,7 @@
             </li>
             @endcan
             @can('financial_statement_access')
-            <li class="{{ request()->is(" admin/financial-statements") || request()->is("admin/financial-statements/*")
+            <li class="{{ request()->is("admin/financial-statements") || request()->is("admin/financial-statements/*")
                 ? "active" : "" }}">
                 <a href="{{ route("admin.financial-statements.index") }}">
                     <i class="fa-fw fas fa-file-invoice-dollar">
@@ -324,7 +324,7 @@
             </li>
             @endcan
             @can('user_alert_access')
-            <li class="{{ request()->is(" admin/user-alerts") || request()->is("admin/user-alerts/*") ? "active" : ""
+            <li class="{{ request()->is("admin/user-alerts") || request()->is("admin/user-alerts/*") ? "active" : ""
                 }}">
                 <a href="{{ route("admin.user-alerts.index") }}">
                     <i class="fa-fw fas fa-bell">
@@ -336,7 +336,7 @@
             </li>
             @endcan
             @can('newsletter_access')
-            <li class="{{ request()->is(" admin/newsletters") || request()->is("admin/newsletters/*") ? "active" : ""
+            <li class="{{ request()->is("admin/newsletters") || request()->is("admin/newsletters/*") ? "active" : ""
                 }}">
                 <a href="{{ route("admin.newsletters.index") }}">
                     <i class="fa-fw far fa-newspaper">
@@ -348,7 +348,7 @@
             </li>
             @endcan
             @can('company_document_access')
-            <li class="{{ request()->is(" admin/company-documents") || request()->is("admin/company-documents/*") ?
+            <li class="{{ request()->is("admin/company-documents") || request()->is("admin/company-documents/*") ?
                 "active" : "" }}">
                 <a href="{{ route("admin.company-documents.index") }}">
                     <i class="fa-fw fas fa-building">
@@ -380,7 +380,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('hero_banner_access')
-                            <li class="{{ request()->is(" admin/hero-banners") || request()->is("admin/hero-banners/*")
+                            <li class="{{ request()->is("admin/hero-banners") || request()->is("admin/hero-banners/*")
                                 ? "active" : "" }}">
                                 <a href="{{ route("admin.hero-banners.index") }}">
                                     <i class="fa-fw fas fa-image">
@@ -392,7 +392,7 @@
                             </li>
                             @endcan
                             @can('home_info_access')
-                            <li class="{{ request()->is(" admin/home-infos") || request()->is("admin/home-infos/*") ?
+                            <li class="{{ request()->is("admin/home-infos") || request()->is("admin/home-infos/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.home-infos.index") }}">
                                     <i class="fa-fw fas fa-info">
@@ -404,7 +404,7 @@
                             </li>
                             @endcan
                             @can('activity_access')
-                            <li class="{{ request()->is(" admin/activities") || request()->is("admin/activities/*") ?
+                            <li class="{{ request()->is("admin/activities") || request()->is("admin/activities/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.activities.index") }}">
                                     <i class="fa-fw fas fa-boxes">
@@ -416,7 +416,7 @@
                             </li>
                             @endcan
                             @can('testimonial_access')
-                            <li class="{{ request()->is(" admin/testimonials") || request()->is("admin/testimonials/*")
+                            <li class="{{ request()->is("admin/testimonials") || request()->is("admin/testimonials/*")
                                 ? "active" : "" }}">
                                 <a href="{{ route("admin.testimonials.index") }}">
                                     <i class="fa-fw fas fa-users">
@@ -441,7 +441,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('faq_category_access')
-                            <li class="{{ request()->is(" admin/faq-categories") || request()->
+                            <li class="{{ request()->is("admin/faq-categories") || request()->
                                 is("admin/faq-categories/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.faq-categories.index") }}">
@@ -454,7 +454,7 @@
                             </li>
                             @endcan
                             @can('faq_question_access')
-                            <li class="{{ request()->is(" admin/faq-questions") || request()->
+                            <li class="{{ request()->is("admin/faq-questions") || request()->
                                 is("admin/faq-questions/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.faq-questions.index") }}">
@@ -480,7 +480,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('car_access')
-                            <li class="{{ request()->is(" admin/cars") || request()->is("admin/cars/*") ? "active" : ""
+                            <li class="{{ request()->is("admin/cars") || request()->is("admin/cars/*") ? "active" : ""
                                 }}">
                                 <a href="{{ route("admin.cars.index") }}">
                                     <i class="fa-fw fas fa-car">
@@ -492,7 +492,7 @@
                             </li>
                             @endcan
                             @can('car_rental_contact_request_access')
-                            <li class="{{ request()->is(" admin/car-rental-contact-requests") || request()->
+                            <li class="{{ request()->is("admin/car-rental-contact-requests") || request()->
                                 is("admin/car-rental-contact-requests/*") ? "active" : "" }}">
                                 <a href="{{ route("admin.car-rental-contact-requests.index") }}">
                                     <i class="fa-fw fas fa-envelope">
@@ -517,7 +517,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('page_access')
-                            <li class="{{ request()->is(" admin/pages") || request()->is("admin/pages/*") ? "active" :
+                            <li class="{{ request()->is("admin/pages") || request()->is("admin/pages/*") ? "active" :
                                 "" }}">
                                 <a href="{{ route("admin.pages.index") }}">
                                     <i class="fa-fw fas fa-sitemap">
@@ -529,7 +529,7 @@
                             </li>
                             @endcan
                             @can('page_form_access')
-                            <li class="{{ request()->is(" admin/page-forms") || request()->is("admin/page-forms/*") ?
+                            <li class="{{ request()->is("admin/page-forms") || request()->is("admin/page-forms/*") ?
                                 "active" :
                                 "" }}">
                                 <a href="{{ route("admin.page-forms.index") }}">
@@ -555,7 +555,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('own_car_access')
-                            <li class="{{ request()->is(" admin/own-cars") || request()->is("admin/own-cars/*") ?
+                            <li class="{{ request()->is("admin/own-cars") || request()->is("admin/own-cars/*") ?
                                 "active" : ""
                                 }}">
                                 <a href="{{ route("admin.own-cars.index") }}">
@@ -568,7 +568,7 @@
                             </li>
                             @endcan
                             @can('own_car_form_access')
-                            <li class="{{ request()->is(" admin/own-car-forms") || request()->
+                            <li class="{{ request()->is("admin/own-car-forms") || request()->
                                 is("admin/own-car-forms/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.own-car-forms.index") }}">
@@ -605,7 +605,7 @@
                                 </a>
                                 <ul class="treeview-menu">
                                     @can('fuel_access')
-                                    <li class="{{ request()->is(" admin/fuels") || request()->is("admin/fuels/*") ?
+                                    <li class="{{ request()->is("admin/fuels") || request()->is("admin/fuels/*") ?
                                         "active" :
                                         "" }}">
                                         <a href="{{ route("admin.fuels.index") }}">
@@ -618,7 +618,7 @@
                                     </li>
                                     @endcan
                                     @can('month_access')
-                                    <li class="{{ request()->is(" admin/months") || request()->is("admin/months/*") ?
+                                    <li class="{{ request()->is("admin/months") || request()->is("admin/months/*") ?
                                         "active" :
                                         "" }}">
                                         <a href="{{ route("admin.months.index") }}">
@@ -631,7 +631,7 @@
                                     </li>
                                     @endcan
                                     @can('origin_access')
-                                    <li class="{{ request()->is(" admin/origins") || request()->is("admin/origins/*") ?
+                                    <li class="{{ request()->is("admin/origins") || request()->is("admin/origins/*") ?
                                         "active"
                                         : "" }}">
                                         <a href="{{ route("admin.origins.index") }}">
@@ -644,7 +644,7 @@
                                     </li>
                                     @endcan
                                     @can('status_access')
-                                    <li class="{{ request()->is(" admin/statuses") || request()->is("admin/statuses/*")
+                                    <li class="{{ request()->is("admin/statuses") || request()->is("admin/statuses/*")
                                         ?
                                         "active" : "" }}">
                                         <a href="{{ route("admin.statuses.index") }}">
@@ -657,7 +657,7 @@
                                     </li>
                                     @endcan
                                     @can('brand_access')
-                                    <li class="{{ request()->is(" admin/brands") || request()->is("admin/brands/*") ?
+                                    <li class="{{ request()->is("admin/brands") || request()->is("admin/brands/*") ?
                                         "active" :
                                         "" }}">
                                         <a href="{{ route("admin.brands.index") }}">
@@ -670,7 +670,7 @@
                                     </li>
                                     @endcan
                                     @can('car_model_access')
-                                    <li class="{{ request()->is(" admin/car-models") || request()->
+                                    <li class="{{ request()->is("admin/car-models") || request()->
                                         is("admin/car-models/*") ?
                                         "active" : "" }}">
                                         <a href="{{ route("admin.car-models.index") }}">
@@ -683,7 +683,7 @@
                                     </li>
                                     @endcan
                                     @can('transmission_access')
-                                    <li class="{{ request()->is(" admin/transmissions") || request()->
+                                    <li class="{{ request()->is("admin/transmissions") || request()->
                                         is("admin/transmissions/*") ? "active" : "" }}">
                                         <a href="{{ route("admin.transmissions.index") }}">
                                             <i class="fa-fw fas fa-circle">
@@ -698,7 +698,7 @@
                             </li>
                             @endcan
                             @can('stand_car_access')
-                            <li class="{{ request()->is(" admin/stand-cars") || request()->is("admin/stand-cars/*") ?
+                            <li class="{{ request()->is("admin/stand-cars") || request()->is("admin/stand-cars/*") ?
                                 "active" :
                                 "" }}">
                                 <a href="{{ route("admin.stand-cars.index") }}">
@@ -711,7 +711,7 @@
                             </li>
                             @endcan
                             @can('stand_car_form_access')
-                            <li class="{{ request()->is(" admin/stand-car-forms") || request()->
+                            <li class="{{ request()->is("admin/stand-car-forms") || request()->
                                 is("admin/stand-car-forms/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.stand-car-forms.index") }}">
@@ -737,7 +737,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('courier_access')
-                            <li class="{{ request()->is(" admin/couriers") || request()->is("admin/couriers/*") ?
+                            <li class="{{ request()->is("admin/couriers") || request()->is("admin/couriers/*") ?
                                 "active" : ""
                                 }}">
                                 <a href="{{ route("admin.couriers.index") }}">
@@ -750,7 +750,7 @@
                             </li>
                             @endcan
                             @can('courier_form_access')
-                            <li class="{{ request()->is(" admin/courier-forms") || request()->
+                            <li class="{{ request()->is("admin/courier-forms") || request()->
                                 is("admin/courier-forms/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.courier-forms.index") }}">
@@ -776,7 +776,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('training_access')
-                            <li class="{{ request()->is(" admin/trainings") || request()->is("admin/trainings/*") ?
+                            <li class="{{ request()->is("admin/trainings") || request()->is("admin/trainings/*") ?
                                 "active" :
                                 "" }}">
                                 <a href="{{ route("admin.trainings.index") }}">
@@ -789,7 +789,7 @@
                             </li>
                             @endcan
                             @can('training_form_access')
-                            <li class="{{ request()->is(" admin/training-forms") || request()->
+                            <li class="{{ request()->is("admin/training-forms") || request()->
                                 is("admin/training-forms/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.training-forms.index") }}">
@@ -815,7 +815,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('product_category_access')
-                            <li class="{{ request()->is(" admin/product-categories") || request()->
+                            <li class="{{ request()->is("admin/product-categories") || request()->
                                 is("admin/product-categories/*") ? "active" : "" }}">
                                 <a href="{{ route("admin.product-categories.index") }}">
                                     <i class="fa-fw fas fa-folder">
@@ -827,7 +827,7 @@
                             </li>
                             @endcan
                             @can('product_tag_access')
-                            <li class="{{ request()->is(" admin/product-tags") || request()->is("admin/product-tags/*")
+                            <li class="{{ request()->is("admin/product-tags") || request()->is("admin/product-tags/*")
                                 ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.product-tags.index") }}">
@@ -840,7 +840,7 @@
                             </li>
                             @endcan
                             @can('product_access')
-                            <li class="{{ request()->is(" admin/products") || request()->is("admin/products/*") ?
+                            <li class="{{ request()->is("admin/products") || request()->is("admin/products/*") ?
                                 "active" : ""
                                 }}">
                                 <a href="{{ route("admin.products.index") }}">
@@ -853,7 +853,7 @@
                             </li>
                             @endcan
                             @can('product_form_access')
-                            <li class="{{ request()->is(" admin/product-forms") || request()->
+                            <li class="{{ request()->is("admin/product-forms") || request()->
                                 is("admin/product-forms/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.product-forms.index") }}">
@@ -879,7 +879,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('transfer_tour_access')
-                            <li class="{{ request()->is(" admin/transfer-tours") || request()->
+                            <li class="{{ request()->is("admin/transfer-tours") || request()->
                                 is("admin/transfer-tours/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.transfer-tours.index") }}">
@@ -892,7 +892,7 @@
                             </li>
                             @endcan
                             @can('transfer_form_access')
-                            <li class="{{ request()->is(" admin/transfer-forms") || request()->
+                            <li class="{{ request()->is("admin/transfer-forms") || request()->
                                 is("admin/transfer-forms/*") ?
                                 "active" : "" }}">
                                 <a href="{{ route("admin.transfer-forms.index") }}">
@@ -918,7 +918,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @can('consulting_access')
-                            <li class="{{ request()->is(" admin/consultings") || request()->is("admin/consultings/*") ?
+                            <li class="{{ request()->is("admin/consultings") || request()->is("admin/consultings/*") ?
                                 "active"
                                 : "" }}">
                                 <a href="{{ route("admin.consultings.index") }}">
@@ -931,7 +931,7 @@
                             </li>
                             @endcan
                             @can('consulting_form_access')
-                            <li class="{{ request()->is(" admin/consulting-forms") || request()->
+                            <li class="{{ request()->is("admin/consulting-forms") || request()->
                                 is("admin/consulting-forms/*")
                                 ? "active" : "" }}">
                                 <a href="{{ route("admin.consulting-forms.index") }}">
@@ -947,7 +947,7 @@
                     </li>
                     @endcan
                     @can('legal_access')
-                    <li class="{{ request()->is(" admin/legals") || request()->is("admin/legals/*") ? "active" : "" }}">
+                    <li class="{{ request()->is("admin/legals") || request()->is("admin/legals/*") ? "active" : "" }}">
                         <a href="{{ route("admin.legals.index") }}">
                             <i class="fa-fw fas fa-balance-scale">
 
@@ -1106,7 +1106,7 @@
                                 </a>
                             </li>
                         @endcan
-                        <li class="{{ request()->is(" admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active"
+                        <li class="{{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active"
                             : "" }}">
                             <a href="{{ route("admin.systemCalendar") }}">
                                 <i class="fas fa-fw fa-calendar">
@@ -1119,7 +1119,7 @@
                 </li>
             @endcan
             @php($unread = \App\Models\QaTopic::unreadCount())
-            <li class="{{ request()->is(" admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
+            <li class="{{ request()->is("admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
                 <a href="{{ route("admin.messenger.index") }}">
                     <i class="fa-fw fa fa-envelope">
 
