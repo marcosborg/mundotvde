@@ -55,7 +55,29 @@
                                         {{ \Carbon\Carbon::parse($week->end_date)->format('d') }}</a></li>
                                 @endforeach
                             </ul>
+                            
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-md-4">
+                                    <form action="/admin/tvde-driver-managements/driver" method="post" class="driver_form">
+                                        @csrf
+                                        <input type="hidden" name="week_id" value="{{ $week->id }}">
+                                        <div class="input-group">
+                                            <select class="form-control select2" name="driver_id" required>
+                                                <option selected disabled>Selecionar condutor</option>
+                                                @foreach ($drivers as $driver)
+                                                    <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <span class="input-group-btn">
+                                            <button class="btn btn-success" type="submit">Lançar
+                                                atividade</button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                             <!-- Tab panes -->
+                                        
                             <div class="tab-content" style="margin-top: 20px;">
                                 @php
                                 $weekCount = 1;
@@ -133,8 +155,6 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    <button class="btn btn-success" type="button"
-                                        onclick="launchActivity({{ $week->id }})">Lançar atividade</button>
                                 </div>
                                 @endforeach
                             </div>

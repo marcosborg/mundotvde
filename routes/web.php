@@ -307,7 +307,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
             Route::get('operators/{driver_id}', 'TvdeDriverManagementController@operators');
             Route::get('activity-launch/{activity_launch_id}', 'TvdeDriverManagementController@activityLaunch');
             Route::post('update-activity', 'TvdeDriverManagementController@updateActivity');
-            Route::get('driver/{driver_id}', 'TvdeDriverManagementController@driver');
+            Route::post('driver', 'TvdeDriverManagementController@driver');
             Route::post('create-activity', 'TvdeDriverManagementController@createActivity');
             Route::get('delete-activity-launch/{activity_louch_id}', 'TvdeDriverManagementController@deleteActivityLaunch');
         }

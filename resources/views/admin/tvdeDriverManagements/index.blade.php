@@ -19,16 +19,10 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Lançar atividade</h4>
+                <h4 class="modal-title"></h4>
             </div>
             <form action="/admin/tvde-driver-managements/create-activity" id="createActivity" method="post">
                 @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Condutor</label>
-                        <select name="driver_id" class="form-control" onchange="selectDriver()"></select>
-                    </div>
-                </div>
                 <input type="hidden" name="driver_id">
                 <input type="hidden" name="week_id">
                 <div class="collapse" id="activityData">
@@ -157,6 +151,7 @@
 </div>
 @endsection
 @section('scripts')
+@parent
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js">
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"
@@ -196,6 +191,7 @@
                 ajax();
             }
         });
+
     });
 
     ajax = () => {
@@ -203,64 +199,54 @@
         $.get('/admin/tvde-driver-managements/ajax').then((resp) => {
             $.LoadingOverlay('hide');
             $('#tvdeDriverManagement').html(resp);
-        });
-    }
-    
-    launchActivity = (week_id) => {
-        console.log(week_id);
-        $('#launchActivityModal input[name=week_id]').val(week_id);
-        $.LoadingOverlay('show');
-        $.get('/admin/tvde-driver-managements/drivers').then((resp) => {
-            $.LoadingOverlay('hide');
-            let html = '<option selected disabled>Selecionar condutor</option>';
-            let drivers = resp;
-            console.log(drivers);
-            $.each(drivers, (i, v) => {
-                let h1 = '<option value="' + v.id + '">' + v.name;
-                let h2 = '</option>';
-                if(v.card) {
-                    h2 = ' - Cartão ' + v.card.code + '</option>';
+            $('.select2').select2();
+            $('.driver_form').ajaxForm({
+                beforeSubmit: () => {
+                    $.LoadingOverlay('show');
+                },
+                success: (resp) => {
+                    $.LoadingOverlay('hide');
+                    if(resp){
+                        console.log(resp);
+                        $('#launchActivityModal').modal('show');
+                        $('#launchActivityModal input[name=week_id]').val(resp.week_id);
+                        $('#launchActivityModal input[name=driver_id]').val(resp.driver.id);
+                        $('#launchActivityModal .modal-title').text(resp.driver.name);
+                        let html = '';
+                        resp.driver.tvde_operators.forEach(tvde_operator => {
+                            html += '<div class="panel panel-default">';
+                            html += '<div class="panel-heading">';
+                            html += tvde_operator.name;
+                            html += '</div>';
+                            html += '<div class="panel-body">';
+                            html += '<div class="form-group">';
+                            html += '<label>Bruto</label>';
+                            html += '<input type="text" name="create-' + tvde_operator.id + '-gross" class="form-control" value="0">';
+                            html += '</div>';
+                            html += '<div class="form-group">';
+                            html += '<label>Líquido</label>';
+                            html += '<input type="text" name="create-' + tvde_operator.id + '-net" class="form-control" value="0">';
+                            html += '</div>';
+                            html += '<div class="form-group">';
+                            html += '<label>Impostos</label>';
+                            html += '<input type="text" name="create-' + tvde_operator.id + '-taxes" class="form-control" value="0">';
+                            html += '</div>';
+                            html += '</div>';
+                            html += '</div>';
+                        });
+                        $('#launchActivityModal .update').html(html);
+                        if($('#activityData').hasClass('in') != true) {
+                            $('#activityData').collapse('toggle');
+                        }
+                    } else {
+                        console.log('nope');
+                    }
+                },
+                error: (err) => {
+                    $.LoadingOverlay('hide');
+                    console.log(err);
                 }
-                html += h1 + h2;
             });
-            $('#launchActivityModal select[name=driver_id]').html(html);
-            $('#launchActivityModal').modal('show');
-        });
-    }
-
-    selectDriver = () => {
-        $.LoadingOverlay('show');
-        let driver_id = $('#launchActivityModal select[name=driver_id]').val();
-        $('#launchActivityModal input[name=driver_id]').val(driver_id);
-        $.get('/admin/tvde-driver-managements/driver/' + driver_id).then((resp) => {
-            $.LoadingOverlay('hide');
-            let driver = resp;
-            let html = '';
-            driver.tvde_operators.forEach(tvde_operator => {
-                html += '<div class="panel panel-default">';
-                html += '<div class="panel-heading">';
-                html += tvde_operator.name;
-                html += '</div>';
-                html += '<div class="panel-body">';
-                html += '<div class="form-group">';
-                html += '<label>Bruto</label>';
-                html += '<input type="text" name="create-' + tvde_operator.id + '-gross" class="form-control" value="0">';
-                html += '</div>';
-                html += '<div class="form-group">';
-                html += '<label>Líquido</label>';
-                html += '<input type="text" name="create-' + tvde_operator.id + '-net" class="form-control" value="0">';
-                html += '</div>';
-                html += '<div class="form-group">';
-                html += '<label>Impostos</label>';
-                html += '<input type="text" name="create-' + tvde_operator.id + '-taxes" class="form-control" value="0">';
-                html += '</div>';
-                html += '</div>';
-                html += '</div>';
-            });
-            $('#launchActivityModal .update').html(html);
-            if($('#activityData').hasClass('in') != true) {
-                $('#activityData').collapse('toggle');
-            }
         });
     }
 
