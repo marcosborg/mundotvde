@@ -29,11 +29,7 @@ class TvdeDriverManagementController extends Controller
             ->orderBy('name')
             ->get();
 
-        $drivers = Driver::with([
-            'card'
-        ])->get();
-
-        return view('partials.tvdeDriverManagement', compact('years', 'drivers'));
+        return view('partials.tvdeDriverManagement', compact('years'));
     }
 
     public function drivers()
@@ -60,7 +56,7 @@ class TvdeDriverManagementController extends Controller
     {
         $activityLaunch = ActivityLaunch::where('id', $request->activity_launch_id)
             ->with([
-                'driver',
+                'driver.card',
                 'activityPerOperators.tvde_operator',
             ])
             ->first();
@@ -103,6 +99,8 @@ class TvdeDriverManagementController extends Controller
         $request->validate([
             'driver_id' => 'required',
         ]);
+
+        $week_id = $request->week_id;
 
         $driver = Driver::where('id', $request->driver_id)
             ->with('tvde_operators')

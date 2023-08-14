@@ -9,6 +9,7 @@
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane" id="not-send">
+            <button class="btn btn-primary btn-sm" style="margin-top: 20px;" onclick="selectAllToSend()">Selecionar tudo para enviar</button>
             <div class="table-responsive" style="margin-top: 20px;">
                 <table class=" table table-bordered table-striped table-hover datatable">
                     <thead>

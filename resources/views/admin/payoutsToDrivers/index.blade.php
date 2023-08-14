@@ -98,6 +98,9 @@
             $('#pay-' + id).hide();
         });
     }
+    selectAllToSend = () => {
+        $('input[type="checkbox"]').prop('checked', true);
+    }
 </script>
 
 @endsection

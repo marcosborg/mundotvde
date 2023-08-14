@@ -158,6 +158,7 @@
     integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous">
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/assets/admin/vendor/table2csv/table2csv.min.js"></script>
 <script>
     $(() => {
         ajax();
@@ -207,7 +208,6 @@
                 success: (resp) => {
                     $.LoadingOverlay('hide');
                     if(resp){
-                        console.log(resp);
                         $('#launchActivityModal').modal('show');
                         $('#launchActivityModal input[name=week_id]').val(resp.week_id);
                         $('#launchActivityModal input[name=driver_id]').val(resp.driver.id);
@@ -247,6 +247,9 @@
                     console.log(err);
                 }
             });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $('.select2').select2();
+            });
         });
     }
 
@@ -255,7 +258,7 @@
         $.get('tvde-driver-managements/activity-launch/' + activity_launch_id).then((resp) => {
             $.LoadingOverlay('hide');
             let activityLaunch = resp;
-            $('#updateActivityModal .modal-title').text(activityLaunch.driver.name);
+            $('#updateActivityModal .modal-title').text(activityLaunch.driver.name + ' - ' + activityLaunch.driver.card.code);
             $('#updateActivityModal input[name=rent]').val(activityLaunch.rent);
             $('#updateActivityModal input[name=management]').val(activityLaunch.management);
             $('#updateActivityModal input[name=insurance]').val(activityLaunch.insurance);
@@ -307,6 +310,10 @@
                 });
             }
         })
+    };
+
+    exportCsv = (table_id) => {
+        $('#' + table_id).table2csv();
     };
     
 </script>

@@ -64,6 +64,12 @@
                                         <div class="input-group">
                                             <select class="form-control select2" name="driver_id" required>
                                                 <option selected disabled>Selecionar condutor</option>
+                                                @php
+                                                    $drivers = \App\Models\Driver::whereDoesntHave('activity_launches', function($query) use ($week){
+                                                        $query->where('week_id', $week->id);
+                                                    })
+                                                    ->get()->load('card');
+                                                @endphp
                                                 @foreach ($drivers as $driver)
                                                     <option value="{{ $driver->id }}">{{ $driver->name }}</option>
                                                 @endforeach
@@ -74,6 +80,9 @@
                                             </span>
                                         </div>
                                     </form>
+                                </div>
+                                <div class="col-md-8">
+                                    <button class="btn btn-default" onclick="exportCsv('week_{{ $week->id }}')">Exportar CSV</button>
                                 </div>
                             </div>
                             <!-- Tab panes -->
@@ -150,6 +159,59 @@
                                                         onclick="deleteActivityLaunch({{ $activityLaunch->id }})">
                                                         Eliminar
                                                     </button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    <table id="week_{{ $week->id }}" style="visibility: hidden;">
+                                        <thead>
+                                            <tr>
+                                                <th>Condutor</td>
+                                                <th>Aluguer</td>
+                                                <th>Gestão</th>
+                                                <th>Seguro</th>
+                                                <th>Combustivel</th>
+                                                <th>Portagens</th>
+                                                <th>Débitos</th>
+                                                <th>Créditos</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($week->activityLaunches as $activityLaunch)
+                                            <tr>
+                                                <td>{{ $activityLaunch->driver->name }}</td>
+                                                <td>{{ $activityLaunch->rent }}</td>
+                                                <td>{{ $activityLaunch->management }}</td>
+                                                <td>{{ $activityLaunch->insurance }}</td>
+                                                <td>{{ $activityLaunch->fuel }}</td>
+                                                <td>{{ $activityLaunch->tolls }}</td>
+                                                <td>{{ $activityLaunch->others }}</td>
+                                                <td>{{ $activityLaunch->refund }}</td>
+                                                    @php
+                                                        $sum = [];
+                                                    @endphp
+                                                    @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
+                                                    @php
+                                                        $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+                                                    @endphp
+                                                    @endforeach
+                                                @php
+                                                    $sum = array_sum($sum);
+                                                    $sub = [
+                                                        $activityLaunch->rent,
+                                                        $activityLaunch->management,
+                                                        $activityLaunch->insurance,
+                                                        $activityLaunch->fuel,
+                                                        $activityLaunch->tolls,
+                                                        $activityLaunch->others
+                                                    ];
+                                                    $sub = array_sum($sub);
+                                                    $total = $sum - $sub + $activityLaunch->refund;
+                                                @endphp
+                                                <td>
+                                                    {{ $total }}
                                                 </td>
                                             </tr>
                                             @endforeach
