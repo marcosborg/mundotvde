@@ -12,6 +12,7 @@
                     <table class="table table-bordered table-striped datatable">
                         <thead>
                             <tr>
+                                <th style="display: none;"></th>
                                 <th>
                                     Condutor
                                 </th>
@@ -29,6 +30,7 @@
                         <tbody>
                             @foreach ($drivers as $driver)
                             <tr>
+                                <td style="display: none"></td>
                                 <td>{{ $driver->name }}</td>
                                 <td>{{ $driver->iban }}</td>
                                 <td>{{ $driver->email }}</td>
@@ -45,6 +47,13 @@
 @endsection
 @section('scripts')
 <script>
-    $('.datatable').DataTable();
+
+    $(() => {
+        let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
+        $('.datatable').DataTable({
+            buttons: dtButtons,
+        });
+    });
+    
 </script>
 @endsection
