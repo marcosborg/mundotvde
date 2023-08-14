@@ -211,7 +211,11 @@
                         $('#launchActivityModal').modal('show');
                         $('#launchActivityModal input[name=week_id]').val(resp.week_id);
                         $('#launchActivityModal input[name=driver_id]').val(resp.driver.id);
-                        $('#launchActivityModal .modal-title').text(resp.driver.name);
+                        if (resp.driver.card){
+                            $('#launchActivityModal .modal-title').text(resp.driver.name + ' - ' + resp.driver.card.code);
+                        } else {
+                            $('#launchActivityModal .modal-title').text(resp.driver.name);
+                        }
                         let html = '';
                         resp.driver.tvde_operators.forEach(tvde_operator => {
                             html += '<div class="panel panel-default">';
@@ -258,7 +262,11 @@
         $.get('tvde-driver-managements/activity-launch/' + activity_launch_id).then((resp) => {
             $.LoadingOverlay('hide');
             let activityLaunch = resp;
-            $('#updateActivityModal .modal-title').text(activityLaunch.driver.name + ' - ' + activityLaunch.driver.card.code);
+            if (activityLaunch.driver.card){
+                $('#updateActivityModal .modal-title').text(activityLaunch.driver.name + ' - ' + activityLaunch.driver.card.code);
+            } else {
+                $('#updateActivityModal .modal-title').text(activityLaunch.driver.name);
+            }
             $('#updateActivityModal input[name=rent]').val(activityLaunch.rent);
             $('#updateActivityModal input[name=management]').val(activityLaunch.management);
             $('#updateActivityModal input[name=insurance]').val(activityLaunch.insurance);

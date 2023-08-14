@@ -100,11 +100,9 @@ class TvdeDriverManagementController extends Controller
             'driver_id' => 'required',
         ]);
 
-        $week_id = $request->week_id;
-
         $driver = Driver::where('id', $request->driver_id)
             ->with('tvde_operators')
-            ->first();
+            ->first()->load('card');
         return [
             'driver' => $driver,
             'week_id' => $request->week_id,
