@@ -22,7 +22,7 @@
                                 <th>
                                     Email
                                 </th>
-                                <th>
+                                <th class="sortable">
                                     Balanço
                                 </th>
                             </tr>
@@ -52,6 +52,10 @@
         let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons);
         $('.datatable').DataTable({
             buttons: dtButtons,
+            columnDefs: [{
+                targets: 'sortable',
+                orderable: true,
+            }],
         });
     });
     
