@@ -106,7 +106,15 @@
                                                 <th>Portagens</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
-                                                <th>Operadores</th>
+                                                @foreach ($week->activityLaunches as $key => $activityLaunch)
+                                                @if($key == 0)
+                                                @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
+                                                <th>
+                                                    {{ $activityPerOperator->tvde_operator->name }}
+                                                </th>
+                                                @endforeach
+                                                @endif
+                                                @endforeach
                                                 <th>Total</th>
                                                 <th></th>
                                             </tr>
@@ -122,18 +130,17 @@
                                                 <td>{{ $activityLaunch->tolls }}</td>
                                                 <td>{{ $activityLaunch->others }}</td>
                                                 <td>{{ $activityLaunch->refund }}</td>
+                                                @php
+                                                    $sum = [];
+                                                @endphp
+                                                @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
+                                                @php
+                                                    $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+                                                @endphp
                                                 <td>
-                                                    @php
-                                                        $sum = [];
-                                                    @endphp
-                                                    @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
-                                                    @php
-                                                        $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
-                                                    @endphp
-                                                    <span class="badge">{{ $activityPerOperator->tvde_operator->name
-                                                        }}</span>
-                                                    @endforeach
+                                                    {{ $activityPerOperator->net }}
                                                 </td>
+                                                @endforeach
                                                 @php
                                                     $sum = array_sum($sum);
                                                     $sub = [
@@ -175,6 +182,15 @@
                                                 <th>Portagens</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
+                                                @foreach ($week->activityLaunches as $key => $activityLaunch)
+                                                @if($key == 0)
+                                                @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
+                                                <th>
+                                                    {{ $activityPerOperator->tvde_operator->name }}
+                                                </th>
+                                                @endforeach
+                                                @endif
+                                                @endforeach
                                                 <th>Total</th>
                                             </tr>
                                         </thead>
@@ -196,6 +212,9 @@
                                                     @php
                                                         $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
                                                     @endphp
+                                                    <td>
+                                                        {{ $activityPerOperator->net }}
+                                                    </td>
                                                     @endforeach
                                                 @php
                                                     $sum = array_sum($sum);
