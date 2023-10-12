@@ -5,5 +5,12 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', '
 });
 
 Route::get('stand-cars', function () {
-    return StandCar::all();
+    return StandCar::all()->load([
+        'brand',
+        'car_model',
+        'fuel',
+        'month',
+        'origin',
+        'status',
+    ]);
 });
