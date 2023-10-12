@@ -3,6 +3,7 @@ use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Fuel;
 use App\Models\Origin;
+use App\Models\Page;
 use App\Models\StandCar;
 
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {
@@ -46,4 +47,12 @@ Route::get('filter-elements', function () {
             'max' => $cars->max('price')
         ]
     ];
+});
+
+Route::get('pages', function () {
+    return Page::where('id', '>', 4)->get();
+});
+
+Route::get('page/{id}', function ($id) {
+    return Page::find($id);
 });

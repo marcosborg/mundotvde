@@ -41,7 +41,7 @@
                         class="nav-link {{ request()->is('pagina/1/sobre-nos') || request()->is('pagina/2/parceiros') || request()->is('pagina/3/contactos') ? 'active' : '' }}"
                         aria-expanded="false" data-bs-toggle="dropdown">A empresa <i class="fas fa-caret-down"></i></a>
                     <div class="dropdown-menu">
-                        @foreach (App\Models\Page::all() as $page)
+                        @foreach (App\Models\Page::limit(3)->get() as $page)
                         <a class="dropdown-item"
                             href="/pagina/{{ $page->id }}/{{ Illuminate\Support\Str::slug($page->title, '-') }}">{{
                             $page->title }}</a>
