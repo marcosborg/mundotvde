@@ -1118,6 +1118,41 @@
                     </ul>
                 </li>
             @endcan
+            @can('stand_tvde_menu_access')
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa-fw fas fa-car">
+
+                        </i>
+                        <span>{{ trans('cruds.standTvdeMenu.title') }}</span>
+                        <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('stand_tvde_page_access')
+                            <li class="{{ request()->is("admin/stand-tvde-pages") || request()->is("admin/stand-tvde-pages/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.stand-tvde-pages.index") }}">
+                                    <i class="fa-fw fas fa-sitemap">
+
+                                    </i>
+                                    <span>{{ trans('cruds.standTvdePage.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('stand_tvde_pub_access')
+                            <li class="{{ request()->is("admin/stand-tvde-pubs") || request()->is("admin/stand-tvde-pubs/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.stand-tvde-pubs.index") }}">
+                                    <i class="fa-fw fas fa-bullhorn">
+
+                                    </i>
+                                    <span>{{ trans('cruds.standTvdePub.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan
             @php($unread = \App\Models\QaTopic::unreadCount())
             <li class="{{ request()->is("admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
                 <a href="{{ route("admin.messenger.index") }}">

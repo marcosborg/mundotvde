@@ -3,8 +3,9 @@ use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Fuel;
 use App\Models\Origin;
-use App\Models\Page;
 use App\Models\StandCar;
+use App\Models\StandTvdePage;
+use App\Models\StandTvdePub;
 
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {
 });
@@ -50,9 +51,13 @@ Route::get('filter-elements', function () {
 });
 
 Route::get('pages', function () {
-    return Page::where('id', '>', 4)->get();
+    return StandTvdePage::all();
 });
 
 Route::get('page/{id}', function ($id) {
-    return Page::find($id);
+    return StandTvdePage::find($id);
+});
+
+Route::get('pubs', function(){
+    return StandTvdePub::all();
 });

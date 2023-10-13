@@ -347,6 +347,18 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('company-documents/ckmedia', 'CompanyDocumentController@storeCKEditorImages')->name('company-documents.storeCKEditorImages');
     Route::resource('company-documents', 'CompanyDocumentController');
 
+    // Stand Tvde Page
+    Route::delete('stand-tvde-pages/destroy', 'StandTvdePageController@massDestroy')->name('stand-tvde-pages.massDestroy');
+    Route::post('stand-tvde-pages/media', 'StandTvdePageController@storeMedia')->name('stand-tvde-pages.storeMedia');
+    Route::post('stand-tvde-pages/ckmedia', 'StandTvdePageController@storeCKEditorImages')->name('stand-tvde-pages.storeCKEditorImages');
+    Route::resource('stand-tvde-pages', 'StandTvdePageController');
+
+    // Stand Tvde Pub
+    Route::delete('stand-tvde-pubs/destroy', 'StandTvdePubController@massDestroy')->name('stand-tvde-pubs.massDestroy');
+    Route::post('stand-tvde-pubs/media', 'StandTvdePubController@storeMedia')->name('stand-tvde-pubs.storeMedia');
+    Route::post('stand-tvde-pubs/ckmedia', 'StandTvdePubController@storeCKEditorImages')->name('stand-tvde-pubs.storeCKEditorImages');
+    Route::resource('stand-tvde-pubs', 'StandTvdePubController');
+
     Route::get('system-calendar', 'SystemCalendarController@index')->name('systemCalendar');
     Route::get('messenger', 'MessengerController@index')->name('messenger.index');
     Route::get('messenger/create', 'MessengerController@createTopic')->name('messenger.createTopic');

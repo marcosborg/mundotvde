@@ -4,13 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVehicleBrandsTable extends Migration
+class CreateStandTvdePubsTable extends Migration
 {
     public function up()
     {
-        Schema::create('vehicle_brands', function (Blueprint $table) {
+        Schema::create('stand_tvde_pubs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
+            $table->string('title')->nullable();
+            $table->longText('text')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
