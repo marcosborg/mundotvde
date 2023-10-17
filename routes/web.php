@@ -359,6 +359,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('stand-tvde-pubs/ckmedia', 'StandTvdePubController@storeCKEditorImages')->name('stand-tvde-pubs.storeCKEditorImages');
     Route::resource('stand-tvde-pubs', 'StandTvdePubController');
 
+    // Stand Tvde Contact
+    Route::delete('stand-tvde-contacts/destroy', 'StandTvdeContactController@massDestroy')->name('stand-tvde-contacts.massDestroy');
+    Route::resource('stand-tvde-contacts', 'StandTvdeContactController');
+
     Route::get('system-calendar', 'SystemCalendarController@index')->name('systemCalendar');
     Route::get('messenger', 'MessengerController@index')->name('messenger.index');
     Route::get('messenger/create', 'MessengerController@createTopic')->name('messenger.createTopic');

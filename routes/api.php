@@ -4,8 +4,10 @@ use App\Models\CarModel;
 use App\Models\Fuel;
 use App\Models\Origin;
 use App\Models\StandCar;
+use App\Models\StandTvdeContact;
 use App\Models\StandTvdePage;
 use App\Models\StandTvdePub;
+use Illuminate\Http\Request;
 
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {
 });
@@ -58,6 +60,20 @@ Route::get('page/{id}', function ($id) {
     return StandTvdePage::find($id);
 });
 
-Route::get('pubs', function(){
+Route::get('pubs', function () {
     return StandTvdePub::all();
+});
+
+Route::post('contact', function (Request $request) {
+
+    $contact = new StandTvdeContact;
+    $contact->car = $request->car;
+    $contact->name = $request->name;
+    $contact->email = $request->email;
+    $contact->phone = $request->phone;
+    $contact->subject = $request->subject;
+    $contact->message = $request->message;
+    $contact->save();
+
+    return $contact;
 });

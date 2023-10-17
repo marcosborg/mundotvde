@@ -1150,6 +1150,17 @@
                                 </a>
                             </li>
                         @endcan
+                        @can('stand_tvde_contact_access')
+                            <li class="{{ request()->is("admin/stand-tvde-contacts") || request()->is("admin/stand-tvde-contacts/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.stand-tvde-contacts.index") }}">
+                                    <i class="fa-fw fas fa-envelope">
+
+                                    </i>
+                                    <span>{{ trans('cruds.standTvdeContact.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
                     </ul>
                 </li>
             @endcan
