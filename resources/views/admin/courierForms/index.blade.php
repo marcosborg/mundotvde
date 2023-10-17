@@ -49,6 +49,9 @@
                                         {{ trans('cruds.courierForm.fields.rgpd') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.courierForm.fields.created_at') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -84,6 +87,9 @@
                                         <td>
                                             <span style="display:none">{{ $courierForm->rgpd ?? '' }}</span>
                                             <input type="checkbox" disabled="disabled" {{ $courierForm->rgpd ? 'checked' : '' }}>
+                                        </td>
+                                        <td>
+                                            {{ $courierForm->created_at ?? '' }}
                                         </td>
                                         <td>
                                             @can('courier_form_show')

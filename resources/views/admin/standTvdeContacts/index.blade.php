@@ -46,6 +46,9 @@
                                         {{ trans('cruds.standTvdeContact.fields.message') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.standTvdeContact.fields.created_at') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -76,6 +79,9 @@
                                         </td>
                                         <td>
                                             {{ $standTvdeContact->message ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $standTvdeContact->created_at ?? '' }}
                                         </td>
                                         <td>
                                             @can('stand_tvde_contact_show')

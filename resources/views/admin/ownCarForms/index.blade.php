@@ -52,6 +52,9 @@
                                         {{ trans('cruds.ownCarForm.fields.rgpd') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.ownCarForm.fields.created_at') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -90,6 +93,9 @@
                                         <td>
                                             <span style="display:none">{{ $ownCarForm->rgpd ?? '' }}</span>
                                             <input type="checkbox" disabled="disabled" {{ $ownCarForm->rgpd ? 'checked' : '' }}>
+                                        </td>
+                                        <td>
+                                            {{ $ownCarForm->created_at ?? '' }}
                                         </td>
                                         <td>
                                             @can('own_car_form_show')

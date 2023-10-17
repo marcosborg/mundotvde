@@ -60,6 +60,9 @@
                                     {{ trans('cruds.carRentalContactRequest.fields.rgpd') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.carRentalContactRequest.fields.created_at') }}
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -130,6 +133,7 @@
 { data: 'car.price', name: 'car.price' },
 { data: 'message', name: 'message' },
 { data: 'rgpd', name: 'rgpd' },
+{ data: 'created_at', name: 'created_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

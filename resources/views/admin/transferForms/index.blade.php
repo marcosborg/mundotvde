@@ -55,6 +55,9 @@
                                         {{ trans('cruds.transferForm.fields.message') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.transferForm.fields.created_at') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -96,6 +99,9 @@
                                         </td>
                                         <td>
                                             {{ $transferForm->message ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $transferForm->created_at ?? '' }}
                                         </td>
                                         <td>
                                             @can('transfer_form_show')

@@ -46,6 +46,9 @@
                                         {{ trans('cruds.consultingForm.fields.rgpd') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.consultingForm.fields.created_at') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -77,6 +80,9 @@
                                         <td>
                                             <span style="display:none">{{ $consultingForm->rgpd ?? '' }}</span>
                                             <input type="checkbox" disabled="disabled" {{ $consultingForm->rgpd ? 'checked' : '' }}>
+                                        </td>
+                                        <td>
+                                            {{ $consultingForm->created_at ?? '' }}
                                         </td>
                                         <td>
                                             @can('consulting_form_show')

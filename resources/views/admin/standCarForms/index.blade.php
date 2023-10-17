@@ -66,6 +66,9 @@
                                     {{ trans('cruds.standCarForm.fields.rgpd') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.standCarForm.fields.created_at') }}
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -138,6 +141,7 @@
 { data: 'car.power', name: 'car.power' },
 { data: 'message', name: 'message' },
 { data: 'rgpd', name: 'rgpd' },
+{ data: 'created_at', name: 'created_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
