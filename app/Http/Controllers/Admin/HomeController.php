@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\ActivityLaunch;
 use App\Models\Driver;
+use App\Models\Receipt;
 use Symfony\Component\HttpFoundation\Response;
 
 class HomeController
@@ -46,8 +47,17 @@ class HomeController
             $activityLaunch->sub = $sub;
         }
 
+        //Impedir dois recibos no mesmo dia
+
+        $last_receipt = Receipt::where([
+            'driver_id' => $driver->id
+        ])
+            ->orderBy('id', 'desc')
+            ->first();
+
         return view('home')->with([
-            'activityLaunches' => $activityLaunches
+            'activityLaunches' => $activityLaunches,
+            'last_receipt' => $last_receipt
         ]);
     }
 }

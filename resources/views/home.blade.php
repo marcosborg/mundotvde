@@ -21,102 +21,115 @@
                     @endphp
                     @endif
                     @endforeach
-                    <span class="budget">Saldo: € {{ number_format($total, 2) }}<span>
-                            <button class="btn btn-success btn-sm" {{ $total==0 ? 'disabled' : '' }}
+                    @php
+                    if ($last_receipt) {
+                    $last_receipt_time = strtotime($last_receipt->created_at) + (24 * 3600);
+                    $current_time = time();
+                    $disable_button = ($total == 0 || $current_time < $last_receipt_time) ? 'disabled' : '' ; } else {
+                        $disable_button='' ; } @endphp <span class="budget">Saldo: € {{ number_format($total, 2)
+                        }}<span>
+                            <button class="btn btn-success btn-sm" {{ $disable_button }}
                                 onclick="openModalReceipt('{{ number_format($total, 2) }}')">Enviar recibo</button>
                         </span></span>
-                    <ul class="list-group">
-                        <script>console.log({!! $activityLaunches !!})</script>
-                        @foreach ($activityLaunches as $activityLaunch)
-                        <li class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <ul class="list-group">
-                                        <li class="list-group-item">{{
-                                            \Carbon\Carbon::parse($activityLaunch->week->start_date)->format('d-m-Y') }}
-                                            a {{
-                                            \Carbon\Carbon::parse($activityLaunch->week->end_date)->format('d-m-Y') }}
-                                            <span class="badge">Semana
-                                                {{ $activityLaunch->week->number }}</span>
-                                        </li>
-                                        <li class="list-group-item"><strong>Aluguer: </strong>€ {{ $activityLaunch->rent
-                                            }}</li>
-                                        <li class="list-group-item"><strong>Gestão: </strong>€ {{
-                                            $activityLaunch->management }}</li>
-                                        <li class="list-group-item"><strong>Seguro: </strong>€ {{
-                                            $activityLaunch->insurance }}</li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-3">
-                                    <ul class="list-group">
-                                        <li class="list-group-item"><strong>Combustivel: </strong>€ {{
-                                            $activityLaunch->fuel }}</li>
-                                        <li class="list-group-item"><strong>Portagens: </strong>€ {{
-                                            $activityLaunch->tolls }}</li>
-                                        <li class="list-group-item"><strong>Débitos: </strong>€ {{
-                                            $activityLaunch->others }}</li>
-                                        <li class="list-group-item"><strong>Créditos: </strong>€ {{
-                                            $activityLaunch->refund }}</li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-3">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Operador</th>
-                                                <th>Líquido</th>
-                                                <th>Impostos</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
-                                            <tr>
-                                                <td>{{ $activityPerOperator->tvde_operator->name }}</td>
-                                                <td>€ {{ $activityPerOperator->net }}</td>
-                                                <td>€ {{ $activityPerOperator->taxes }}</td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="panel panel-default">
-                                        <div class="panel-body">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Ganhos</th>
-                                                        <td>€ {{ $activityLaunch->sum + $activityLaunch->refund }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Descontos</th>
-                                                        <td>€ {{ $activityLaunch->sub }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Total</th>
-                                                        <th>€ {{ $activityLaunch->total }}</th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
-                                            @if ($activityLaunch->paid == 1)
-                                            <span class="badge">Pago</span>
-                                            @endif
+                        <ul class="list-group">
+                            <script>
+                                console.log({!! $activityLaunches !!})
+                            </script>
+                            @foreach ($activityLaunches as $activityLaunch)
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">{{
+                                                \Carbon\Carbon::parse($activityLaunch->week->start_date)->format('d-m-Y')
+                                                }}
+                                                a {{
+                                                \Carbon\Carbon::parse($activityLaunch->week->end_date)->format('d-m-Y')
+                                                }}
+                                                <span class="badge">Semana
+                                                    {{ $activityLaunch->week->number }}</span>
+                                            </li>
+                                            <li class="list-group-item"><strong>Aluguer: </strong>€ {{
+                                                $activityLaunch->rent
+                                                }}</li>
+                                            <li class="list-group-item"><strong>Gestão: </strong>€ {{
+                                                $activityLaunch->management }}</li>
+                                            <li class="list-group-item"><strong>Seguro: </strong>€ {{
+                                                $activityLaunch->insurance }}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <ul class="list-group">
+                                            <li class="list-group-item"><strong>Combustivel: </strong>€ {{
+                                                $activityLaunch->fuel }}</li>
+                                            <li class="list-group-item"><strong>Portagens: </strong>€ {{
+                                                $activityLaunch->tolls }}</li>
+                                            <li class="list-group-item"><strong>Débitos: </strong>€ {{
+                                                $activityLaunch->others }}</li>
+                                            <li class="list-group-item"><strong>Créditos: </strong>€ {{
+                                                $activityLaunch->refund }}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Operador</th>
+                                                    <th>Líquido</th>
+                                                    <th>Impostos</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
+                                                <tr>
+                                                    <td>{{ $activityPerOperator->tvde_operator->name }}</td>
+                                                    <td>€ {{ $activityPerOperator->net }}</td>
+                                                    <td>€ {{ $activityPerOperator->taxes }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Ganhos</th>
+                                                            <td>€ {{ $activityLaunch->sum + $activityLaunch->refund }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Descontos</th>
+                                                            <td>€ {{ $activityLaunch->sub }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Total</th>
+                                                            <th>€ {{ $activityLaunch->total }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                                @if ($activityLaunch->paid == 1)
+                                                <span class="badge">Pago</span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-                        @endforeach
-                    </ul>
-                    @else
-                    <div class="alert alert-info" role="alert">Ainda não existem registos de atividade.</div>
-                    @endif
-                    @endcan
+                            </li>
+                            @endforeach
+                        </ul>
+                        @else
+                        <div class="alert alert-info" role="alert">Ainda não existem registos de atividade.</div>
+                        @endif
+                        @endcan
                 </div>
             </div>
         </div>
     </div>
-</div></div>
+</div>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="receipt-modal" tabindex="-1" role="dialog">
