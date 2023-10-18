@@ -174,13 +174,13 @@
                     'Pode continuar!',
                     'success'
                 );
-                $('#activityData input[name=rent]').val('');
-                $('#activityData input[name=management]').val('');
-                $('#activityData input[name=insurance]').val('');
-                $('#activityData input[name=fuel]').val('');
-                $('#activityData input[name=tolls]').val('');
-                $('#activityData input[name=others]').val('');
-                $('#activityData input[name=refund]').val('');
+                $('#activityData input[name=rent]').val(0);
+                $('#activityData input[name=management]').val(0);
+                $('#activityData input[name=insurance]').val(0);
+                $('#activityData input[name=fuel]').val(0);
+                $('#activityData input[name=tolls]').val(0);
+                $('#activityData input[name=others]').val(0);
+                $('#activityData input[name=refund]').val(0);
                 $('#activityData input[name=initial_kilometers]').val('');
                 $('#activityData input[name=final_kilometers]').val('');
                 ajax();
