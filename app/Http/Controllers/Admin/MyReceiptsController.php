@@ -55,7 +55,7 @@ class MyReceiptsController extends Controller
 
         //SEND EMAIL TO ADMIN
         User::find(2)->notify(new NewReceipt($driver));
-        User::find($driver->id)->notify(new NewReceipt($driver));
+        User::find($driver->user_id)->notify(new NewReceipt($driver));
 
         return redirect()->back()->with('message', 'Enviado com sucesso');
     }
