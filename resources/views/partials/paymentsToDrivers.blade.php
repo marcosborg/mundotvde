@@ -58,7 +58,9 @@
                             <th>Condutor</th>
                             <th>Semana</th>
                             <th>Valor</th>
+                            @can('payouts_to_driver_edit')
                             <th></th>
+                            @endcan
                             <th></th>
                         </tr>
                     </thead>
@@ -73,11 +75,13 @@
                                     \Carbon\Carbon::parse($item->week->end_date)->format('d-m-Y')
                                     }}</small></td>
                             <td>{{ $item->total }}</td>
+                            @can('payouts_to_driver_edit')
                             <td>
                                 @if ($item->paid == 0)
                                 <button class="btn btn-success btn-sm" id="pay-{{ $item->id }}" onclick="pay({{ $item->id }})" type="button">Pagar</button>
                                 @endif
                             </td>
+                            @endcan
                             <td>
                                 <a href="/admin/financial-statements/pdf/{{ $item->id }}" class="btn btn-success btn-sm">Extrato</a>
                             </td>
