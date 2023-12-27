@@ -244,7 +244,6 @@ class FormsController extends Controller
         $TransferForm->save();
 
         Notification::route('mail', 'info@mundotvde.pt')
-            ->route('mail', 'm.borges.mail@gmail.com')
             ->notify(new \App\Notifications\transferTourContact($TransferForm));
     }
 
@@ -272,7 +271,6 @@ class FormsController extends Controller
         $StandCarForm->save();
 
         Notification::route('mail', 'info@mundotvde.pt')
-            ->route('mail', 'm.borges.mail@gmail.com')
             ->notify(new \App\Notifications\standCarContact($StandCarForm));
     }
 }
