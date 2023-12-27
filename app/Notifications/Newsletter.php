@@ -44,6 +44,8 @@ class Newsletter extends Notification
     {
         return (new MailMessage)
                     ->line('Recebeu uma nova subscrição em newsletter.')
+                    ->line('Nome: ' . $this->newsletter->name)
+                    ->line('Telefone: ' . $this->newsletter->phone)
                     ->line('Email: ' . $this->newsletter->email);
     }
 

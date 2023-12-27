@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Car;
 
 class carRentalContact extends Notification
 {
@@ -42,12 +43,17 @@ class carRentalContact extends Notification
      */
     public function toMail($notifiable)
     {
+
+        $car = Car::find($this->CarRentalContactRequest->car_id);
+
         return (new MailMessage)
                     ->line('Existe um pedido de contacto em Aluguer de viaturas.')
                     ->action('Ir para pedido', url('http://mundotvde.pt/admin/car-rental-contact-requests'))
                     ->line('Nome: ' . $this->CarRentalContactRequest->name)
                     ->line('Email: ' . $this->CarRentalContactRequest->email)
-                    ->line('Telefone: ' . $this->CarRentalContactRequest->phone);
+                    ->line('Telefone: ' . $this->CarRentalContactRequest->phone)
+                    ->line('Cidade: ' . $this->CarRentalContactRequest->city)
+                    ->line('Viatura: ' . $car->title . ' - ' . $car->subtitle . ' - ' . $car->price . '€');
     }
 
     /**

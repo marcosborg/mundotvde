@@ -47,7 +47,8 @@ class pageContact extends Notification
                     ->action('Ir para pedido', url('http://mundotvde.pt/admin/page-forms'))
                     ->line('Nome: ' . $this->PageForm->name)
                     ->line('Email: ' . $this->PageForm->email)
-                    ->line('Telefone: ' . $this->PageForm->phone);
+                    ->line('Telefone: ' . $this->PageForm->phone)
+                    ->line('Cidade: ' . $this->PageForm->city);
     }
 
     /**

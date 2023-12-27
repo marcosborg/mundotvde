@@ -47,7 +47,9 @@ class consultingContact extends Notification
                     ->action('Ir para pedido', url('http://mundotvde.pt/admin/consulting-forms'))
                     ->line('Nome: ' . $this->ConsultingForm->name)
                     ->line('Email: ' . $this->ConsultingForm->email)
-                    ->line('Telefone: ' . $this->ConsultingForm->phone);
+                    ->line('Telefone: ' . $this->ConsultingForm->phone)
+                    ->line('Cidade: ' . $this->ConsultingForm->city)
+                    ->line('Mensagem: ' . $this->ConsultingForm->message);
     }
 
     /**

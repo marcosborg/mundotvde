@@ -47,7 +47,9 @@ class ownCarContact extends Notification
                     ->action('Ir para pedido', url('http://mundotvde.pt/admin/own-car-forms'))
                     ->line('Nome: ' . $this->OwnCarForm->name)
                     ->line('Email: ' . $this->OwnCarForm->email)
-                    ->line('Telefone: ' . $this->OwnCarForm->phone);
+                    ->line('Telefone: ' . $this->OwnCarForm->phone)
+                    ->line('Cidade: ' . $this->OwnCarForm->city)
+                    ->line('Mensagem: ' . $this->OwnCarForm->message);
     }
 
     /**

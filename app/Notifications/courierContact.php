@@ -47,7 +47,8 @@ class courierContact extends Notification
                     ->action('Ir para pedido', url('http://mundotvde.pt/admin/courier-forms'))
                     ->line('Nome: ' . $this->CourierForm->name)
                     ->line('Email: ' . $this->CourierForm->email)
-                    ->line('Telefone: ' . $this->CourierForm->phone);
+                    ->line('Telefone: ' . $this->CourierForm->phone)
+                    ->line('Cidade: ' . $this->CourierForm->city);
     }
 
     /**

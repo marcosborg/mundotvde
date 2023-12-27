@@ -24,8 +24,8 @@ class FormsController extends Controller
         $request->validate([
             'email' => 'required|max:255|email|unique:App\Models\Newsletter,email'
         ], [], [
-                'email' => 'Email.'
-            ]);
+            'email' => 'Email.'
+        ]);
 
         $newsletter = new Newsletter;
         $newsletter->email = $request->email;
@@ -45,12 +45,12 @@ class FormsController extends Controller
             'phone' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'city' => 'Cidade',
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'city' => 'Cidade',
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $CarRentalContactRequest = new CarRentalContactRequest;
         $CarRentalContactRequest->car_id = $request->car_id;
@@ -80,12 +80,12 @@ class FormsController extends Controller
             'phone' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'city' => 'Cidade',
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'city' => 'Cidade',
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $OwnCarForm = new OwnCarForm;
         $OwnCarForm->name = $request->name;
@@ -113,12 +113,12 @@ class FormsController extends Controller
             'phone' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'city' => 'Cidade',
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'city' => 'Cidade',
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $CourierForm = new CourierForm;
         $CourierForm->name = $request->name;
@@ -145,12 +145,12 @@ class FormsController extends Controller
             'phone' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'city' => 'Cidade',
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'city' => 'Cidade',
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $trainingForm = new TrainingForm;
         $trainingForm->name = $request->name;
@@ -172,11 +172,11 @@ class FormsController extends Controller
             'phone' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $PageForm = new PageForm;
         $PageForm->name = $request->name;
@@ -197,12 +197,12 @@ class FormsController extends Controller
             'city' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'city' => 'Cidade',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'city' => 'Cidade',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $ConsultingForm = new ConsultingForm;
         $ConsultingForm->name = $request->name;
@@ -226,12 +226,12 @@ class FormsController extends Controller
             'city' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'city' => 'Cidade',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'city' => 'Cidade',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $TransferForm = new TransferForm;
         $TransferForm->transfer_tour_id = $request->id;
@@ -244,6 +244,7 @@ class FormsController extends Controller
         $TransferForm->save();
 
         Notification::route('mail', 'info@mundotvde.pt')
+            ->route('mail', 'm.borges.mail@gmail.com')
             ->notify(new \App\Notifications\transferTourContact($TransferForm));
     }
 
@@ -255,11 +256,11 @@ class FormsController extends Controller
             'phone' => 'required|max:255',
             'rgpd' => 'required'
         ], [], [
-                'email' => 'Email',
-                'name' => 'Nome',
-                'phone' => 'Telefone',
-                'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
-            ]);
+            'email' => 'Email',
+            'name' => 'Nome',
+            'phone' => 'Telefone',
+            'rgpd' => 'Autorizo o tratamento dos dados fornecidos'
+        ]);
 
         $StandCarForm = new StandCarForm;
         $StandCarForm->car_id = $request->id;
@@ -271,6 +272,7 @@ class FormsController extends Controller
         $StandCarForm->save();
 
         Notification::route('mail', 'info@mundotvde.pt')
+            ->route('mail', 'm.borges.mail@gmail.com')
             ->notify(new \App\Notifications\standCarContact($StandCarForm));
     }
 }

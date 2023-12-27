@@ -47,7 +47,8 @@ class trainingContact extends Notification
                     ->action('Ir para pedido', url('http://mundotvde.pt/admin/training-forms'))
                     ->line('Nome: ' . $this->trainingForm->name)
                     ->line('Email: ' . $this->trainingForm->email)
-                    ->line('Telefone: ' . $this->trainingForm->phone);
+                    ->line('Telefone: ' . $this->trainingForm->phone)
+                    ->line('Cidade: ' . $this->trainingForm->city);
     }
 
     /**
