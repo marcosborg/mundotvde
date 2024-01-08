@@ -14,10 +14,10 @@
     <div class="tab-content" style="margin-top: 20px;">
         @php
         $count = 1;
-        $total = $years->count();
+        $years_count = $years->count();
         @endphp
         @foreach ($years as $year)
-        <div role="tabpanel" class="tab-pane {{ $count++ == $total ? 'active' : '' }}" id="year-{{ $year->id }}">
+        <div role="tabpanel" class="tab-pane {{ $count++ == $years_count ? 'active' : '' }}" id="year-{{ $year->id }}">
             <div>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" role="tablist">
@@ -245,6 +245,10 @@
                 </div>
             </div>
         </div>
+        <script>console.log({
+            count: {{ $count }},
+            years_count: {{ $years_count }}
+        });</script>
         @endforeach
     </div>
 </div>
