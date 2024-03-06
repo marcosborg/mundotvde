@@ -225,6 +225,7 @@
     order: [],
     scrollX: true,
     pageLength: 100,
+    lengthMenu: [100, 500, 1000],
     dom: 'lBfrtip<"actions">',
     buttons: [
       {

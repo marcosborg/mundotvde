@@ -116,7 +116,7 @@
                 </th>
             </tr>
             <tr style="background: #eeeeee;">
-                <th width="50%" style="text-align: left;">Fatura/recibo a emitir</th>
+                <th width="50%" style="text-align: left;">Resultado da Semana</th>
                 <th widtd="50%" style="text-align: right;">€ {{ number_format($activityLaunch->total, 2, '.', '') }}
                 </th>
             </tr>
