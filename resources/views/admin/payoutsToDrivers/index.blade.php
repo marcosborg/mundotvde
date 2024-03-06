@@ -35,7 +35,7 @@
                 targets: 0, // índice da coluna de checkboxes
                 visible: false // oculta a coluna
                 }],
-                order: [[2, 'desc']]
+                order: [[3, 'desc']]
             });
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 $('.datatable').DataTable().draw();

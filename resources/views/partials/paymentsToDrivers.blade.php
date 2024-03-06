@@ -1,15 +1,17 @@
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation"><a href="#not-send" aria-controls="not-send" role="tab"
-                data-toggle="tab">Extratos por enviar</a></li>
-        <li role="presentation" class="active"><a href="#send" aria-controls="send" role="tab" data-toggle="tab">Extratos enviados</a>
+        <li role="presentation"><a href="#not-send" aria-controls="not-send" role="tab" data-toggle="tab">Extratos por
+                enviar</a></li>
+        <li role="presentation" class="active"><a href="#send" aria-controls="send" role="tab"
+                data-toggle="tab">Extratos enviados</a>
         </li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane" id="not-send">
-            <button class="btn btn-primary btn-sm" style="margin-top: 20px;" onclick="selectAllToSend()">Selecionar tudo para enviar</button>
+            <button class="btn btn-primary btn-sm" style="margin-top: 20px;" onclick="selectAllToSend()">Selecionar tudo
+                para enviar</button>
             <div class="table-responsive" style="margin-top: 20px;">
                 <table class=" table table-bordered table-striped table-hover datatable">
                     <thead>
@@ -33,7 +35,8 @@
                                     \Carbon\Carbon::parse($item->week->end_date)->format('d-m-Y')
                                     }}</small></td>
                             <td>{{ $item->total }}</td>
-                            <td><a href="/admin/financial-statements/pdf/{{ $item->id }}/stream" class="btn btn-success btn-sm">Extrato</a></td>
+                            <td><a href="/admin/financial-statements/pdf/{{ $item->id }}/stream"
+                                    class="btn btn-success btn-sm">Extrato</a></td>
                             <td>
                                 <div class="checkbox">
                                     <label>
@@ -57,6 +60,8 @@
                             <th>ID</th>
                             <th>Condutor</th>
                             <th>Semana</th>
+                            <th>De</th>
+                            <th>Até</th>
                             <th>Valor</th>
                             @can('payouts_to_driver_edit')
                             <th></th>
@@ -69,21 +74,27 @@
                         <tr>
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->driver->name }}</td>
-                            <td><span class="badge">{{ $item->week->number }}</span> <small>de {{
-                                    \Carbon\Carbon::parse($item->week->start_date)->format('d-m-Y')
-                                    }} a {{
-                                    \Carbon\Carbon::parse($item->week->end_date)->format('d-m-Y')
-                                    }}</small></td>
+                            <td><span class="badge">{{ $item->week->number }}</span></td>
+                            <td>
+                                <small>{{ $item->week->start_date }}</small>
+                            </td>
+                            <td>
+                                <small>
+                                    {{$item->week->end_date}}
+                                </small>
+                            </td>
                             <td>{{ $item->total }}</td>
                             @can('payouts_to_driver_edit')
                             <td>
                                 @if ($item->paid == 0)
-                                <button class="btn btn-success btn-sm" id="pay-{{ $item->id }}" onclick="pay({{ $item->id }})" type="button">Pagar</button>
+                                <button class="btn btn-success btn-sm" id="pay-{{ $item->id }}"
+                                    onclick="pay({{ $item->id }})" type="button">Pagar</button>
                                 @endif
                             </td>
                             @endcan
                             <td>
-                                <a href="/admin/financial-statements/pdf/{{ $item->id }}" class="btn btn-success btn-sm">Extrato</a>
+                                <a href="/admin/financial-statements/pdf/{{ $item->id }}"
+                                    class="btn btn-success btn-sm">Extrato</a>
                             </td>
                         </tr>
                         @endforeach
