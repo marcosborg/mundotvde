@@ -127,6 +127,20 @@ class MyDocumentController extends Controller
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('address');
             }
         }
+
+        if (count($document->vehicle_documents) > 0) {
+            foreach ($document->vehicle_documents as $media) {
+                if (! in_array($media->file_name, $request->input('vehicle_documents', []))) {
+                    $media->delete();
+                }
+            }
+        }
+        $media = $document->vehicle_documents->pluck('file_name')->toArray();
+        foreach ($request->input('vehicle_documents', []) as $file) {
+            if (count($media) === 0 || ! in_array($file, $media)) {
+                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('vehicle_documents');
+            }
+        }
         
         return redirect()->route('admin.my-documents.index');
     }

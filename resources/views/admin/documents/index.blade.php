@@ -55,6 +55,9 @@
                                         {{ trans('cruds.document.fields.address') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.document.fields.vehicle_documents') }}
+                                    </th>
+                                    <th>
                                         {{ trans('cruds.document.fields.notes') }}
                                     </th>
                                     <th>
@@ -121,6 +124,13 @@
                                         </td>
                                         <td>
                                             @foreach($document->address as $key => $media)
+                                                <a href="{{ $media->getUrl() }}" target="_blank">
+                                                    {{ trans('global.view_file') }}
+                                                </a>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach($document->vehicle_documents as $key => $media)
                                                 <a href="{{ $media->getUrl() }}" target="_blank">
                                                     {{ trans('global.view_file') }}
                                                 </a>

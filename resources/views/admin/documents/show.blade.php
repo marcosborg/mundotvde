@@ -119,6 +119,18 @@
                                 </tr>
                                 <tr>
                                     <th>
+                                        {{ trans('cruds.document.fields.vehicle_documents') }}
+                                    </th>
+                                    <td>
+                                        @foreach($document->vehicle_documents as $key => $media)
+                                            <a href="{{ $media->getUrl() }}" target="_blank">
+                                                {{ trans('global.view_file') }}
+                                            </a>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
                                         {{ trans('cruds.document.fields.notes') }}
                                     </th>
                                     <td>

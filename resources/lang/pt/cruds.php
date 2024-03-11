@@ -1251,6 +1251,8 @@ return [
             'address_helper'                 => ' ',
             'notes'                          => 'Notas',
             'notes_helper'                   => ' ',
+            'vehicle_documents'              => 'Vehicle Documents',
+            'vehicle_documents_helper'       => ' ',
         ],
     ],
     'myDocument' => [

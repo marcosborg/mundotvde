@@ -39,6 +39,9 @@ class StoreDocumentRequest extends FormRequest
             'address' => [
                 'array',
             ],
+            'vehicle_documents' => [
+                'array',
+            ],
         ];
     }
 }
