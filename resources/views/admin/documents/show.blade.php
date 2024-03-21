@@ -119,10 +119,34 @@
                                 </tr>
                                 <tr>
                                     <th>
-                                        {{ trans('cruds.document.fields.vehicle_documents') }}
+                                        {{ trans('cruds.document.fields.dua_vehicle') }}
                                     </th>
                                     <td>
-                                        @foreach($document->vehicle_documents as $key => $media)
+                                        @foreach($document->dua_vehicle as $key => $media)
+                                            <a href="{{ $media->getUrl() }}" target="_blank">
+                                                {{ trans('global.view_file') }}
+                                            </a>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.document.fields.car_insurance') }}
+                                    </th>
+                                    <td>
+                                        @foreach($document->car_insurance as $key => $media)
+                                            <a href="{{ $media->getUrl() }}" target="_blank">
+                                                {{ trans('global.view_file') }}
+                                            </a>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.document.fields.ipo_vehicle') }}
+                                    </th>
+                                    <td>
+                                        @foreach($document->ipo_vehicle as $key => $media)
                                             <a href="{{ $media->getUrl() }}" target="_blank">
                                                 {{ trans('global.view_file') }}
                                             </a>

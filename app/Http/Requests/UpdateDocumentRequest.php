@@ -39,7 +39,13 @@ class UpdateDocumentRequest extends FormRequest
             'address' => [
                 'array',
             ],
-            'vehicle_documents' => [
+            'dua_vehicle' => [
+                'array',
+            ],
+            'car_insurance' => [
+                'array',
+            ],
+            'ipo_vehicle' => [
                 'array',
             ],
         ];

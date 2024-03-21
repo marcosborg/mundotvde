@@ -38,7 +38,9 @@ class Document extends Model implements HasMedia
         'driving_license',
         'iban',
         'address',
-        'vehicle_documents',
+        'dua_vehicle',
+        'car_insurance',
+        'ipo_vehicle',
     ];
 
     protected function serializeDate(DateTimeInterface $date)
@@ -99,8 +101,18 @@ class Document extends Model implements HasMedia
         return $this->getMedia('address');
     }
 
-    public function getVehicleDocumentsAttribute()
+    public function getDuaVehicleAttribute()
     {
-        return $this->getMedia('vehicle_documents');
+        return $this->getMedia('dua_vehicle');
+    }
+
+    public function getCarInsuranceAttribute()
+    {
+        return $this->getMedia('car_insurance');
+    }
+
+    public function getIpoVehicleAttribute()
+    {
+        return $this->getMedia('ipo_vehicle');
     }
 }

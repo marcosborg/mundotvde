@@ -55,7 +55,13 @@
                                         {{ trans('cruds.document.fields.address') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.document.fields.vehicle_documents') }}
+                                        {{ trans('cruds.document.fields.dua_vehicle') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('cruds.document.fields.car_insurance') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('cruds.document.fields.ipo_vehicle') }}
                                     </th>
                                     <th>
                                         {{ trans('cruds.document.fields.notes') }}
@@ -130,7 +136,21 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            @foreach($document->vehicle_documents as $key => $media)
+                                            @foreach($document->dua_vehicle as $key => $media)
+                                                <a href="{{ $media->getUrl() }}" target="_blank">
+                                                    {{ trans('global.view_file') }}
+                                                </a>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach($document->car_insurance as $key => $media)
+                                                <a href="{{ $media->getUrl() }}" target="_blank">
+                                                    {{ trans('global.view_file') }}
+                                                </a>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach($document->ipo_vehicle as $key => $media)
                                                 <a href="{{ $media->getUrl() }}" target="_blank">
                                                     {{ trans('global.view_file') }}
                                                 </a>

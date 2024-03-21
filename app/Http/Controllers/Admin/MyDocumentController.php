@@ -128,17 +128,45 @@ class MyDocumentController extends Controller
             }
         }
 
-        if (count($document->vehicle_documents) > 0) {
-            foreach ($document->vehicle_documents as $media) {
-                if (! in_array($media->file_name, $request->input('vehicle_documents', []))) {
+        if (count($document->dua_vehicle) > 0) {
+            foreach ($document->dua_vehicle as $media) {
+                if (! in_array($media->file_name, $request->input('dua_vehicle', []))) {
                     $media->delete();
                 }
             }
         }
-        $media = $document->vehicle_documents->pluck('file_name')->toArray();
-        foreach ($request->input('vehicle_documents', []) as $file) {
+        $media = $document->dua_vehicle->pluck('file_name')->toArray();
+        foreach ($request->input('dua_vehicle', []) as $file) {
             if (count($media) === 0 || ! in_array($file, $media)) {
-                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('vehicle_documents');
+                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('dua_vehicle');
+            }
+        }
+
+        if (count($document->car_insurance) > 0) {
+            foreach ($document->car_insurance as $media) {
+                if (! in_array($media->file_name, $request->input('car_insurance', []))) {
+                    $media->delete();
+                }
+            }
+        }
+        $media = $document->car_insurance->pluck('file_name')->toArray();
+        foreach ($request->input('car_insurance', []) as $file) {
+            if (count($media) === 0 || ! in_array($file, $media)) {
+                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('car_insurance');
+            }
+        }
+
+        if (count($document->ipo_vehicle) > 0) {
+            foreach ($document->ipo_vehicle as $media) {
+                if (! in_array($media->file_name, $request->input('ipo_vehicle', []))) {
+                    $media->delete();
+                }
+            }
+        }
+        $media = $document->ipo_vehicle->pluck('file_name')->toArray();
+        foreach ($request->input('ipo_vehicle', []) as $file) {
+            if (count($media) === 0 || ! in_array($file, $media)) {
+                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('ipo_vehicle');
             }
         }
         
