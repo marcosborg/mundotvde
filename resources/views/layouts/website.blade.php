@@ -24,6 +24,8 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('assets/website/css/custom.css?v=' . rand()) }}">
 
+    @yield('styles')
+
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B5667Z67RW">
 </script>
@@ -69,6 +71,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset("assets/website/js/vanilla-zoom.js") }}"></script>
     <script src="{{ asset("assets/website/js/theme.js?v=" . rand()) }}"></script>
+    @yield('scripts')
 </body>
 
 </html>
