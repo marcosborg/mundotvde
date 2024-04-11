@@ -17,33 +17,32 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CarsController extends Controller
 {
-    use MediaUploadingTrait;
-    use CsvImportTrait;
+    use MediaUploadingTrait, CsvImportTrait;
 
     public function index(Request $request)
     {
         abort_if(Gate::denies('car_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
-            $query = Car::query()->select(sprintf('%s.*', (new Car())->table));
+            $query = Car::query()->select(sprintf('%s.*', (new Car)->table));
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) {
-                $viewGate = 'car_show';
-                $editGate = 'car_edit';
-                $deleteGate = 'car_delete';
+                $viewGate      = 'car_show';
+                $editGate      = 'car_edit';
+                $deleteGate    = 'car_delete';
                 $crudRoutePart = 'cars';
 
                 return view('partials.datatablesActions', compact(
-                'viewGate',
-                'editGate',
-                'deleteGate',
-                'crudRoutePart',
-                'row'
-            ));
+                    'viewGate',
+                    'editGate',
+                    'deleteGate',
+                    'crudRoutePart',
+                    'row'
+                ));
             });
 
             $table->editColumn('id', function ($row) {
@@ -59,15 +58,15 @@ class CarsController extends Controller
                 return $row->price ? $row->price : '';
             });
             $table->editColumn('photo', function ($row) {
-                if ($photo = $row->photo) {
-                    return sprintf(
-        '<a href="%s" target="_blank"><img src="%s" width="50px" height="50px"></a>',
-        $photo->url,
-        $photo->thumbnail
-    );
+                if (! $row->photo) {
+                    return '';
+                }
+                $links = [];
+                foreach ($row->photo as $media) {
+                    $links[] = '<a href="' . $media->getUrl() . '" target="_blank"><img src="' . $media->getUrl('thumb') . '" width="50px" height="50px"></a>';
                 }
 
-                return '';
+                return implode(' ', $links);
             });
 
             $table->rawColumns(['actions', 'placeholder', 'photo']);
@@ -89,8 +88,8 @@ class CarsController extends Controller
     {
         $car = Car::create($request->all());
 
-        if ($request->input('photo', false)) {
-            $car->addMedia(storage_path('tmp/uploads/' . basename($request->input('photo'))))->toMediaCollection('photo');
+        foreach ($request->input('photo', []) as $file) {
+            $car->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('photo');
         }
 
         if ($media = $request->input('ck-media', false)) {
@@ -111,15 +110,18 @@ class CarsController extends Controller
     {
         $car->update($request->all());
 
-        if ($request->input('photo', false)) {
-            if (!$car->photo || $request->input('photo') !== $car->photo->file_name) {
-                if ($car->photo) {
-                    $car->photo->delete();
+        if (count($car->photo) > 0) {
+            foreach ($car->photo as $media) {
+                if (! in_array($media->file_name, $request->input('photo', []))) {
+                    $media->delete();
                 }
-                $car->addMedia(storage_path('tmp/uploads/' . basename($request->input('photo'))))->toMediaCollection('photo');
             }
-        } elseif ($car->photo) {
-            $car->photo->delete();
+        }
+        $media = $car->photo->pluck('file_name')->toArray();
+        foreach ($request->input('photo', []) as $file) {
+            if (count($media) === 0 || ! in_array($file, $media)) {
+                $car->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('photo');
+            }
         }
 
         return redirect()->route('admin.cars.index');
@@ -143,7 +145,11 @@ class CarsController extends Controller
 
     public function massDestroy(MassDestroyCarRequest $request)
     {
-        Car::whereIn('id', request('ids'))->delete();
+        $cars = Car::find(request('ids'));
+
+        foreach ($cars as $car) {
+            $car->delete();
+        }
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
