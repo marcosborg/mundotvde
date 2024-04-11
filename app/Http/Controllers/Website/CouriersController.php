@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class CouriersController extends Controller
 {
-    public function index()
+    public function index($id = 1)
     {
-        $courier = Courier::first();
+        $courier = Courier::find($id);
 
         return view('website.couriers')->with('courier', $courier);
     }

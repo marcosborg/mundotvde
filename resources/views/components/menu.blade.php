@@ -16,8 +16,16 @@
                         <a class="dropdown-item" href="/tvde/consultadoria">Consultadoria</a>
                     </div>
                 </li>
-                <li class="nav-item"><a class="nav-link {{ request()->is('tvde/estafetas') ? 'active' : '' }}"
-                        href="/tvde/estafetas">Estafetas</a></li>
+                <li class="nav-item dropdown"><a
+                        class="nav-link {{ request()->is('tvde/estafetas') || request()->is('tvde/estafetas/1') || request()->is('tvde/estafetas/2') ? 'active' : '' }}"
+                        aria-expanded="false" data-bs-toggle="dropdown" href="#">Estafetas <i
+                            class="fas fa-caret-down"></i></a>
+                    <div class="dropdown-menu">
+                        @foreach (\App\Models\Courier::all() as $item)
+                        <a class="dropdown-item" href="/tvde/estafetas/{{ $item->id }}">{{ $item->title }}</a>
+                        @endforeach
+                    </div>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('tvde/transfers-tours') ? 'active' : '' }}"
                         href="/tvde/transfers-tours">Transfer´s e

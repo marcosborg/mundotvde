@@ -10,7 +10,7 @@ Route::prefix('tvde')->group(function () {
             Route::get('/{id}', 'Website\StandController@car');
         }
     );
-    Route::get('estafetas', 'Website\CouriersController@index');
+    Route::get('estafetas/{id?}', 'Website\CouriersController@index');
     Route::get('formacao', 'Website\TrainingsController@index');
     Route::get('transfers-tours', 'Website\TransferTourController@index');
     Route::get('transfer-tour/{id}', 'Website\TransferTourController@transferTour');
