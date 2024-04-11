@@ -18,7 +18,7 @@
                 </li>
                 <li class="nav-item dropdown"><a
                         class="nav-link {{ request()->is('tvde/estafetas') || request()->is('tvde/estafetas/1') || request()->is('tvde/estafetas/2') ? 'active' : '' }}"
-                        aria-expanded="false" data-bs-toggle="dropdown" href="#">Estafetas <i
+                        aria-expanded="false" data-bs-toggle="dropdown" href="#">Bolsa TVDE <i
                             class="fas fa-caret-down"></i></a>
                     <div class="dropdown-menu">
                         @foreach (\App\Models\Courier::all() as $item)
