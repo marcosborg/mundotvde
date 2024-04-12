@@ -49,22 +49,6 @@ Rentabilize o seu tempo com as nossas parcerias. Com os nossos parceiros pode re
                         <label for="city">Cidade</label>
                         <input type="text" id="city" name="city" class="form-control">
                     </div>
-                    <div class="row mt-4">
-                        <div class="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="courier" name="courier">
-                                <label class="form-check-label" for="courier">
-                                    Tem conta Estafeta?
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <input type="text" id="account" name="account" class="form-control d-none"
-                                    placeholder="Conta estafeta">
-                            </div>
-                        </div>
-                    </div>
                     <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" id="rgpd" name="rgpd">
                         <label class="form-check-label" for="rgpd">

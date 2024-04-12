@@ -128,7 +128,6 @@ class FormsController extends Controller
         if ($request->courier) {
             $CourierForm->courier = 1;
         }
-        $CourierForm->account = $request->account;
         $CourierForm->rgpd = 1;
         $CourierForm->save();
 
