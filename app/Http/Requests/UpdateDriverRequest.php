@@ -87,6 +87,10 @@ class UpdateDriverRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'bolt_name' => [
+                'string',
+                'nullable',
+            ],
             'license_plate' => [
                 'string',
                 'nullable',

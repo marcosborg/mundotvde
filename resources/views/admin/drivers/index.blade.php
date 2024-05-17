@@ -100,6 +100,9 @@
                                     {{ trans('cruds.driver.fields.uber_uuid') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.bolt_name') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.driver.fields.license_plate') }}
                                 </th>
                                 <th>
@@ -194,6 +197,7 @@
 { data: 'driver_license', name: 'driver_license' },
 { data: 'driver_vat', name: 'driver_vat' },
 { data: 'uber_uuid', name: 'uber_uuid' },
+{ data: 'bolt_name', name: 'bolt_name' },
 { data: 'license_plate', name: 'license_plate' },
 { data: 'brand', name: 'brand' },
 { data: 'model', name: 'model' },

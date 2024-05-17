@@ -125,6 +125,9 @@ class DriverController extends Controller
             $table->editColumn('uber_uuid', function ($row) {
                 return $row->uber_uuid ? $row->uber_uuid : '';
             });
+            $table->editColumn('bolt_name', function ($row) {
+                return $row->bolt_name ? $row->bolt_name : '';
+            });
             $table->editColumn('license_plate', function ($row) {
                 return $row->license_plate ? $row->license_plate : '';
             });

@@ -997,6 +997,8 @@ return [
             'citizen_card_helper'   => ' ',
             'notes'                 => 'Notas',
             'notes_helper'          => ' ',
+            'bolt_name'             => 'Nome Bolt',
+            'bolt_name_helper'      => ' ',
         ],
     ],
     'card' => [

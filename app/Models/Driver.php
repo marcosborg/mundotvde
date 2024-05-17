@@ -44,6 +44,7 @@ class Driver extends Model
         'driver_license',
         'driver_vat',
         'uber_uuid',
+        'bolt_name',
         'license_plate',
         'brand',
         'model',
