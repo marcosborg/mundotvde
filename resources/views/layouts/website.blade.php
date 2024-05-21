@@ -58,7 +58,6 @@
                         </div>
                     </form>
                 </div>
-                <x-whatsapp />
             </div>
         </section>
     </main>

@@ -39,7 +39,15 @@
     </div>
 </footer>
 
+<div class="whatsapp-button">
+    <a href="https://api.whatsapp.com/send?phone=351964028006" target="_blank">
+        <img src="/assets/website/img/whatsapp.png" width="200">
+    </a>
+</div>
 <div id="social-floating-button">
+    <a target="_blank" href="">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
     <a target="_blank" href="https://www.facebook.com/mundotvde">
         <i class="fa-brands fa-facebook-f"></i>
     </a>
@@ -49,6 +57,14 @@
 </div>
 
 <style>
+    .whatsapp-button {
+        position: fixed;
+        bottom: 100px;
+        right: 40px;
+        display: flex;
+        z-index: 1000;
+    }
+
     #social-floating-button {
         position: fixed;
         bottom: 40px;
