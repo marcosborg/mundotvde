@@ -45,9 +45,6 @@
     </a>
 </div>
 <div id="social-floating-button">
-    <a target="_blank" href="">
-        <i class="fa-brands fa-whatsapp"></i>
-    </a>
     <a target="_blank" href="https://www.facebook.com/mundotvde">
         <i class="fa-brands fa-facebook-f"></i>
     </a>
