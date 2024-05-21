@@ -35,14 +35,6 @@
                                 </tr>
                                 <tr>
                                     <th>
-                                        {{ trans('cruds.tvdeActivity.fields.tvde_operator') }}
-                                    </th>
-                                    <td>
-                                        {{ $tvdeActivity->tvde_operator->name ?? '' }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>
                                         {{ trans('cruds.tvdeActivity.fields.driver_code') }}
                                     </th>
                                     <td>
@@ -63,6 +55,14 @@
                                     </th>
                                     <td>
                                         {{ $tvdeActivity->earnings_two }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.tvdeActivity.fields.earnings_three') }}
+                                    </th>
+                                    <td>
+                                        {{ $tvdeActivity->earnings_three }}
                                     </td>
                                 </tr>
                             </tbody>

@@ -7,9 +7,7 @@ use App\Http\Controllers\Traits\CsvImportTrait;
 use App\Http\Requests\MassDestroyTvdeActivityRequest;
 use App\Http\Requests\StoreTvdeActivityRequest;
 use App\Http\Requests\UpdateTvdeActivityRequest;
-use App\Models\Company;
 use App\Models\TvdeActivity;
-use App\Models\TvdeOperator;
 use App\Models\TvdeWeek;
 use Gate;
 use Illuminate\Http\Request;
@@ -25,7 +23,7 @@ class TvdeActivityController extends Controller
         abort_if(Gate::denies('tvde_activity_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
-            $query = TvdeActivity::with(['tvde_week', 'tvde_operator'])->select(sprintf('%s.*', (new TvdeActivity)->table));
+            $query = TvdeActivity::with(['tvde_week'])->select(sprintf('%s.*', (new TvdeActivity)->table));
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -53,10 +51,6 @@ class TvdeActivityController extends Controller
                 return $row->tvde_week ? $row->tvde_week->start_date : '';
             });
 
-            $table->addColumn('tvde_operator_name', function ($row) {
-                return $row->tvde_operator ? $row->tvde_operator->name : '';
-            });
-
             $table->editColumn('driver_code', function ($row) {
                 return $row->driver_code ? $row->driver_code : '';
             });
@@ -66,8 +60,11 @@ class TvdeActivityController extends Controller
             $table->editColumn('earnings_two', function ($row) {
                 return $row->earnings_two ? $row->earnings_two : '';
             });
+            $table->editColumn('earnings_three', function ($row) {
+                return $row->earnings_three ? $row->earnings_three : '';
+            });
 
-            $table->rawColumns(['actions', 'placeholder', 'tvde_week', 'tvde_operator']);
+            $table->rawColumns(['actions', 'placeholder', 'tvde_week']);
 
             return $table->make(true);
         }
@@ -81,9 +78,7 @@ class TvdeActivityController extends Controller
 
         $tvde_weeks = TvdeWeek::pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $tvde_operators = TvdeOperator::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
-        return view('admin.tvdeActivities.create', compact('tvde_operators', 'tvde_weeks'));
+        return view('admin.tvdeActivities.create', compact('tvde_weeks'));
     }
 
     public function store(StoreTvdeActivityRequest $request)
@@ -99,11 +94,9 @@ class TvdeActivityController extends Controller
 
         $tvde_weeks = TvdeWeek::pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $tvde_operators = TvdeOperator::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $tvdeActivity->load('tvde_week');
 
-        $tvdeActivity->load('tvde_week', 'tvde_operator');
-
-        return view('admin.tvdeActivities.edit', compact('tvdeActivity', 'tvde_operators', 'tvde_weeks'));
+        return view('admin.tvdeActivities.edit', compact('tvdeActivity', 'tvde_weeks'));
     }
 
     public function update(UpdateTvdeActivityRequest $request, TvdeActivity $tvdeActivity)
@@ -117,7 +110,7 @@ class TvdeActivityController extends Controller
     {
         abort_if(Gate::denies('tvde_activity_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $tvdeActivity->load('tvde_week', 'tvde_operator', 'company');
+        $tvdeActivity->load('tvde_week');
 
         return view('admin.tvdeActivities.show', compact('tvdeActivity'));
     }

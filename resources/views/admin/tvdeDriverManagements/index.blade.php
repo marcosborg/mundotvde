@@ -217,6 +217,7 @@
                 success: (resp) => {
                     $.LoadingOverlay('hide');
                     if(resp){
+                        
                         $('#launchActivityModal').modal('show');
                         $('#launchActivityModal input[name=week_id]').val(resp.week_id);
                         $('#launchActivityModal input[name=driver_id]').val(resp.driver.id);
@@ -227,6 +228,27 @@
                         }
                         let html = '';
                         resp.driver.tvde_operators.forEach(tvde_operator => {
+                            let earnings_one = 0;
+                            let earnings_two = 0;
+                            let earnings_three = 0;
+                            switch (tvde_operator.id) {
+                                case 1:
+                                    earnings_one = resp.uber_activities.earnings_one;
+                                    earnings_two = resp.uber_activities.earnings_two;
+                                    earnings_three = resp.uber_activities.earnings_three;
+                                    break;
+                                case 2:
+                                    earnings_one = resp.bolt_activities.earnings_one;
+                                    earnings_two = resp.bolt_activities.earnings_two;
+                                    earnings_three = resp.bolt_activities.earnings_three;
+                                    break;
+                                default:
+                                    earnings_one = 0;
+                                    earnings_two = 0;
+                                    earnings_three = 0;
+                                    break;
+                            }
+
                             html += '<div class="panel panel-default">';
                             html += '<div class="panel-heading">';
                             html += tvde_operator.name;
@@ -234,15 +256,15 @@
                             html += '<div class="panel-body">';
                             html += '<div class="form-group">';
                             html += '<label>Bruto</label>';
-                            html += '<input type="text" name="create-' + tvde_operator.id + '-gross" class="form-control" value="0">';
+                            html += '<input type="text" name="create-' + tvde_operator.id + '-gross" class="form-control" value="' + earnings_one + '">';
                             html += '</div>';
                             html += '<div class="form-group">';
                             html += '<label>Líquido</label>';
-                            html += '<input type="text" name="create-' + tvde_operator.id + '-net" class="form-control" value="0">';
+                            html += '<input type="text" name="create-' + tvde_operator.id + '-net" class="form-control" value="' + earnings_two + '">';
                             html += '</div>';
                             html += '<div class="form-group">';
                             html += '<label>Impostos</label>';
-                            html += '<input type="text" name="create-' + tvde_operator.id + '-taxes" class="form-control" value="0">';
+                            html += '<input type="text" name="create-' + tvde_operator.id + '-taxes" class="form-control" value="' + earnings_three + '">';
                             html += '</div>';
                             html += '</div>';
                             html += '</div>';

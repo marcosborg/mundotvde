@@ -21,10 +21,10 @@ class TvdeActivity extends Model
 
     protected $fillable = [
         'tvde_week_id',
-        'tvde_operator_id',
         'driver_code',
         'earnings_one',
         'earnings_two',
+        'earnings_three',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -38,11 +38,6 @@ class TvdeActivity extends Model
     public function tvde_week()
     {
         return $this->belongsTo(TvdeWeek::class, 'tvde_week_id');
-    }
-
-    public function tvde_operator()
-    {
-        return $this->belongsTo(TvdeOperator::class, 'tvde_operator_id');
     }
     
 }

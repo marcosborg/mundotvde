@@ -21,10 +21,6 @@ class StoreTvdeActivityRequest extends FormRequest
                 'required',
                 'integer',
             ],
-            'tvde_operator_id' => [
-                'required',
-                'integer',
-            ],
             'driver_code' => [
                 'string',
                 'required',

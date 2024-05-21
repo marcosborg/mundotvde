@@ -7,6 +7,7 @@ use App\Models\ActivityLaunch;
 use App\Models\ActivityPerOperator;
 use App\Models\Driver;
 use App\Models\TvdeYear;
+use App\Models\TvdeActivity;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -103,9 +104,30 @@ class TvdeDriverManagementController extends Controller
         $driver = Driver::where('id', $request->driver_id)
             ->with('tvde_operators')
             ->first()->load('card');
+
+        $uber_activities = TvdeActivity::where([
+            'tvde_week_id' => $request->week_id,
+            'driver_code' => $driver->uber_uuid
+        ])->get();
+
+        $bolt_activities = TvdeActivity::where([
+            'tvde_week_id' => $request->week_id,
+            'driver_code' => $driver->bolt_name
+        ])->get();
+
         return [
             'driver' => $driver,
             'week_id' => $request->week_id,
+            'uber_activities' => [
+                'earnings_one' => $uber_activities->sum('earnings_one'),
+                'earnings_two' => $uber_activities->sum('earnings_two'),
+                'earnings_three' => $uber_activities->sum('earnings_three'),
+            ],
+            'bolt_activities' => [
+                'earnings_one' => $bolt_activities->sum('earnings_one'),
+                'earnings_two' => $bolt_activities->sum('earnings_two'),
+                'earnings_three' => $bolt_activities->sum('earnings_three'),
+            ]
         ];
     }
 

@@ -245,10 +245,6 @@
                 </div>
             </div>
         </div>
-        <script>console.log({
-            count: {{ $count }},
-            years_count: {{ $years_count }}
-        });</script>
         @endforeach
     </div>
 </div>

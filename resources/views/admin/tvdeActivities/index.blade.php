@@ -34,9 +34,6 @@
                                     {{ trans('cruds.tvdeActivity.fields.tvde_week') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.tvdeActivity.fields.tvde_operator') }}
-                                </th>
-                                <th>
                                     {{ trans('cruds.tvdeActivity.fields.driver_code') }}
                                 </th>
                                 <th>
@@ -44,6 +41,9 @@
                                 </th>
                                 <th>
                                     {{ trans('cruds.tvdeActivity.fields.earnings_two') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.tvdeActivity.fields.earnings_three') }}
                                 </th>
                                 <th>
                                     &nbsp;
@@ -106,10 +106,10 @@
       { data: 'placeholder', name: 'placeholder' },
 { data: 'id', name: 'id' },
 { data: 'tvde_week_start_date', name: 'tvde_week.start_date' },
-{ data: 'tvde_operator_name', name: 'tvde_operator.name' },
 { data: 'driver_code', name: 'driver_code' },
 { data: 'earnings_one', name: 'earnings_one' },
 { data: 'earnings_two', name: 'earnings_two' },
+{ data: 'earnings_three', name: 'earnings_three' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
