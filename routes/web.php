@@ -428,6 +428,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('tvde-activities/process-csv-import', 'TvdeActivityController@processCsvImport')->name('tvde-activities.processCsvImport');
     Route::resource('tvde-activities', 'TvdeActivityController');
 
+    // Document Warning
+    Route::delete('document-warnings/destroy', 'DocumentWarningController@massDestroy')->name('document-warnings.massDestroy');
+    Route::resource('document-warnings', 'DocumentWarningController');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

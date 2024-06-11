@@ -148,6 +148,17 @@
                                 </a>
                             </li>
                             @endcan
+                            @can('document_warning_access')
+                                        <li class="{{ request()->is("admin/document-warnings") || request()->is("admin/document-warnings/*") ? "active" : "" }}">
+                                            <a href="/admin/document-warnings/1/edit">
+                                                <i class="fa-fw fas fa-bell">
+
+                                                </i>
+                                                <span>{{ trans('cruds.documentWarning.title') }}</span>
+
+                                            </a>
+                                        </li>
+                                    @endcan
                         </ul>
                     </li>
                     @endcan
