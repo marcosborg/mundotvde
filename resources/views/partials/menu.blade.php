@@ -1201,6 +1201,41 @@
                 </ul>
             </li>
             @endcan
+            @can('driver_recommendation_access')
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa-fw fas fa-marker">
+
+                        </i>
+                        <span>{{ trans('cruds.driverRecommendation.title') }}</span>
+                        <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('recommendation_status_access')
+                            <li class="{{ request()->is("admin/recommendation-statuses") || request()->is("admin/recommendation-statuses/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.recommendation-statuses.index") }}">
+                                    <i class="fa-fw fas fa-marker">
+
+                                    </i>
+                                    <span>{{ trans('cruds.recommendationStatus.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('recommendation_access')
+                            <li class="{{ request()->is("admin/recommendations") || request()->is("admin/recommendations/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.recommendations.index") }}">
+                                    <i class="fa-fw fas fa-marker">
+
+                                    </i>
+                                    <span>{{ trans('cruds.recommendation.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan
             @php($unread = \App\Models\QaTopic::unreadCount())
             <li class="{{ request()->is("admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
                 <a href="{{ route("admin.messenger.index") }}">

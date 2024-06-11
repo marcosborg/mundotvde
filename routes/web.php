@@ -432,6 +432,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('document-warnings/destroy', 'DocumentWarningController@massDestroy')->name('document-warnings.massDestroy');
     Route::resource('document-warnings', 'DocumentWarningController');
 
+    // Recommendation Status
+    Route::delete('recommendation-statuses/destroy', 'RecommendationStatusController@massDestroy')->name('recommendation-statuses.massDestroy');
+    Route::resource('recommendation-statuses', 'RecommendationStatusController');
+
+    // Recommendation
+    Route::delete('recommendations/destroy', 'RecommendationController@massDestroy')->name('recommendations.massDestroy');
+    Route::post('recommendations/media', 'RecommendationController@storeMedia')->name('recommendations.storeMedia');
+    Route::post('recommendations/ckmedia', 'RecommendationController@storeCKEditorImages')->name('recommendations.storeCKEditorImages');
+    Route::resource('recommendations', 'RecommendationController');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
