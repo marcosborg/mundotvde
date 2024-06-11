@@ -44,7 +44,7 @@ class NewDocumentSubmited extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('O condutor ' . $this->driver_name . 'submeteu o documento ' . $this->document_name . '.')
+                    ->line('O condutor ' . $this->driver_name . ' submeteu o documento ' . $this->document_name . '.')
                     ->line('Pode consultar na sua área de administração!');
     }
 
