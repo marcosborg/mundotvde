@@ -61,6 +61,30 @@
                                         <input type="checkbox" disabled="disabled" {{ $receipt->paid ? 'checked' : '' }}>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.receipt.fields.company') }}
+                                    </th>
+                                    <td>
+                                        {{ App\Models\Receipt::COMPANY_RADIO[$receipt->company] ?? '' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.receipt.fields.iva') }}
+                                    </th>
+                                    <td>
+                                        {{ App\Models\Receipt::IVA_RADIO[$receipt->iva] ?? '' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        {{ trans('cruds.receipt.fields.retention') }}
+                                    </th>
+                                    <td>
+                                        {{ App\Models\Receipt::RETENTION_RADIO[$receipt->retention] ?? '' }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="form-group">

@@ -31,9 +31,6 @@
                                     {{ trans('cruds.receipt.fields.driver') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.driver.fields.code') }}
-                                </th>
-                                <th>
                                     {{ trans('cruds.receipt.fields.value') }}
                                 </th>
                                 <th>
@@ -41,6 +38,15 @@
                                 </th>
                                 <th>
                                     {{ trans('cruds.receipt.fields.paid') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.receipt.fields.company') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.receipt.fields.iva') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.receipt.fields.retention') }}
                                 </th>
                                 <th>
                                     {{ trans('cruds.receipt.fields.created_at') }}
@@ -53,7 +59,6 @@
                                 <td>
                                 </td>
                                 <td>
-                                    <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                                 </td>
                                 <td>
                                     <select class="search">
@@ -66,11 +71,32 @@
                                 <td>
                                 </td>
                                 <td>
-                                    <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                                 </td>
                                 <td>
                                 </td>
                                 <td>
+                                    <select class="search" strict="true">
+                                        <option value>{{ trans('global.all') }}</option>
+                                        @foreach(App\Models\Receipt::COMPANY_RADIO as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="search" strict="true">
+                                        <option value>{{ trans('global.all') }}</option>
+                                        @foreach(App\Models\Receipt::IVA_RADIO as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="search" strict="true">
+                                        <option value>{{ trans('global.all') }}</option>
+                                        @foreach(App\Models\Receipt::RETENTION_RADIO as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
                                 </td>
                                 <td>
                                     <input class="search" type="text" placeholder="{{ trans('global.search') }}">
@@ -135,10 +161,12 @@
       { data: 'placeholder', name: 'placeholder' },
 { data: 'id', name: 'id' },
 { data: 'driver_name', name: 'driver.name' },
-{ data: 'driver.code', name: 'driver.code' },
 { data: 'value', name: 'value' },
 { data: 'file', name: 'file', sortable: false, searchable: false },
 { data: 'paid', name: 'paid' },
+{ data: 'company', name: 'company' },
+{ data: 'iva', name: 'iva' },
+{ data: 'retention', name: 'retention' },
 { data: 'created_at', name: 'created_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],

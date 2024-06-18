@@ -1289,6 +1289,12 @@ return [
             'deleted_at_helper' => ' ',
             'paid'              => 'Pago',
             'paid_helper'       => ' ',
+            'company'                   => 'Company',
+            'company_helper'            => ' ',
+            'iva'                       => 'Iva',
+            'iva_helper'                => ' ',
+            'retention'                 => 'Retention',
+            'retention_helper'          => ' ',
         ],
     ],
     'myReceipt' => [

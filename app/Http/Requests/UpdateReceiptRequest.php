@@ -27,6 +27,15 @@ class UpdateReceiptRequest extends FormRequest
             'file' => [
                 'required',
             ],
+            'company' => [
+                'required',
+            ],
+            'iva' => [
+                'required',
+            ],
+            'retention' => [
+                'required',
+            ],
         ];
     }
 }

@@ -52,6 +52,45 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.receipt.fields.paid_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('company') ? 'has-error' : '' }}">
+                            <label class="required">{{ trans('cruds.receipt.fields.company') }}</label>
+                            @foreach(App\Models\Receipt::COMPANY_RADIO as $key => $label)
+                                <div>
+                                    <input type="radio" id="company_{{ $key }}" name="company" value="{{ $key }}" {{ old('company', $receipt->company) === (string) $key ? 'checked' : '' }} required>
+                                    <label for="company_{{ $key }}" style="font-weight: 400">{{ $label }}</label>
+                                </div>
+                            @endforeach
+                            @if($errors->has('company'))
+                                <span class="help-block" role="alert">{{ $errors->first('company') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.receipt.fields.company_helper') }}</span>
+                        </div>
+                        <div class="form-group {{ $errors->has('iva') ? 'has-error' : '' }}">
+                            <label class="required">{{ trans('cruds.receipt.fields.iva') }}</label>
+                            @foreach(App\Models\Receipt::IVA_RADIO as $key => $label)
+                                <div>
+                                    <input type="radio" id="iva_{{ $key }}" name="iva" value="{{ $key }}" {{ old('iva', $receipt->iva) === (string) $key ? 'checked' : '' }} required>
+                                    <label for="iva_{{ $key }}" style="font-weight: 400">{{ $label }}</label>
+                                </div>
+                            @endforeach
+                            @if($errors->has('iva'))
+                                <span class="help-block" role="alert">{{ $errors->first('iva') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.receipt.fields.iva_helper') }}</span>
+                        </div>
+                        <div class="form-group {{ $errors->has('retention') ? 'has-error' : '' }}">
+                            <label class="required">{{ trans('cruds.receipt.fields.retention') }}</label>
+                            @foreach(App\Models\Receipt::RETENTION_RADIO as $key => $label)
+                                <div>
+                                    <input type="radio" id="retention_{{ $key }}" name="retention" value="{{ $key }}" {{ old('retention', $receipt->retention) === (string) $key ? 'checked' : '' }} required>
+                                    <label for="retention_{{ $key }}" style="font-weight: 400">{{ $label }}</label>
+                                </div>
+                            @endforeach
+                            @if($errors->has('retention'))
+                                <span class="help-block" role="alert">{{ $errors->first('retention') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.receipt.fields.retention_helper') }}</span>
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}

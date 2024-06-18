@@ -65,7 +65,17 @@ class ReceiptController extends Controller
                 return '<input id="check-' . $row->id . '" onclick="checkPay(' . $row->id . ')" type="checkbox" ' . ($row->paid ? 'disabled' : '') . ' ' . ($row->paid ? 'checked' : null) . '>';
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'driver', 'file', 'paid']);
+            $table->editColumn('company', function ($row) {
+                return $row->company ? Receipt::COMPANY_RADIO[$row->company] : '';
+            });
+            $table->editColumn('iva', function ($row) {
+                return $row->iva ? Receipt::IVA_RADIO[$row->iva] : '';
+            });
+            $table->editColumn('retention', function ($row) {
+                return $row->retention ? Receipt::RETENTION_RADIO[$row->retention] : '';
+            });
+
+            $table->rawColumns(['actions', 'placeholder', 'driver', 'file', 'paid', 'company']);
 
             return $table->make(true);
         }

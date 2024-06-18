@@ -20,6 +20,24 @@ class Receipt extends Model implements HasMedia
         'file',
     ];
 
+    public const COMPANY_RADIO = [
+        'OC'  => 'OC',
+        'TGA' => 'TGA',
+    ];
+
+    public const IVA_RADIO = [
+        'Sem IVA' => 'Sem IVA',
+        'IVA 6%'  => 'IVA 6%',
+        'IVA 23%' => 'IVA 23%',
+    ];
+
+    public const RETENTION_RADIO = [
+        '11.50%' => '11.50%',
+        '16.50%' => '16.50%',
+        '20%'    => '20%',
+        '25%'    => '25%',
+    ];
+
     protected $dates = [
         'created_at',
         'updated_at',
@@ -30,6 +48,9 @@ class Receipt extends Model implements HasMedia
         'driver_id',
         'value',
         'paid',
+        'company',
+        'iva',
+        'retention',
         'created_at',
         'updated_at',
         'deleted_at',
