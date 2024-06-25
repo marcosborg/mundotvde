@@ -1646,12 +1646,12 @@ return [
         ],
     ],
     'driverRecommendation' => [
-        'title'          => 'Driver Recommendation',
-        'title_singular' => 'Driver Recommendation',
+        'title'          => 'Recomendação de motorista',
+        'title_singular' => 'Recomendações de motrista',
     ],
     'recommendation' => [
-        'title'          => 'Recommendation',
-        'title_singular' => 'Recommendation',
+        'title'          => 'Recomendações',
+        'title_singular' => 'Recomendação',
         'fields'         => [
             'id'                           => 'ID',
             'id_helper'                    => ' ',
