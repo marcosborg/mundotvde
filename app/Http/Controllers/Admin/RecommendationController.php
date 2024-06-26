@@ -14,7 +14,8 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\User;
+use App\Notifications\SendRecomendation;
+use Illuminate\Support\Facades\Notification;
 
 class RecommendationController extends Controller
 {
@@ -48,7 +49,7 @@ class RecommendationController extends Controller
 
         $driver = Driver::where('user_id', auth()->user()->id)->first();
 
-        if(!$driver){
+        if (!$driver) {
             $driver_id = 0;
         } else {
             $driver_id = $driver->id;
@@ -63,11 +64,14 @@ class RecommendationController extends Controller
 
     public function store(StoreRecommendationRequest $request)
     {
-        $recommendation = Recommendation::create($request->all());
+        $recommendation = Recommendation::create($request->all())->load('driver', 'recommendation_status');
 
         if ($media = $request->input('ck-media', false)) {
             Media::whereIn('id', $media)->update(['model_id' => $recommendation->id]);
         }
+
+        Notification::route('mail', env('MAIL_FROM_ADDRESS'))
+            ->notify(new SendRecomendation($recommendation));
 
         return redirect()->route('admin.recommendations.index');
     }

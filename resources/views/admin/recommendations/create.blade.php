@@ -25,7 +25,7 @@
               <span class="help-block">{{ trans('cruds.recommendation.fields.driver_helper') }}</span>
             </div>
             @else
-            <input type="hidden" name="driver_id" id="driver_id" value="1">
+            <input type="hidden" name="driver_id" id="driver_id" value="{{ $driver_id }}">
             @endif
             @if (auth()->user()->roles()->where('title', 'Admin')->exists())
             <div class="form-group {{ $errors->has('recommendation_status') ? 'has-error' : '' }}">
