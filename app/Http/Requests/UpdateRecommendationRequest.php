@@ -36,6 +36,10 @@ class UpdateRecommendationRequest extends FormRequest
                 'string',
                 'required',
             ],
+            'city' => [
+                'string',
+                'required',
+            ],
         ];
     }
 }

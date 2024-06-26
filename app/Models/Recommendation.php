@@ -28,6 +28,7 @@ class Recommendation extends Model implements HasMedia
         'name',
         'email',
         'phone',
+        'city',
         'comments',
         'created_at',
         'updated_at',

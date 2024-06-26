@@ -60,6 +60,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.recommendation.fields.phone_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('city') ? 'has-error' : '' }}">
+                          <label class="required" for="city">{{ trans('cruds.recommendation.fields.city') }}</label>
+                          <input class="form-control" type="text" name="city" id="city" value="{{ old('city', $recommendation->city) }}" required>
+                          @if($errors->has('city'))
+                              <span class="help-block" role="alert">{{ $errors->first('city') }}</span>
+                          @endif
+                          <span class="help-block">{{ trans('cruds.recommendation.fields.city_helper') }}</span>
+                      </div>
                         <div class="form-group {{ $errors->has('comments') ? 'has-error' : '' }}">
                             <label for="comments">{{ trans('cruds.recommendation.fields.comments') }}</label>
                             <textarea class="form-control ckeditor" name="comments" id="comments">{!! old('comments', $recommendation->comments) !!}</textarea>

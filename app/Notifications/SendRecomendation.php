@@ -48,6 +48,7 @@ class SendRecomendation extends Notification
             ->line('<strong>Nome: </strong>' . $this->recommendation->name)
             ->line('<strong>Email: </strong>' . $this->recommendation->email)
             ->line('<strong>Telefone: </strong>' . $this->recommendation->phone)
+            ->line('<strong>Cidade: </strong>' . $this->recommendation->city)
             ->line('<strong>Observações: </strong>' . $this->recommendation->comments)
             ->line('<strong>Estado: </strong>' . $this->recommendation->recommendation_status->name);
     }

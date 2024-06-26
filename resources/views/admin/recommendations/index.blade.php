@@ -43,6 +43,9 @@
                                         {{ trans('cruds.recommendation.fields.phone') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.recommendation.fields.city') }}
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -70,6 +73,9 @@
                                         </td>
                                         <td>
                                             {{ $recommendation->phone ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $recommendation->city ?? '' }}
                                         </td>
                                         <td>
                                             @can('recommendation_show')

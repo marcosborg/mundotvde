@@ -67,6 +67,14 @@
                                 </tr>
                                 <tr>
                                     <th>
+                                        {{ trans('cruds.recommendation.fields.city') }}
+                                    </th>
+                                    <td>
+                                        {{ $recommendation->city }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
                                         {{ trans('cruds.recommendation.fields.comments') }}
                                     </th>
                                     <td>
