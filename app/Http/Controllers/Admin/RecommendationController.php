@@ -14,6 +14,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
 
 class RecommendationController extends Controller
 {
@@ -23,7 +24,20 @@ class RecommendationController extends Controller
     {
         abort_if(Gate::denies('recommendation_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $recommendations = Recommendation::with(['driver', 'recommendation_status'])->get();
+        $user = auth()->user();
+
+        $isAdmin = $user->roles()->where('title', 'Admin')->exists();
+
+        if ($isAdmin) {
+            $recommendations = Recommendation::with(['driver', 'recommendation_status'])
+                ->get();
+        } else {
+            $recommendations = Recommendation::whereHas('driver', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+                ->with(['driver', 'recommendation_status'])
+                ->get();
+        }
 
         return view('admin.recommendations.index', compact('recommendations'));
     }
@@ -103,10 +117,10 @@ class RecommendationController extends Controller
     {
         abort_if(Gate::denies('recommendation_create') && Gate::denies('recommendation_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $model         = new Recommendation();
-        $model->id     = $request->input('crud_id', 0);
+        $model = new Recommendation();
+        $model->id = $request->input('crud_id', 0);
         $model->exists = true;
-        $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
+        $media = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
     }
