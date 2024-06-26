@@ -46,11 +46,19 @@ class RecommendationController extends Controller
     {
         abort_if(Gate::denies('recommendation_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        $driver = Driver::where('user_id', auth()->user()->id)->first();
+
+        if(!$driver){
+            $driver_id = 0;
+        } else {
+            $driver_id = $driver->id;
+        }
+
         $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $recommendation_statuses = RecommendationStatus::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.recommendations.create', compact('drivers', 'recommendation_statuses'));
+        return view('admin.recommendations.create', compact('drivers', 'driver_id', 'recommendation_statuses'));
     }
 
     public function store(StoreRecommendationRequest $request)
