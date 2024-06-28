@@ -27,7 +27,11 @@ class RecommendationController extends Controller
 
         $user = auth()->user();
 
-        $isAdmin = $user->roles()->where('title', 'Admin')->orWhere('title', 'Gestor')->exists();
+        $isAdmin = $user->roles()->where('title', 'Admin')->exists();
+
+        if (!$isAdmin) {
+            $isAdmin = $user->roles()->where('title', 'Gestor')->exists();
+        }
 
         if ($isAdmin) {
             $recommendations = Recommendation::with(['driver', 'recommendation_status'])
