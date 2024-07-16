@@ -13,6 +13,8 @@ use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
+use App\Notifications\NewDocumentSend;
+use Illuminate\Support\Facades\Notification;
 
 class DocumentController extends Controller
 {
@@ -104,48 +106,48 @@ class DocumentController extends Controller
 
         if (count($document->citizen_card) > 0) {
             foreach ($document->citizen_card as $media) {
-                if (! in_array($media->file_name, $request->input('citizen_card', []))) {
+                if (!in_array($media->file_name, $request->input('citizen_card', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->citizen_card->pluck('file_name')->toArray();
         foreach ($request->input('citizen_card', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('citizen_card');
             }
         }
 
         if (count($document->tvde_driver_certificate) > 0) {
             foreach ($document->tvde_driver_certificate as $media) {
-                if (! in_array($media->file_name, $request->input('tvde_driver_certificate', []))) {
+                if (!in_array($media->file_name, $request->input('tvde_driver_certificate', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->tvde_driver_certificate->pluck('file_name')->toArray();
         foreach ($request->input('tvde_driver_certificate', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('tvde_driver_certificate');
             }
         }
 
         if (count($document->criminal_record) > 0) {
             foreach ($document->criminal_record as $media) {
-                if (! in_array($media->file_name, $request->input('criminal_record', []))) {
+                if (!in_array($media->file_name, $request->input('criminal_record', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->criminal_record->pluck('file_name')->toArray();
         foreach ($request->input('criminal_record', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('criminal_record');
             }
         }
 
         if ($request->input('profile_picture', false)) {
-            if (! $document->profile_picture || $request->input('profile_picture') !== $document->profile_picture->file_name) {
+            if (!$document->profile_picture || $request->input('profile_picture') !== $document->profile_picture->file_name) {
                 if ($document->profile_picture) {
                     $document->profile_picture->delete();
                 }
@@ -157,86 +159,98 @@ class DocumentController extends Controller
 
         if (count($document->driving_license) > 0) {
             foreach ($document->driving_license as $media) {
-                if (! in_array($media->file_name, $request->input('driving_license', []))) {
+                if (!in_array($media->file_name, $request->input('driving_license', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->driving_license->pluck('file_name')->toArray();
         foreach ($request->input('driving_license', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('driving_license');
             }
         }
 
         if (count($document->iban) > 0) {
             foreach ($document->iban as $media) {
-                if (! in_array($media->file_name, $request->input('iban', []))) {
+                if (!in_array($media->file_name, $request->input('iban', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->iban->pluck('file_name')->toArray();
         foreach ($request->input('iban', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('iban');
             }
         }
 
         if (count($document->address) > 0) {
             foreach ($document->address as $media) {
-                if (! in_array($media->file_name, $request->input('address', []))) {
+                if (!in_array($media->file_name, $request->input('address', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->address->pluck('file_name')->toArray();
         foreach ($request->input('address', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('address');
             }
         }
 
         if (count($document->dua_vehicle) > 0) {
             foreach ($document->dua_vehicle as $media) {
-                if (! in_array($media->file_name, $request->input('dua_vehicle', []))) {
+                if (!in_array($media->file_name, $request->input('dua_vehicle', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->dua_vehicle->pluck('file_name')->toArray();
         foreach ($request->input('dua_vehicle', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('dua_vehicle');
             }
         }
 
         if (count($document->car_insurance) > 0) {
             foreach ($document->car_insurance as $media) {
-                if (! in_array($media->file_name, $request->input('car_insurance', []))) {
+                if (!in_array($media->file_name, $request->input('car_insurance', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->car_insurance->pluck('file_name')->toArray();
         foreach ($request->input('car_insurance', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('car_insurance');
             }
         }
 
         if (count($document->ipo_vehicle) > 0) {
             foreach ($document->ipo_vehicle as $media) {
-                if (! in_array($media->file_name, $request->input('ipo_vehicle', []))) {
+                if (!in_array($media->file_name, $request->input('ipo_vehicle', []))) {
                     $media->delete();
                 }
             }
         }
         $media = $document->ipo_vehicle->pluck('file_name')->toArray();
         foreach ($request->input('ipo_vehicle', []) as $file) {
-            if (count($media) === 0 || ! in_array($file, $media)) {
+            if (count($media) === 0 || !in_array($file, $media)) {
                 $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('ipo_vehicle');
             }
+        }
+
+        if ($request->notify_driver) {
+            $driver = Driver::find($request->driver_id)->load('user');
+            if ($driver->email) {
+                $email = $driver->email;
+            } else {
+                $email = $driver->user->email;
+            }
+            $text = $request->notify_text;
+            Notification::route('mail', $email)
+                ->notify(new NewDocumentSend($text));
         }
 
         return redirect()->route('admin.documents.index');
@@ -275,10 +289,10 @@ class DocumentController extends Controller
     {
         abort_if(Gate::denies('document_create') && Gate::denies('document_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $model         = new Document();
-        $model->id     = $request->input('crud_id', 0);
+        $model = new Document();
+        $model->id = $request->input('crud_id', 0);
         $model->exists = true;
-        $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
+        $media = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
     }

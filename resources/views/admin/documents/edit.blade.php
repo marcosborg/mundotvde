@@ -24,6 +24,25 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.document.fields.driver_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('notify_driver') ? 'has-error' : '' }}">
+                          <div>
+                              <input type="hidden" name="notify_driver" value="0">
+                              <input type="checkbox" name="notify_driver" id="notify_driver" value="1" {{ $document->notify_driver || old('notify_driver', 0) === 1 ? 'checked' : '' }}>
+                              <label for="notify_driver" style="font-weight: 400">{{ trans('cruds.document.fields.notify_driver') }}</label>
+                          </div>
+                          @if($errors->has('notify_driver'))
+                              <span class="help-block" role="alert">{{ $errors->first('notify_driver') }}</span>
+                          @endif
+                          <span class="help-block">{{ trans('cruds.document.fields.notify_driver_helper') }}</span>
+                      </div>
+                      <div class="form-group {{ $errors->has('notify_text') ? 'has-error' : '' }}">
+                          <label for="notify_text">{{ trans('cruds.document.fields.notify_text') }}</label>
+                          <input class="form-control" type="text" name="notify_text" id="notify_text" value="{{ old('notify_text', $document->notify_text) }}">
+                          @if($errors->has('notify_text'))
+                              <span class="help-block" role="alert">{{ $errors->first('notify_text') }}</span>
+                          @endif
+                          <span class="help-block">{{ trans('cruds.document.fields.notify_text_helper') }}</span>
+                      </div>
                         <div class="form-group {{ $errors->has('citizen_card') ? 'has-error' : '' }}">
                             <label for="citizen_card">{{ trans('cruds.document.fields.citizen_card') }}</label>
                             <div class="needsclick dropzone" id="citizen_card-dropzone">

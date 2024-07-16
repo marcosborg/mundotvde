@@ -21,6 +21,10 @@ class StoreDocumentRequest extends FormRequest
                 'required',
                 'integer',
             ],
+            'notify_text' => [
+                'string',
+                'nullable',
+            ],
             'citizen_card' => [
                 'array',
             ],
