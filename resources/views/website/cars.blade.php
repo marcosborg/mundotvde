@@ -7,7 +7,7 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
 @endsection
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-< <style>
+<style>
     .swiper {
     width: 100%;
     height: 100%;
@@ -75,7 +75,7 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
         height: 100px;
         margin: 10px;
     }
-    </style>
+</style>
     @endsection
     @section('content')
     <section class="clean-block clean-blog-list dark pt-5">
@@ -89,21 +89,31 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
                     <div class="row">
                         <div class="col-lg-6">
                             @if ($car->photo)
+                            
                             <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
-                                class="swiper photo-{{ $car->id }}">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <img src="{{ $car->photo[0]->url }}" />
-                                    </div>
+                            class="swiper photo-{{ $car->id }}">
+                            
+                            <div class="swiper-wrapper">
+                                @foreach ($car->photo as $photo)
+                                <div class="swiper-slide">
+                                    <img src="{{ $photo->url }}" />
                                 </div>
-                                <div class="swiper-button-next"></div>
-                                <div class="swiper-button-prev"></div>
+                                @endforeach
                             </div>
+                            
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                            
+                            
+                            
                             <div thumbsSlider="" class="swiper thumbs-{{ $car->id }}">
                                 <div class="swiper-wrapper thumb">
+                                    @foreach ($car->photo as $photo)
                                     <div class="swiper-slide">
-                                        <img src="{{ $car->photo[0]->url }}" style="height: 100px;" />
+                                        <img src="{{ $photo->url }}" style="height: 100px;" />
                                     </div>
+                                    @endforeach
                                 </div>
                             </div>
                             @endif

@@ -43,6 +43,7 @@ class NewReceipt extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
+            ->subject('Novo recibo')
             ->line('O condutor ' . $this->driver->name . ', enviou um novo recibo.');
     }
 
