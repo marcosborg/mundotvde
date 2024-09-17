@@ -117,15 +117,12 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
                                 </div>
                             </div>
                             @endif
-                            <h3><span style="color: rgb(85, 85, 85); text-transform: uppercase">{{ $car->title
-                                    }}</span><br>
-                            </h3><span class="text-muted">{{ $car->subtitle }}</span>
-                            <p class="fw-bold"><span style="color: rgb(108, 117, 125);">Desde €{{ $car->price }} por
-                                    semana*</span><br></p>
                         </div>
                         <div class="col-lg-6">
                             <div style="margin-left: 59px;">
                                 <p><strong><span style="color: rgb(85, 85, 85);">Especificações:</span></strong><br></p>
+                                <p class="fw-bold"><span style="color: rgb(108, 117, 125);">Desde €{{ $car->price }} por
+                                    semana*</span><br></p>
                                 {!! $car->specifications !!}
                                 <button onclick="openCarModal({{ $car->id }})" class="btn btn-outline-primary btn-sm"
                                     type="button" style="margin-top: 20px;">Pedir
