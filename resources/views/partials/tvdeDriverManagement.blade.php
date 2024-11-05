@@ -81,9 +81,6 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="col-md-8">
-                                    <button class="btn btn-default" onclick="exportCsv('week_{{ $week->id }}')">Exportar CSV</button>
-                                </div>
                             </div>
                             <!-- Tab panes -->
                                         
@@ -95,6 +92,7 @@
                                 @foreach ($month->weeks as $week)
                                 <div role="tabpanel" class="tab-pane {{ $weekCount++ == $weekTotal ? 'active' : '' }}"
                                     id="week-{{ $week->id }}">
+                                    <button class="btn btn-default" onclick="exportCsv('week_{{ $week->id }}')" style="margin-bottom: 20px;">Exportar CSV</button>
                                     <table class="table table-bordered table-striped">
                                         <thead>
                                             <tr>

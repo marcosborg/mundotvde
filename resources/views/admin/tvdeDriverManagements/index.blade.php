@@ -352,6 +352,7 @@
     };
 
     exportCsv = (table_id) => {
+        console.log(table_id);
         $('#' + table_id).table2csv();
     };
     
