@@ -1,4 +1,5 @@
 <?php
+
 use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Fuel;
@@ -9,8 +10,7 @@ use App\Models\StandTvdePage;
 use App\Models\StandTvdePub;
 use Illuminate\Http\Request;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {
-});
+Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {});
 
 Route::get('stand-cars', function () {
     return StandCar::all()->load([
@@ -80,3 +80,8 @@ Route::post('contact', function (Request $request) {
 
 //APP
 
+Route::post('login', 'Api\\AuthController@login');
+Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('user', 'Api\\AuthController@user');
+    Route::get('admin', 'Api\\AppController@admin');
+});
