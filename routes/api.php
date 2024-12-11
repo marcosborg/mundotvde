@@ -84,4 +84,9 @@ Route::post('login', 'Api\\AuthController@login');
 Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::get('user', 'Api\\AuthController@user');
     Route::get('admin', 'Api\\AppController@admin');
+    Route::get('my-receipts', 'Api\\AppController@myReceipts');
+    Route::get('reports', 'Api\\AppController@reports');
+    Route::get('reports/pdf/{activity_launch_id}', 'Api\\AppController@pdf');
+    Route::get('documents', 'Api\\AppController@documents');
 });
+
