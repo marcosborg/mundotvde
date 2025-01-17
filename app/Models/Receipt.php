@@ -34,7 +34,7 @@ class Receipt extends Model implements HasMedia
     public const RETENTION_RADIO = [
         'Sem retenção' => 'Sem retenção',
         '11.50%' => '11.50%',
-        '16.50%' => '16.50%',
+        '23%' => '23%',
         '20%'    => '20%',
         '25%'    => '25%',
     ];

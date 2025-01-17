@@ -8,10 +8,16 @@ use App\Models\Driver;
 use App\Models\ActivityLaunch;
 use App\Models\Receipt;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Models\CompanyDocument;
+use App\Models\User;
+use App\Notifications\NewReceipt;
 
 class AppController extends Controller
 {
+
+    use MediaUploadingTrait;
+
     public function admin(Request $request)
     {
         $driver = Driver::where('user_id', $request->user()->id)->first();
@@ -48,7 +54,7 @@ class AppController extends Controller
             $activityLaunch->sub = $sub;
         }
 
-        //Impedir dois recibos no mesmo dia
+        // Impedir dois recibos no mesmo dia
 
         $last_receipt = Receipt::where([
             'driver_id' => $driver->id
@@ -56,9 +62,15 @@ class AppController extends Controller
             ->orderBy('id', 'desc')
             ->first();
 
+        $can_create_receipt = true;
+        if ($last_receipt && $last_receipt->created_at->gt(now()->subDays(1))) {
+            $can_create_receipt = false;
+        }
+
         return [
             'activityLaunches' => $activityLaunches,
-            'last_receipt' => $last_receipt
+            'last_receipt' => $last_receipt,
+            'can_create_receipt' => $can_create_receipt
         ];
     }
 
@@ -204,5 +216,37 @@ class AppController extends Controller
     public function documents()
     {
         return CompanyDocument::with(['media'])->get();
+    }
+
+    public function sendReceipt(Request $request)
+    {
+
+        $request->validate([
+            'value' => 'required',
+            'file' => 'required',
+        ]);
+
+        // CREATE RECEIPT
+        $driver = Driver::where('user_id', $request->user()->id)->first();
+
+        $receipt = new Receipt;
+        $receipt->driver_id = $driver->id;
+        $receipt->value = $request->value;
+        $receipt->save();
+
+        //GRAVAR DOCUMENTO
+
+        if ($request->input('file', false)) {
+            $receipt->addMedia(storage_path('tmp/uploads/' . basename($request->input('file'))))->toMediaCollection('file');
+        }
+
+        //SEND EMAIL TO ADMIN
+        User::find(1)->notify(new NewReceipt($driver));
+        //User::find($driver->user_id)->notify(new NewReceipt($driver));
+
+        return response()->json([
+            'message' => 'Receipt created successfully',
+            'receipt' => $receipt
+        ], 201);
     }
 }

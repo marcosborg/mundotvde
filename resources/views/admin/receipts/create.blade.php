@@ -81,7 +81,7 @@
                             <label class="required">{{ trans('cruds.receipt.fields.retention') }}</label>
                             @foreach(App\Models\Receipt::RETENTION_RADIO as $key => $label)
                                 <div>
-                                    <input type="radio" id="retention_{{ $key }}" name="retention" value="{{ $key }}" {{ old('retention', '11.50%') === (string) $key ? 'checked' : '' }} required>
+                                    <input type="radio" id="retention_{{ $key }}" name="retention" value="{{ $key }}" {{ old('retention', 'Sem retenção') === (string) $key ? 'checked' : '' }} required>
                                     <label for="retention_{{ $key }}" style="font-weight: 400">{{ $label }}</label>
                                 </div>
                             @endforeach
