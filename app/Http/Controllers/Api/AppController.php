@@ -64,7 +64,7 @@ class AppController extends Controller
 
         $can_create_receipt = true;
         if ($last_receipt && $last_receipt->created_at->gt(now()->subDays(1))) {
-            $can_create_receipt = false;
+            //$can_create_receipt = false;
         }
 
         return [
