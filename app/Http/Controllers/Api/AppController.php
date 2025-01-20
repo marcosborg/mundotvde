@@ -220,10 +220,9 @@ class AppController extends Controller
 
     public function sendReceipt(Request $request)
     {
-
         $request->validate([
             'value' => 'required',
-            'file' => 'required',
+            'file' => 'required|file',
         ]);
 
         // CREATE RECEIPT
@@ -234,15 +233,14 @@ class AppController extends Controller
         $receipt->value = $request->value;
         $receipt->save();
 
-        //GRAVAR DOCUMENTO
-
-        if ($request->input('file')) {
-            $receipt->addMedia(storage_path('tmp/uploads/' . basename($request->input('file'))))->toMediaCollection('file');
+        // GRAVAR DOCUMENTO
+        if ($request->hasFile('file')) {
+            $receipt->addMedia($request->file('file'))->toMediaCollection('file');
         }
 
-        //SEND EMAIL TO ADMIN
+        // SEND EMAIL TO ADMIN
         User::find(1)->notify(new NewReceipt($driver));
-        //User::find($driver->user_id)->notify(new NewReceipt($driver));
+        // User::find($driver->user_id)->notify(new NewReceipt($driver));
 
         return response()->json([
             'message' => 'Receipt created successfully',
