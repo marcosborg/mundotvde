@@ -236,7 +236,7 @@ class AppController extends Controller
 
         //GRAVAR DOCUMENTO
 
-        if ($request->input('file', false)) {
+        if ($request->input('file')) {
             $receipt->addMedia(storage_path('tmp/uploads/' . basename($request->input('file'))))->toMediaCollection('file');
         }
 
