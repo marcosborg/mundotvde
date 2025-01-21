@@ -89,5 +89,7 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::get('reports/pdf/{activity_launch_id}', 'Api\\AppController@pdf');
     Route::get('documents', 'Api\\AppController@documents');
     Route::post('send-receipt', 'Api\\AppController@sendReceipt');
+    Route::get('my-documents', 'Api\\AppController@myDocuments');
+    Route::post('send-document', 'Api\\AppController@sendDocument');
 });
 

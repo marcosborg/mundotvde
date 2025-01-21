@@ -12,6 +12,7 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Models\CompanyDocument;
 use App\Models\User;
 use App\Notifications\NewReceipt;
+use App\Models\Document;
 
 class AppController extends Controller
 {
@@ -246,5 +247,23 @@ class AppController extends Controller
             'message' => 'Receipt created successfully',
             'receipt' => $receipt
         ], 201);
+    }
+
+    public function myDocuments(Request $request)
+    {
+        $driver_id = Driver::where('user_id', $request->user()->id)->first()->id;
+        $my_documents = Document::where('driver_id', $driver_id)->first();
+        return $my_documents;
+    }
+
+    public function sendDocument(Request $request)
+    {
+
+        $driver_id = Driver::where('user_id', $request->user()->id)->first()->id;
+        $document = Document::where('driver_id', $driver_id)->first();
+
+        if ($request->collection_name) {
+            $document->addMedia($request->file('file'))->toMediaCollection($request->collection_name);
+        }
     }
 }
