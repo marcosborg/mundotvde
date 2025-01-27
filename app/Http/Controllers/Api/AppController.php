@@ -42,17 +42,24 @@ class AppController extends Controller
                 $activityLaunch->insurance,
                 $activityLaunch->fuel,
                 $activityLaunch->tolls,
-                $activityLaunch->others
+                $activityLaunch->others,
             ];
+            $taxes = [];
             $sub = array_sum($sub);
             $sum = [];
             foreach ($activityLaunch->activityPerOperators as $activityPerOperator) {
                 $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+                $sum_net[] = $activityPerOperator->net;
+                $taxes[] = $activityPerOperator->taxes;
             }
             $sum = array_sum($sum);
             $activityLaunch->total = $sum - $sub + $activityLaunch->refund;
             $activityLaunch->sum = $sum;
             $activityLaunch->sub = $sub;
+            $activityLaunch->sum_net = array_sum($sum_net);
+            $activityLaunch->total_after_refund = $activityLaunch->sum_net + $activityLaunch->refund;
+            $activityLaunch->taxes = array_sum($taxes);
+            $activityLaunch->total_descount_after_taxes = $activityLaunch->sub + $activityLaunch->taxes;
         }
 
         // Impedir dois recibos no mesmo dia
