@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Driver;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -37,6 +38,9 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return $request->user();
+        $user = $request->user();
+        $driver = Driver::where('user_id', $user->id)->first();
+        $user->driver = $driver;
+        return $user;
     }
 }
