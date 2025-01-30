@@ -442,6 +442,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('recommendations/ckmedia', 'RecommendationController@storeCKEditorImages')->name('recommendations.storeCKEditorImages');
     Route::resource('recommendations', 'RecommendationController');
 
+    // Time Logs
+    Route::delete('time-logs/destroy', 'TimeLogsController@massDestroy')->name('time-logs.massDestroy');
+    Route::resource('time-logs', 'TimeLogsController');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

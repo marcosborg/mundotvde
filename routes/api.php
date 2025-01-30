@@ -90,6 +90,11 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::post('send-receipt', 'Api\\AppController@sendReceipt');
     Route::get('my-documents', 'Api\\AppController@myDocuments');
     Route::post('send-document', 'Api\\AppController@sendDocument');
+    Route::prefix('time-log')->group(function () {
+        Route::get('last-time-log', 'Api\\AppController@lastTimeLog');
+        Route::get('new-time-log/{status}', 'Api\\AppController@newTimeLog');
+        Route::get('get-time-logs', 'Api\\AppController@getTimeLogs');
+    });
 });
 
 Route::get('app/reports/pdf/{activity_launch_id}', 'Api\\AppController@pdf');

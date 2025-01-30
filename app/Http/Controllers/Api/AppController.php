@@ -13,6 +13,7 @@ use App\Models\CompanyDocument;
 use App\Models\User;
 use App\Notifications\NewReceipt;
 use App\Models\Document;
+use App\Models\TimeLog;
 
 class AppController extends Controller
 {
@@ -272,5 +273,34 @@ class AppController extends Controller
         if ($request->collection_name) {
             $document->addMedia($request->file('file'))->toMediaCollection($request->collection_name);
         }
+    }
+
+    public function lastTimeLog(Request $request)
+    {
+        $user = $request->user();
+        $driver = Driver::where('user_id', $user->id)->first();
+        $lastTimeLog = TimeLog::where('driver_id', $driver->id)->orderBy('id', 'desc')->first();
+        return $lastTimeLog;
+    }
+
+    public function newTimeLog(Request $request)
+    {
+        $user = $request->user();
+        $driver = Driver::where('user_id', $user->id)->first();
+        $newTimeLog = new TimeLog;
+        $newTimeLog->driver_id = $driver->id;
+        $newTimeLog->status = $request->status;
+        $newTimeLog->save();
+        return $newTimeLog;
+    }
+
+    public function getTimeLogs(Request $request)
+    {
+        $user = $request->user();
+        $driver = Driver::where('user_id', $user->id)->first();
+        $timeLogs = TimeLog::where('driver_id', $driver->id)
+            ->orderBy('id', 'desc')
+            ->get();
+        return $timeLogs;
     }
 }

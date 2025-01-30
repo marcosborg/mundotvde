@@ -1236,6 +1236,17 @@
                     </ul>
                 </li>
             @endcan
+            @can('time_log_access')
+                <li class="{{ request()->is("admin/time-logs") || request()->is("admin/time-logs/*") ? "active" : "" }}">
+                    <a href="{{ route("admin.time-logs.index") }}">
+                        <i class="fa-fw far fa-clock">
+
+                        </i>
+                        <span>{{ trans('cruds.timeLog.title') }}</span>
+
+                    </a>
+                </li>
+            @endcan
             @php($unread = \App\Models\QaTopic::unreadCount())
             <li class="{{ request()->is("admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
                 <a href="{{ route("admin.messenger.index") }}">
