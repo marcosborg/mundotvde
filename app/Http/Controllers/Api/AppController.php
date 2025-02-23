@@ -48,6 +48,8 @@ class AppController extends Controller
             $taxes = [];
             $sub = array_sum($sub);
             $sum = [];
+            $sum_net = [];
+            $taxes = [];
             foreach ($activityLaunch->activityPerOperators as $activityPerOperator) {
                 $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
                 $sum_net[] = $activityPerOperator->net;
