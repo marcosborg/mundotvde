@@ -36,6 +36,8 @@ class AppController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
+        $total = [];
+
         foreach ($activityLaunches as $activityLaunch) {
             $sub = [
                 $activityLaunch->rent,
@@ -63,6 +65,10 @@ class AppController extends Controller
             $activityLaunch->total_after_refund = $activityLaunch->sum_net + $activityLaunch->refund;
             $activityLaunch->taxes = array_sum($taxes);
             $activityLaunch->total_descount_after_taxes = $activityLaunch->sub + $activityLaunch->taxes;
+
+            if($activityLaunch->paid == 0) {
+                $total[] = $activityLaunch->total;
+            }
         }
 
         // Impedir dois recibos no mesmo dia
@@ -78,10 +84,13 @@ class AppController extends Controller
             $can_create_receipt = false;
         }
 
+        $total = number_format(array_sum($total), 2);
+
         return [
             'activityLaunches' => $activityLaunches,
             'last_receipt' => $last_receipt,
-            'can_create_receipt' => $can_create_receipt
+            'can_create_receipt' => $can_create_receipt,
+            'total' => $total
         ];
     }
 
