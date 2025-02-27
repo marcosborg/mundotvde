@@ -66,7 +66,7 @@ class AppController extends Controller
             $activityLaunch->taxes = array_sum($taxes);
             $activityLaunch->total_descount_after_taxes = $activityLaunch->sub + $activityLaunch->taxes;
 
-            if($activityLaunch->paid == 0) {
+            if ($activityLaunch->paid == 0) {
                 $total[] = $activityLaunch->total;
             }
         }
@@ -309,9 +309,44 @@ class AppController extends Controller
     {
         $user = $request->user();
         $driver = Driver::where('user_id', $user->id)->first();
+
+        if (!$driver) {
+            return response()->json(['error' => 'Driver not found'], 404);
+        }
+
         $timeLogs = TimeLog::where('driver_id', $driver->id)
-            ->orderBy('id', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
-        return $timeLogs;
+
+        $groupedLogs = [];
+        $drivingTimePerDay = [];
+
+        $openStart = null;
+
+        foreach ($timeLogs as $log) {
+            $date = (new \DateTime($log->created_at))->format('Y-m-d');
+
+            if (!isset($groupedLogs[$date])) {
+                $groupedLogs[$date] = ['time_periods' => []];
+                $drivingTimePerDay[$date] = 0;
+            }
+
+            $groupedLogs[$date]['time_periods'][] = $log;
+
+            if ($log->status === 'start') {
+                $openStart = new \DateTime($log->created_at);
+            } elseif ($log->status === 'end' && $openStart) {
+                $endTime = new \DateTime($log->created_at);
+                $drivingTimePerDay[$date] += $endTime->getTimestamp() - $openStart->getTimestamp();
+                $openStart = null;
+            }
+        }
+
+        // Adiciona o tempo total de condução no formato HH:MM:SS
+        foreach ($groupedLogs as $date => &$data) {
+            $data['driving_time'] = gmdate("H:i:s", $drivingTimePerDay[$date]);
+        }
+
+        return response()->json($groupedLogs);
     }
 }
