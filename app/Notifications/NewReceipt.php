@@ -44,6 +44,7 @@ class NewReceipt extends Notification
     {
         return (new MailMessage)
             ->subject('Novo recibo')
+            ->greeting('Olá!')
             ->line('O condutor ' . $this->driver->name . ', enviou um novo recibo.');
     }
 
