@@ -36,6 +36,9 @@
                                     {{ trans('cruds.timeLog.fields.status') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.timeLog.fields.created_at') }}
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -98,6 +101,7 @@
 { data: 'driver_name', name: 'driver.name' },
 { data: 'driver.name', name: 'driver.name' },
 { data: 'status', name: 'status' },
+{ data: 'created_at', name: 'created_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

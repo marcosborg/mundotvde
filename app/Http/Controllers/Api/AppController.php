@@ -315,13 +315,14 @@ class AppController extends Controller
         }
 
         $timeLogs = TimeLog::where('driver_id', $driver->id)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         $groupedLogs = [];
         $drivingTimePerDay = [];
 
         $openStart = null;
+        $isPaused = false;
 
         foreach ($timeLogs as $log) {
             $date = (new \DateTime($log->created_at))->format('Y-m-d');
@@ -335,14 +336,26 @@ class AppController extends Controller
 
             if ($log->status === 'start') {
                 $openStart = new \DateTime($log->created_at);
-            } elseif ($log->status === 'end' && $openStart) {
+                $isPaused = false;
+            } elseif ($log->status === 'pause') {
+                if ($openStart && !$isPaused) {
+                    $pauseTime = new \DateTime($log->created_at);
+                    $drivingTimePerDay[$date] += $pauseTime->getTimestamp() - $openStart->getTimestamp();
+                    $isPaused = true;
+                }
+            } elseif ($log->status === 'continue') {
+                if ($isPaused) {
+                    $openStart = new \DateTime($log->created_at);
+                    $isPaused = false;
+                }
+            } elseif ($log->status === 'end' && $openStart && !$isPaused) {
                 $endTime = new \DateTime($log->created_at);
                 $drivingTimePerDay[$date] += $endTime->getTimestamp() - $openStart->getTimestamp();
                 $openStart = null;
             }
         }
 
-        // Adiciona o tempo total de condução no formato HH:MM:SS
+        // Ajusta o formato do tempo de condução para HH:MM:SS
         foreach ($groupedLogs as $date => &$data) {
             $data['driving_time'] = gmdate("H:i:s", $drivingTimePerDay[$date]);
         }

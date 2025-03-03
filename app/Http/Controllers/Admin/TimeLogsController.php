@@ -54,6 +54,9 @@ class TimeLogsController extends Controller
             $table->editColumn('status', function ($row) {
                 return $row->status ? TimeLog::STATUS_SELECT[$row->status] : '';
             });
+            $table->editColumn('created_at', function ($row) {
+                return $row->created_at ? $row->created_at : '';
+            });
 
             $table->rawColumns(['actions', 'placeholder', 'driver']);
 
