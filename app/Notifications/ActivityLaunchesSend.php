@@ -47,9 +47,8 @@ class ActivityLaunchesSend extends Notification
         $html .= '<tr>';
         $html .= '<th>N.</th>';
         $html .= '<th>Semana</th>';
-        $html .= '<th>Receber</th>';
-        $html .= '<th>Descontar</th>';
-        $html .= '<th>Acerto</th>';
+        $html .= '<th>Recebimentos</th>';
+        $html .= '<th>Descontos</th>';
         $html .= '<th>Total</th>';
         $html .= '</tr>';
         $html .= '</thead>';
@@ -59,8 +58,7 @@ class ActivityLaunchesSend extends Notification
             $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['number'] . '</td>';
             $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['start_date'] . '<br>' . $value['end_date'] . '</td>';
             $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['sum'] . '</td>';
-            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['sub'] . '</td>';
-            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['refund'] . '</td>';
+            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['sub'] + $value['refund'] . '</td>';
             $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['total'] . '</td>';
             $html .= '</tr>';
         }
@@ -70,7 +68,7 @@ class ActivityLaunchesSend extends Notification
         return (new MailMessage)
                     ->subject('Extrato Mundo TVDE')
                     ->greeting('Olá!')
-                    ->line('O Mundo TVDE o extrato abaixo.')
+                    ->line('O Mundo TVDE lançou o extrato abaixo.')
                     ->line($html)
                     ->line('Visite a sua área pessoal para verificar os detalhes e fazer upload do recibo.')
                     ->action('Área pessoal', url('https://mundotvde.pt/login'))
