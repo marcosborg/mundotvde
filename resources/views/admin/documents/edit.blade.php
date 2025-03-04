@@ -665,7 +665,7 @@ Dropzone.options.carInsuranceDropzone = {
     var uploadedIpoVehicleMap = {}
 Dropzone.options.ipoVehicleDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 2, // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
