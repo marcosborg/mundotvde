@@ -315,7 +315,7 @@ class AppController extends Controller
         }
 
         $timeLogs = TimeLog::where('driver_id', $driver->id)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $groupedLogs = [];
