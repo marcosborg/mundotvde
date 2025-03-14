@@ -314,15 +314,18 @@ class AppController extends Controller
             return response()->json(['error' => 'Driver not found'], 404);
         }
 
+        // Filtra os logs dos últimos 60 dias
+        $sixtyDaysAgo = now()->subDays(60)->format('Y-m-d H:i:s');
         $timeLogs = TimeLog::where('driver_id', $driver->id)
-            ->orderBy('created_at', 'desc')
+            ->where('created_at', '>=', $sixtyDaysAgo)
+            ->orderBy('created_at', 'asc') // Ordena os logs por ordem cronológica
             ->get();
 
         $groupedLogs = [];
         $drivingTimePerDay = [];
 
-        $openStart = null;
-        $isPaused = false;
+        $openStart = null; // Armazena o início do período de condução
+        $isPaused = false; // Indica se o motorista está em pausa
 
         foreach ($timeLogs as $log) {
             $date = (new \DateTime($log->created_at))->format('Y-m-d');
@@ -332,10 +335,12 @@ class AppController extends Controller
                 $drivingTimePerDay[$date] = 0;
             }
 
+            // Adiciona o log ao dia correspondente
             $groupedLogs[$date]['time_periods'][] = $log;
 
+            // Lógica para calcular o tempo de condução
             if ($log->status === 'start') {
-                $openStart = new \DateTime($log->created_at);
+                $openStart = new \DateTime($log->created_at); // Inicia o período de condução
                 $isPaused = false;
             } elseif ($log->status === 'pause') {
                 if ($openStart && !$isPaused) {
@@ -345,17 +350,22 @@ class AppController extends Controller
                 }
             } elseif ($log->status === 'continue') {
                 if ($isPaused) {
-                    $openStart = new \DateTime($log->created_at);
+                    $openStart = new \DateTime($log->created_at); // Retoma o período de condução
                     $isPaused = false;
                 }
-            } elseif ($log->status === 'end' && $openStart && !$isPaused) {
-                $endTime = new \DateTime($log->created_at);
-                $drivingTimePerDay[$date] += $endTime->getTimestamp() - $openStart->getTimestamp();
-                $openStart = null;
+            } elseif ($log->status === 'end') {
+                if ($openStart && !$isPaused) {
+                    $endTime = new \DateTime($log->created_at);
+                    $drivingTimePerDay[$date] += $endTime->getTimestamp() - $openStart->getTimestamp();
+                    $openStart = null; // Finaliza o período de condução
+                }
             }
         }
 
-        // Ajusta o formato do tempo de condução para HH:MM:SS
+        // Ordena os dias por data decrescente
+        krsort($groupedLogs);
+
+        // Formata o tempo de condução para HH:MM:SS
         foreach ($groupedLogs as $date => &$data) {
             $data['driving_time'] = gmdate("H:i:s", $drivingTimePerDay[$date]);
         }
