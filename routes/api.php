@@ -98,3 +98,9 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::get('app/reports/pdf/{activity_launch_id}', 'Api\\AppController@pdf');
+
+Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {
+    // News
+    Route::post('newss/media', 'NewsApiController@storeMedia')->name('newss.storeMedia');
+    Route::apiResource('newss', 'NewsApiController');
+});
