@@ -969,17 +969,16 @@
                         </ul>
                     </li>
                     @endcan
-                    @can('news_access')
-                            <li class="{{ request()->is("admin/newss") || request()->is("admin/newss/*") ? "active" : "" }}">
-                                <a href="{{ route("admin.newss.index") }}">
-                                    <i class="fa-fw far fa-newspaper">
+                    @can('article_access')
+                            <li class="{{ request()->is("admin/articles") || request()->is("admin/articles/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.articles.index") }}">
+                                    <i class="fa-fw fas fa-bullhorn">
 
                                     </i>
-                                    <span>{{ trans('cruds.news.title') }}</span>
-
-                                </a>
-                            </li>
-                        @endcan
+                        <span>{{ trans('cruds.article.title') }}</span>
+                        </a>
+                    </li>
+                    @endcan
                     @can('legal_access')
                     <li class="{{ request()->is("admin/legals") || request()->is("admin/legals/*") ? "active" : "" }}">
                         <a href="{{ route("admin.legals.index") }}">

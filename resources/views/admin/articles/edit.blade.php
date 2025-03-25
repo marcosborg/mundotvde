@@ -6,54 +6,55 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {{ trans('global.create') }} {{ trans('cruds.news.title_singular') }}
+                    {{ trans('global.edit') }} {{ trans('cruds.article.title_singular') }}
                 </div>
                 <div class="panel-body">
-                    <form method="POST" action="{{ route("admin.newss.store") }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route("admin.articles.update", [$article->id]) }}" enctype="multipart/form-data">
+                        @method('PUT')
                         @csrf
                         <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
-                            <label class="required" for="title">{{ trans('cruds.news.fields.title') }}</label>
-                            <input class="form-control" type="text" name="title" id="title" value="{{ old('title', '') }}" required>
+                            <label class="required" for="title">{{ trans('cruds.article.fields.title') }}</label>
+                            <input class="form-control" type="text" name="title" id="title" value="{{ old('title', $article->title) }}" required>
                             @if($errors->has('title'))
                                 <span class="help-block" role="alert">{{ $errors->first('title') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.news.fields.title_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.article.fields.title_helper') }}</span>
                         </div>
                         <div class="form-group {{ $errors->has('resume') ? 'has-error' : '' }}">
-                            <label for="resume">{{ trans('cruds.news.fields.resume') }}</label>
-                            <input class="form-control" type="text" name="resume" id="resume" value="{{ old('resume', '') }}">
+                            <label for="resume">{{ trans('cruds.article.fields.resume') }}</label>
+                            <input class="form-control" type="text" name="resume" id="resume" value="{{ old('resume', $article->resume) }}">
                             @if($errors->has('resume'))
                                 <span class="help-block" role="alert">{{ $errors->first('resume') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.news.fields.resume_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.article.fields.resume_helper') }}</span>
                         </div>
                         <div class="form-group {{ $errors->has('text') ? 'has-error' : '' }}">
-                            <label for="text">{{ trans('cruds.news.fields.text') }}</label>
-                            <textarea class="form-control ckeditor" name="text" id="text">{!! old('text') !!}</textarea>
+                            <label for="text">{{ trans('cruds.article.fields.text') }}</label>
+                            <textarea class="form-control ckeditor" name="text" id="text">{!! old('text', $article->text) !!}</textarea>
                             @if($errors->has('text'))
                                 <span class="help-block" role="alert">{{ $errors->first('text') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.news.fields.text_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.article.fields.text_helper') }}</span>
                         </div>
                         <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
-                            <label for="photo">{{ trans('cruds.news.fields.photo') }}</label>
+                            <label for="photo">{{ trans('cruds.article.fields.photo') }}</label>
                             <div class="needsclick dropzone" id="photo-dropzone">
                             </div>
                             @if($errors->has('photo'))
                                 <span class="help-block" role="alert">{{ $errors->first('photo') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.news.fields.photo_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.article.fields.photo_helper') }}</span>
                         </div>
                         <div class="form-group {{ $errors->has('active') ? 'has-error' : '' }}">
                             <div>
                                 <input type="hidden" name="active" value="0">
-                                <input type="checkbox" name="active" id="active" value="1" {{ old('active', 0) == 1 || old('active') === null ? 'checked' : '' }}>
-                                <label for="active" style="font-weight: 400">{{ trans('cruds.news.fields.active') }}</label>
+                                <input type="checkbox" name="active" id="active" value="1" {{ $article->active || old('active', 0) === 1 ? 'checked' : '' }}>
+                                <label for="active" style="font-weight: 400">{{ trans('cruds.article.fields.active') }}</label>
                             </div>
                             @if($errors->has('active'))
                                 <span class="help-block" role="alert">{{ $errors->first('active') }}</span>
                             @endif
-                            <span class="help-block">{{ trans('cruds.news.fields.active_helper') }}</span>
+                            <span class="help-block">{{ trans('cruds.article.fields.active_helper') }}</span>
                         </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
@@ -83,7 +84,7 @@
               return new Promise(function(resolve, reject) {
                 // Init request
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', '{{ route('admin.newss.storeCKEditorImages') }}', true);
+                xhr.open('POST', '{{ route('admin.articles.storeCKEditorImages') }}', true);
                 xhr.setRequestHeader('x-csrf-token', window._token);
                 xhr.setRequestHeader('Accept', 'application/json');
                 xhr.responseType = 'json';
@@ -116,7 +117,7 @@
                 // Send request
                 var data = new FormData();
                 data.append('upload', file);
-                data.append('crud_id', '{{ $news->id ?? 0 }}');
+                data.append('crud_id', '{{ $article->id ?? 0 }}');
                 xhr.send(data);
               });
             })
@@ -138,7 +139,7 @@
 
 <script>
     Dropzone.options.photoDropzone = {
-    url: '{{ route('admin.newss.storeMedia') }}',
+    url: '{{ route('admin.articles.storeMedia') }}',
     maxFilesize: 2, // MB
     acceptedFiles: '.jpeg,.jpg,.png,.gif',
     maxFiles: 1,
@@ -163,8 +164,8 @@
       }
     },
     init: function () {
-@if(isset($news) && $news->photo)
-      var file = {!! json_encode($news->photo) !!}
+@if(isset($article) && $article->photo)
+      var file = {!! json_encode($article->photo) !!}
           this.options.addedfile.call(this, file)
       this.options.thumbnail.call(this, file, file.preview ?? file.preview_url)
       file.previewElement.classList.add('dz-complete')

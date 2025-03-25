@@ -446,12 +446,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('time-logs/destroy', 'TimeLogsController@massDestroy')->name('time-logs.massDestroy');
     Route::resource('time-logs', 'TimeLogsController');
 
-    // News
-    Route::delete('newss/destroy', 'NewsController@massDestroy')->name('newss.massDestroy');
-    Route::post('newss/media', 'NewsController@storeMedia')->name('newss.storeMedia');
-    Route::post('newss/ckmedia', 'NewsController@storeCKEditorImages')->name('newss.storeCKEditorImages');
-    Route::get('newss/{news_id}/edit', 'NewsController@edit');
-    Route::resource('newss', 'NewsController');
+    // Article
+    Route::delete('articles/destroy', 'ArticleController@massDestroy')->name('articles.massDestroy');
+    Route::post('articles/media', 'ArticleController@storeMedia')->name('articles.storeMedia');
+    Route::post('articles/ckmedia', 'ArticleController@storeCKEditorImages')->name('articles.storeCKEditorImages');
+    Route::resource('articles', 'ArticleController');
 
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
