@@ -450,6 +450,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('newss/destroy', 'NewsController@massDestroy')->name('newss.massDestroy');
     Route::post('newss/media', 'NewsController@storeMedia')->name('newss.storeMedia');
     Route::post('newss/ckmedia', 'NewsController@storeCKEditorImages')->name('newss.storeCKEditorImages');
+    Route::get('newss/{news_id}/edit', 'NewsController@edit');
     Route::resource('newss', 'NewsController');
 
 });

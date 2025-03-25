@@ -98,9 +98,11 @@ class NewsController extends Controller
         return redirect()->route('admin.newss.index');
     }
 
-    public function edit(News $news)
+    public function edit(Request $request)
     {
         abort_if(Gate::denies('news_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $news = News::find($request->news_id);
 
         return view('admin.newss.edit', compact('news'));
     }
