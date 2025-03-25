@@ -1,9 +1,9 @@
 @extends('layouts.website')
 @section('title')
-
+{{ $article->title ?? '' }} - Mundo TVDE
 @endsection
 @section('description')
-
+{{ $article->resume ?? '' }}
 @endsection
 @section('content')
 <section class="clean-block clean-post dark">
