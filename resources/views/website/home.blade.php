@@ -1,7 +1,6 @@
 @extends('layouts.website')
 @section('content')
-<section class="clean-block clean-hero"
-    style="background-image: url({{ $hero->image->url }});color: rgba(5, 79, 119, 0.50);">
+<section class="clean-block clean-hero" style="background-image: url({{ $hero->image->url }});color: rgba(5, 79, 119, 0.50);">
     <div class="text">
         <h2>{{ $hero->title }}</h2>
         <p>{{ $hero->subtitle }}</p><a class="btn btn-outline-light btn-lg" href="{{ $hero->link }}">{{ $hero->button
@@ -24,6 +23,34 @@
         </div>
     </div>
 </section>
+
+<section id="articles" style="padding: 50px 0">
+
+    <div class="container">
+        <div class="block-heading text-center">
+            <h2 class="text-info">Notícias</h2>
+            <p>Saiba as últimas novidades TVDE</p>
+        </div>
+        <div class="row align-items-center">
+            @foreach (App\Models\Article::where('active', true)->orderBy('created_at', 'desc')->limit('3')->get() as $article)
+            <div class="col-md-4">
+                <div class="card" style="margin: 20px;">
+                    @if ($article->photo)
+                    <img src="{{ $article->photo->getUrl() }}" class="card-img-top" alt="...">
+                    @endif
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $article->title ?? '' }}</h5>
+                        <p class="card-text">{{ $article->resume ?? '' }}</p>
+                        <a href="/noticia/{{ $article->id }}/{{ Str::slug($article->title) }}" class="btn btn-primary">Ler notícia</a>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+</section>
+
 <section class="clean-block features" style="background: var(--bs-gray-900);color: rgb(255,255,255);">
     <div class="container">
         <div class="block-heading">
@@ -33,8 +60,7 @@
             @foreach ($activities as $activity)
             <div class="col-md-5 feature-box"><i class="{{ $activity->icon }}"></i>
                 <h4>{{ $activity->title }}</h4>
-                <p>{{ $activity->description }}</p><a class="btn btn-primary btn-sm" role="button"
-                    href="{{ $activity->link }}">{{ $activity->button }}</a>
+                <p>{{ $activity->description }}</p><a class="btn btn-primary btn-sm" role="button" href="{{ $activity->link }}">{{ $activity->button }}</a>
             </div>
             @endforeach
             <div class="col-md-5 feature-box"></div>
