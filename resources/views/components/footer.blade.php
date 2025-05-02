@@ -39,6 +39,11 @@
     </div>
 </footer>
 
+<div class="whatsapp-ai-button">
+    <a href="https://api.whatsapp.com/send?phone=351926978477" target="_blank">
+        <img src="/assets/website/img/whatsapp-ai.png" width="200">
+    </a>
+</div>
 <div class="whatsapp-button">
     <a href="https://api.whatsapp.com/send?phone=351964028006" target="_blank">
         <img src="/assets/website/img/whatsapp.png" width="200">
@@ -57,6 +62,14 @@
     .whatsapp-button {
         position: fixed;
         bottom: 100px;
+        right: 40px;
+        display: flex;
+        z-index: 1000;
+    }
+
+    .whatsapp-ai-button {
+        position: fixed;
+        bottom: 170px;
         right: 40px;
         display: flex;
         z-index: 1000;
