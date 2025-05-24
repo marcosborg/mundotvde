@@ -473,8 +473,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('app-messages', 'AppMessagesController');
 
     // Billing Analysis
-    Route::get('billing-analysis/{tvde_year_id?}', 'BillingAnalysisController@index')->name('billing-analysis.index');
-
+    Route::prefix('billing-analysis')->group(function () {
+        Route::get('export/{tvde_year_id}', 'BillingAnalysisController@export');
+        Route::get('/{tvde_year_id?}', 'BillingAnalysisController@index')->name('billing-analysis.index');
+    });
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

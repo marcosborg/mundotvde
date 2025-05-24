@@ -25,6 +25,13 @@
                 <label for="driverSearch">Pesquisar Motorista:</label>
                 <input type="text" id="driverSearch" class="form-control" placeholder="Escreve o nome do motorista...">
             </div>
+            @if ($tvde_year_id)
+            <div class="mb-3">
+                <a href="/admin/billing-analysis/export/{{ $tvde_year_id }}" class="btn btn-success">
+                    Exportar para Excel
+                </a>
+            </div>
+            @endif
 
             <table class="table table-striped">
                 <thead>
@@ -75,8 +82,8 @@
 </div>
 @endsection
 @section('scripts')
-    <script>
-    document.getElementById('driverSearch').addEventListener('input', function () {
+<script>
+    document.getElementById('driverSearch').addEventListener('input', function() {
         let searchValue = this.value.toLowerCase();
         let rows = document.querySelectorAll('.driver-row');
 
@@ -89,6 +96,7 @@
             }
         });
     });
+
 </script>
 
 @endsection

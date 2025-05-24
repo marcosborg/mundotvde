@@ -7,8 +7,9 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\TvdeYear;
-use App\Models\Receipt;
 use App\Models\Driver;
+use App\Exports\BillingAnalysisExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BillingAnalysisController extends Controller
 {
@@ -40,5 +41,10 @@ class BillingAnalysisController extends Controller
             'tvde_year',
             'drivers',
         ]));
+    }
+
+    public function export($tvde_year_id)
+    {
+        return Excel::download(new BillingAnalysisExport($tvde_year_id), 'analise_faturacao_' . $tvde_year_id . '.xlsx');
     }
 }
