@@ -21,6 +21,11 @@
                 Seecione um ano para análise.
             </div>
             @else
+            <div class="form-group">
+                <label for="driverSearch">Pesquisar Motorista:</label>
+                <input type="text" id="driverSearch" class="form-control" placeholder="Escreve o nome do motorista...">
+            </div>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -40,20 +45,25 @@
                     $tgaPercent = $total > 0 ? round(($totalTGA / $total) * 100) : 0;
                     $ocPercent = 100 - $tgaPercent;
                     @endphp
-                    <tr>
+                    <tr class="driver-row">
                         <td>{{ $driver->name }}</td>
                         <td>{{ number_format($totalTGA, 2) }}</td>
                         <td>{{ number_format($totalOC, 2) }}</td>
                         <td>
-                            <div style="display: flex; height: 25px; width: 100%; background: #eee; border-radius: 5px; overflow: hidden;">
-                                <div style="width: {{ $ocPercent }}%; background-color: #a8e6cf; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #000;">
-                                    @if ($ocPercent > 10) OC @endif
+                            <div style="display: flex; height: 25px; width: 100%; background: #eee; border-radius: 5px; overflow: hidden; font-size: 12px;">
+                                <div style="width: {{ $ocPercent }}%; background-color: #a8e6cf; display: flex; align-items: center; justify-content: center; position: relative;">
+                                    @if ($ocPercent > 5)
+                                    <span>OC <span style="font-size: 10px;">{{ $ocPercent }}%</span></span>
+                                    @endif
                                 </div>
-                                <div style="width: {{ $tgaPercent }}%; background-color: #d0e7ff; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #000;">
-                                    @if ($tgaPercent > 10) TGA @endif
+                                <div style="width: {{ $tgaPercent }}%; background-color: #d0e7ff; display: flex; align-items: center; justify-content: center; position: relative;">
+                                    @if ($tgaPercent > 5)
+                                    <span>TGA <span style="font-size: 10px;">{{ $tgaPercent }}%</span></span>
+                                    @endif
                                 </div>
                             </div>
                         </td>
+
                     </tr>
                     @endforeach
                 </tbody>
@@ -63,4 +73,22 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+    <script>
+    document.getElementById('driverSearch').addEventListener('input', function () {
+        let searchValue = this.value.toLowerCase();
+        let rows = document.querySelectorAll('.driver-row');
+
+        rows.forEach(row => {
+            let name = row.querySelector('td').textContent.toLowerCase();
+            if (name.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 @endsection
