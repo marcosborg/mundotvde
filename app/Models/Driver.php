@@ -128,4 +128,11 @@ class Driver extends Model
     {
         return $this->hasMany(Receipt::class, 'driver_id', 'id');
     }
+
+    // app/Models/Driver.php
+
+    public function receipts()
+    {
+        return $this->hasMany(\App\Models\Receipt::class);
+    }
 }

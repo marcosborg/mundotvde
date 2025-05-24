@@ -1799,5 +1799,9 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
+    'billingAnalysi' => [
+        'title'          => 'Análise de faturação',
+        'title_singular' => 'Análise de faturação',
+    ],
 
 ];

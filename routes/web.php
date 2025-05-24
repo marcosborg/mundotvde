@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', 'Website\HomePageController@index');
 Route::prefix('tvde')->group(function () {
     Route::get('aluguer-de-viaturas', 'Website\CarsController@index');
@@ -469,6 +471,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // App Messages
     Route::delete('app-messages/destroy', 'AppMessagesController@massDestroy')->name('app-messages.massDestroy');
     Route::resource('app-messages', 'AppMessagesController');
+
+    // Billing Analysis
+    Route::get('billing-analysis/{tvde_year_id?}', 'BillingAnalysisController@index')->name('billing-analysis.index');
 
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {

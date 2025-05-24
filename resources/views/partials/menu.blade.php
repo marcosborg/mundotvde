@@ -307,6 +307,15 @@
                         </a>
                     </li>
                     @endcan
+                    @can('billing_analysi_access')
+                        <li class="{{ request()->is("admin/billing-analysis") || request()->is("admin/billing-analysis/*") ? "active" : "" }}">
+                            <a href="{{ route("admin.billing-analysis.index") }}">
+                                <i class="fa-fw fas fa-chart-pie">
+                                </i>
+                                <span>{{ trans('cruds.billingAnalysi.title') }}</span>
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </li>
             @endcan
