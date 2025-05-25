@@ -110,3 +110,32 @@
 
 </script>
 @endsection
+@section('styles')
+    <style>
+    .chat-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        max-width: 100%;
+    }
+
+    .user-bubble {
+        align-self: flex-end;
+        background-color: #d1e7dd;
+        color: #0f5132;
+        padding: 8px 12px;
+        border-radius: 15px 15px 0 15px;
+        font-size: 13px;
+    }
+
+    .assistant-bubble {
+        align-self: flex-start;
+        background-color: #f8d7da;
+        color: #842029;
+        padding: 8px 12px;
+        border-radius: 15px 15px 15px 0;
+        font-size: 13px;
+    }
+</style>
+
+@endsection
