@@ -35,10 +35,27 @@
                                 </tr>
                                 <tr>
                                     <th>
-                                        {{ trans('cruds.websiteMessage.fields.messages') }}
+                                        {{ trans('cruds.whatsappMessage.fields.messages') }}
                                     </th>
                                     <td>
-                                        {{ $websiteMessage->messages }}
+                                        @php
+                                        $messages = json_decode($websiteMessage->messages, true);
+                                        @endphp
+
+                                        @if(is_array($messages))
+                                        <div class="chat-full">
+                                            @foreach($messages as $message)
+                                            @php
+                                            $role = $message['role'] ?? 'user';
+                                            $content = $message['content'] ?? '';
+                                            $class = $role === 'assistant' ? 'assistant-bubble' : 'user-bubble';
+                                            @endphp
+                                            <div class="{{ $class }}">{{ $content }}</div>
+                                            @endforeach
+                                        </div>
+                                        @else
+                                        <em>Sem mensagens válidas</em>
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
@@ -57,4 +74,38 @@
         </div>
     </div>
 </div>
+@endsection
+@section('styles')
+<style>
+    .chat-full {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 600px;
+    }
+
+    .user-bubble {
+        align-self: flex-end;
+        background-color: #d1e7dd;
+        color: #0f5132;
+        padding: 10px 15px;
+        border-radius: 15px 15px 0 15px;
+        font-size: 14px;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+
+    .assistant-bubble {
+        align-self: flex-start;
+        background-color: #f8d7da;
+        color: #842029;
+        padding: 10px 15px;
+        border-radius: 15px 15px 15px 0;
+        font-size: 14px;
+        max-width: 80%;
+        word-wrap: break-word;
+    }
+
+</style>
+
 @endsection

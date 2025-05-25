@@ -19,7 +19,9 @@ class WebsiteMessagesController extends Controller
         abort_if(Gate::denies('website_message_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
-            $query = WebsiteMessage::query()->select(sprintf('%s.*', (new WebsiteMessage)->table));
+            $query = WebsiteMessage::query()
+                ->select(sprintf('%s.*', (new WebsiteMessage)->table))
+                ->orderBy('updated_at', 'desc');
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -47,10 +49,28 @@ class WebsiteMessagesController extends Controller
                 return $row->email ? $row->email : '';
             });
             $table->editColumn('messages', function ($row) {
-                return $row->messages ? $row->messages : '';
+                if (!$row->messages) return '';
+
+                $messages = json_decode($row->messages, true);
+
+                if (!is_array($messages)) return '';
+
+                $lastMessages = array_slice($messages, -2); // últimas 3 mensagens
+                $html = '<div class="chat-preview">';
+
+                foreach ($lastMessages as $msg) {
+                    $role = $msg['role'] ?? 'user';
+                    $content = htmlspecialchars($msg['content'] ?? '');
+
+                    $class = $role === 'assistant' ? 'assistant-bubble' : 'user-bubble';
+                    $html .= "<div class=\"{$class}\">{$content}</div>";
+                }
+
+                $html .= '</div>';
+                return $html;
             });
 
-            $table->rawColumns(['actions', 'placeholder']);
+            $table->rawColumns(['actions', 'placeholder', 'messages']);
 
             return $table->make(true);
         }
