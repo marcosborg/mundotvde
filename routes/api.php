@@ -9,6 +9,8 @@ use App\Models\StandTvdeContact;
 use App\Models\StandTvdePage;
 use App\Models\StandTvdePub;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\VirtualAssistantController;
 
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {});
 
@@ -115,3 +117,5 @@ Route::prefix('public')->group(function () {
 Route::get('/bot/{id}/instructions', 'Api\\BotController@getInstructions');
 Route::get('/message', 'Api\\BotController@getMessage');
 Route::post('/message', 'Api\\BotController@saveMessage');
+
+Route::post('/assistente-virtual', [VirtualAssistantController::class, 'handleMessage']);
