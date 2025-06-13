@@ -28,6 +28,7 @@ class TransferForm extends Model
         'rgpd',
         'transfer_tour_id',
         'message',
+        'obs',
         'created_at',
         'updated_at',
         'deleted_at',

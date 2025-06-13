@@ -27,6 +27,7 @@ class ConsultingForm extends Model
         'city',
         'message',
         'rgpd',
+        'obs',
         'created_at',
         'updated_at',
         'deleted_at',

@@ -695,6 +695,8 @@ return [
             'transfer_tour_helper' => ' ',
             'message'              => 'Message',
             'message_helper'       => ' ',
+            'obs'              => 'Observações',
+            'obs_helper'       => ' ',
         ],
     ],
     'menuConsulting' => [
@@ -747,6 +749,8 @@ return [
             'deleted_at_helper' => ' ',
             'message'           => 'Message',
             'message_helper'    => ' ',
+            'obs'           => 'Observações',
+            'obs_helper'    => ' ',
         ],
     ],
     'newsletter' => [

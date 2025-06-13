@@ -55,6 +55,9 @@
                                         {{ trans('cruds.transferForm.fields.message') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.transferForm.fields.obs') }}
+                                    </th>
+                                    <th>
                                         {{ trans('cruds.transferForm.fields.created_at') }}
                                     </th>
                                     <th>
@@ -99,6 +102,9 @@
                                         </td>
                                         <td>
                                             {{ $transferForm->message ?? '' }}
+                                        </td>
+                                        <td>
+                                            {!! $transferForm->obs ? '<span class="badge">Sim</span>' : '' !!}
                                         </td>
                                         <td>
                                             {{ $transferForm->created_at ?? '' }}
