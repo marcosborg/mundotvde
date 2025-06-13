@@ -78,8 +78,11 @@ class CarRentalContactRequestsController extends Controller
             $table->editColumn('rgpd', function ($row) {
                 return '<input type="checkbox" disabled ' . ($row->rgpd ? 'checked' : null) . '>';
             });
+            $table->editColumn('obs', function ($row) {
+                return $row->obs ? '<span class="badge badge-info">Sim</span>' : '';
+            });
 
-            $table->rawColumns(['actions', 'placeholder', 'tvde', 'car', 'rgpd']);
+            $table->rawColumns(['actions', 'placeholder', 'tvde', 'car', 'rgpd', 'obs']);
 
             return $table->make(true);
         }

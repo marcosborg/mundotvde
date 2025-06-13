@@ -189,6 +189,8 @@ return [
             'tvde_card_helper'  => ' ',
             'rgpd'              => 'Autorizo o tratamento dos dados fornecidos',
             'rgpd_helper'       => ' ',
+            'obs'              => 'Observações',
+            'obs_helper'       => ' ',
         ],
     ],
     'homePage' => [
