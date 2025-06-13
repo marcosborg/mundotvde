@@ -24,7 +24,7 @@ class CarsController extends Controller
         abort_if(Gate::denies('car_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
-            $query = Car::query()->select(sprintf('%s.*', (new Car)->table));
+            $query = Car::query()->select(sprintf('%s.*', (new Car)->table))->orderBy('position', 'asc');
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -67,6 +67,9 @@ class CarsController extends Controller
                 }
 
                 return implode(' ', $links);
+            });
+            $table->editColumn('position', function ($row) {
+                return $row->position ? $row->position : '';
             });
 
             $table->rawColumns(['actions', 'placeholder', 'photo']);

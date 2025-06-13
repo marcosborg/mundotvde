@@ -43,6 +43,9 @@
                                     {{ trans('cruds.car.fields.photo') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.car.fields.position') }}
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -106,10 +109,11 @@
 { data: 'subtitle', name: 'subtitle' },
 { data: 'price', name: 'price' },
 { data: 'photo', name: 'photo', sortable: false, searchable: false },
+{ data: 'position', name: 'position' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
+    order: [[ 6, 'asc' ]],
     pageLength: 100,
   };
   let table = $('.datatable-Car').DataTable(dtOverrideGlobals);

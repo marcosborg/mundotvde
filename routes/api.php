@@ -111,7 +111,9 @@ Route::prefix('public')->group(function () {
     Route::get('home', 'Api\\PublicController@home');
     Route::get('article/{article_id}', 'Api\\PublicController@article');
     Route::get('cars', 'Api\\PublicController@cars');
+    Route::get('car/{car_id}', 'Api\\PublicController@car');
     Route::get('stand-cars', 'Api\\PublicController@standCars');
+    Route::post('car-rental-contact', 'Api\\PublicController@carRentalContact');
 });
 
 Route::get('/bot/{id}/instructions', 'Api\\BotController@getInstructions');

@@ -53,6 +53,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.car.fields.photo_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('position') ? 'has-error' : '' }}">
+                            <label for="position">{{ trans('cruds.car.fields.position') }}</label>
+                            <input class="form-control" type="number" name="position" id="position" value="{{ old('position', $car->position) }}" step="0.01">
+                            @if($errors->has('position'))
+                                <span class="help-block" role="alert">{{ $errors->first('position') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.car.fields.position_helper') }}</span>
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}

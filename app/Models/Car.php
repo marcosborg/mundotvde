@@ -31,6 +31,7 @@ class Car extends Model implements HasMedia
         'subtitle',
         'specifications',
         'price',
+        'position',
         'created_at',
         'updated_at',
         'deleted_at',
