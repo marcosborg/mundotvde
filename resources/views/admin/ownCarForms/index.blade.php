@@ -52,6 +52,9 @@
                                         {{ trans('cruds.ownCarForm.fields.rgpd') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.ownCarForm.fields.obs') }}
+                                    </th>
+                                    <th>
                                         {{ trans('cruds.ownCarForm.fields.created_at') }}
                                     </th>
                                     <th>
@@ -93,6 +96,9 @@
                                         <td>
                                             <span style="display:none">{{ $ownCarForm->rgpd ?? '' }}</span>
                                             <input type="checkbox" disabled="disabled" {{ $ownCarForm->rgpd ? 'checked' : '' }}>
+                                        </td>
+                                        <td>
+                                            {!! $ownCarForm->obs ? '<span class="badge badge-info">Sim</span>' : '' !!}
                                         </td>
                                         <td>
                                             {{ $ownCarForm->created_at ?? '' }}

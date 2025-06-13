@@ -80,6 +80,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.ownCarForm.fields.rgpd_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('obs') ? 'has-error' : '' }}">
+                            <label for="obs">{{ trans('cruds.ownCarForm.fields.obs') }}</label>
+                            <textarea class="form-control" name="obs" id="obs">{{ old('obs') }}</textarea>
+                            @if($errors->has('obs'))
+                                <span class="help-block" role="alert">{{ $errors->first('obs') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.ownCarForm.fields.obs_helper') }}</span>
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}

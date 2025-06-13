@@ -29,6 +29,7 @@ class OwnCarForm extends Model
         'tvde_card',
         'message',
         'rgpd',
+        'obs',
         'created_at',
         'updated_at',
         'deleted_at',
