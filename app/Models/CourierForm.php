@@ -28,6 +28,7 @@ class CourierForm extends Model
         'courier',
         'account',
         'rgpd',
+        'obs',
         'created_at',
         'updated_at',
         'deleted_at',
