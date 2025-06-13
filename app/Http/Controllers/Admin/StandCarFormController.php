@@ -84,8 +84,11 @@ class StandCarFormController extends Controller
             $table->editColumn('rgpd', function ($row) {
                 return '<input type="checkbox" disabled ' . ($row->rgpd ? 'checked' : null) . '>';
             });
+            $table->editColumn('obs', function ($row) {
+                return $row->obs ? '<span badge badge-info>Sim</span>' : '';
+            });
 
-            $table->rawColumns(['actions', 'placeholder', 'car', 'rgpd']);
+            $table->rawColumns(['actions', 'placeholder', 'car', 'rgpd', 'obs']);
 
             return $table->make(true);
         }
