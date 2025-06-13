@@ -43,6 +43,9 @@
                                         {{ trans('cruds.trainingForm.fields.rgpd') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.trainingForm.fields.obs') }}
+                                    </th>
+                                    <th>
                                         {{ trans('cruds.trainingForm.fields.created_at') }}
                                     </th>
                                     <th>
@@ -74,6 +77,9 @@
                                         <td>
                                             <span style="display:none">{{ $trainingForm->rgpd ?? '' }}</span>
                                             <input type="checkbox" disabled="disabled" {{ $trainingForm->rgpd ? 'checked' : '' }}>
+                                        </td>
+                                        <td>
+                                            {!! $trainingForm->obs ? '<span class="badge">Sim</span>' : '' !!}
                                         </td>
                                         <td>
                                             {{ $trainingForm->created_at ?? '' }}
