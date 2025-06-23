@@ -33,6 +33,9 @@
                                     {{ trans('cruds.whatsappMessage.fields.messages') }}
                                 </th>
                                 <th>
+                                    Atualizado
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -94,6 +97,7 @@
 { data: 'id', name: 'id' },
 { data: 'user', name: 'user' },
 { data: 'messages', name: 'messages' },
+{ data: 'updated_at', name: 'updated_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

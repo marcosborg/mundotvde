@@ -48,6 +48,9 @@ class WhatsappMessagesController extends Controller
             $table->editColumn('user', function ($row) {
                 return $row->user ? $row->user : '';
             });
+            $table->editColumn('updated_at', function ($row) {
+                return $row->updated_at ? $row->updated_at : '';
+            });
 
             $table->editColumn('messages', function ($row) {
                 if (!$row->messages) return '';

@@ -70,6 +70,10 @@ class WebsiteMessagesController extends Controller
                 return $html;
             });
 
+            $table->editColumn('updated_at', function ($row) {
+                return $row->updated_at ? $row->updated_at : '';
+            });
+
             $table->rawColumns(['actions', 'placeholder', 'messages']);
 
             return $table->make(true);

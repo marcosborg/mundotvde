@@ -33,6 +33,9 @@
                                     {{ trans('cruds.websiteMessage.fields.messages') }}
                                 </th>
                                 <th>
+                                    Data
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -94,6 +97,7 @@
 { data: 'id', name: 'id' },
 { data: 'email', name: 'email' },
 { data: 'messages', name: 'messages' },
+{ data: 'updated_at', name: 'updated_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

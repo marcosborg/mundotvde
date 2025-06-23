@@ -55,6 +55,10 @@ class AppMessagesController extends Controller
                 return $row->messages ? $row->messages : '';
             });
 
+            $table->editColumn('updated_at', function ($row) {
+                return $row->updated_at ? $row->updated_at : '';
+            });
+
             $table->rawColumns(['actions', 'placeholder', 'user']);
 
             return $table->make(true);
