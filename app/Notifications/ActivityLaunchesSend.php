@@ -50,7 +50,7 @@ class ActivityLaunchesSend extends Notification
         $html .= "<th colspan='2' style='text-align: left; padding: 10px; font-size: 16px; border: 1px solid #ddd;'>Valor do saldo disponível</th>";
         $html .= "</tr>";
         $html .= "<tr>";
-        $html .= "<td colspan='2' style='padding: 10px; border: 1px solid #ddd; font-size: 16px; background-color: #ffffff;'><strong>" . $this->activityLaunche->total . " €</strong></td>";
+        $html .= "<td colspan='2' style='padding: 10px; border: 1px solid #ddd; font-size: 16px; background-color: #ffffff;'><strong>" . $this->activityLaunche->balance . " €</strong></td>";
         $html .= "</tr>";
         $html .= "<tr><td colspan='2' style='height: 10px;'></td></tr>"; // espaço
         $html .= "</thead>";

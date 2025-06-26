@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Driver;
 
 class PayoutsToDriversController extends Controller
 {
@@ -100,6 +101,7 @@ class PayoutsToDriversController extends Controller
             $taxes[] = $activityPerOperator->taxes;
         }
         $sum = array_sum($sum);
+        $activityLaunche->balance = $this->getBalance($activityLaunche->driver_id);
         $activityLaunche->total = $sum - $sub + $activityLaunche->refund;
         $activityLaunche->sum = $sum;
         $activityLaunche->sub = $sub;
@@ -110,6 +112,43 @@ class PayoutsToDriversController extends Controller
 
         $activityLaunche->driver->user->notify(new ActivityLaunchesSend($activityLaunche));
         User::find(1)->notify(new ActivityLaunchesSend($activityLaunche));
+    }
+
+    private function getBalance($driver_id)
+    {
+
+        $driver = Driver::find($driver_id)
+            ->load([
+                'activity_launches.activityPerOperators'
+            ]);
+
+        $balance = 0;
+
+        foreach ($driver->activity_launches as $activity_launch) {
+            $sub = [
+                $activity_launch->rent,
+                $activity_launch->management,
+                $activity_launch->insurance,
+                $activity_launch->fuel,
+                $activity_launch->tolls,
+                $activity_launch->others
+            ];
+            $sub = array_sum($sub);
+
+            $sum = [];
+            foreach ($activity_launch->activityPerOperators as $activityPerOperator) {
+                $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+            }
+            $sum = array_sum($sum);
+
+            $result = $sum - $sub + $activity_launch->refund;
+
+            if (!$activity_launch->paid) {
+                $balance += $result;
+            }
+        }
+
+        return $balance;
     }
 
     public function pay(Request $request)

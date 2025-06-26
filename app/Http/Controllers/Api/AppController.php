@@ -84,13 +84,37 @@ class AppController extends Controller
             $can_create_receipt = false;
         }
 
-        $total = number_format(array_sum($total), 2);
+        $balance = 0;
+
+        foreach ($driver->activity_launches as $activity_launch) {
+            $sub = [
+                $activity_launch->rent,
+                $activity_launch->management,
+                $activity_launch->insurance,
+                $activity_launch->fuel,
+                $activity_launch->tolls,
+                $activity_launch->others
+            ];
+            $sub = array_sum($sub);
+
+            $sum = [];
+            foreach ($activity_launch->activityPerOperators as $activityPerOperator) {
+                $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+            }
+            $sum = array_sum($sum);
+
+            $result = $sum - $sub + $activity_launch->refund;
+
+            if (!$activity_launch->paid) {
+                $balance += $result;
+            }
+        }
 
         return [
             'activityLaunches' => $activityLaunches,
             'last_receipt' => $last_receipt,
             'can_create_receipt' => $can_create_receipt,
-            'total' => $total
+            'total' => $balance
         ];
     }
 
