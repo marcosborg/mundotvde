@@ -319,6 +319,114 @@
                 </ul>
             </li>
             @endcan
+            @can('vehicle_access')
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa-fw fas fa-car">
+
+                    </i>
+                    <span>{{ trans('cruds.vehicle.title') }}</span>
+                    <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+                </a>
+                <ul class="treeview-menu">
+                    @can('vehicle_setting_access')
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa-fw fas fa-cogs">
+
+                            </i>
+                            <span>{{ trans('cruds.vehicleSetting.title') }}</span>
+                            <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @can('vehicle_brand_access')
+                            <li class="{{ request()->is("admin/vehicle-brands") || request()->
+                                is("admin/vehicle-brands/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.vehicle-brands.index") }}">
+                                    <i class="fa-fw fas fa-car">
+
+                                    </i>
+                                    <span>{{ trans('cruds.vehicleBrand.title') }}</span>
+
+                                </a>
+                            </li>
+                            @endcan
+                            @can('vehicle_model_access')
+                            <li class="{{ request()->is("admin/vehicle-models") || request()->
+                                is("admin/vehicle-models/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.vehicle-models.index") }}">
+                                    <i class="fa-fw fas fa-car">
+
+                                    </i>
+                                    <span>{{ trans('cruds.vehicleModel.title') }}</span>
+
+                                </a>
+                            </li>
+                            @endcan
+                            @can('vehicle_event_type_access')
+                            <li class="{{ request()->is("admin/vehicle-event-types") || request()->
+                                is("admin/vehicle-event-types/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.vehicle-event-types.index") }}">
+                                    <i class="fa-fw fas fa-calendar">
+
+                                    </i>
+                                    <span>{{ trans('cruds.vehicleEventType.title') }}</span>
+
+                                </a>
+                            </li>
+                            @endcan
+                            @can('vehicle_event_warning_time_access')
+                            <li class="{{ request()->is("admin/vehicle-event-warning-times") || request()->
+                                is("admin/vehicle-event-warning-times/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.vehicle-event-warning-times.index") }}">
+                                    <i class="fa-fw fas fa-stopwatch">
+
+                                    </i>
+                                    <span>{{ trans('cruds.vehicleEventWarningTime.title') }}</span>
+
+                                </a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcan
+                    @can('vehicle_event_access')
+                    <li class="{{ request()->is("admin/vehicle-events") || request()->is("admin/vehicle-events/*") ?
+                        "active" : "" }}">
+                        <a href="{{ route("admin.vehicle-events.index") }}">
+                            <i class="fa-fw fas fa-calendar">
+
+                            </i>
+                            <span>{{ trans('cruds.vehicleEvent.title') }}</span>
+
+                        </a>
+                    </li>
+                    @endcan
+                    @can('vehicle_item_access')
+                    <li class="{{ request()->is("admin/vehicle-items") || request()->is("admin/vehicle-items/*") ?
+                        "active" : "" }}">
+                        <a href="{{ route("admin.vehicle-items.index") }}">
+                            <i class="fa-fw fas fa-car">
+
+                            </i>
+                            <span>{{ trans('cruds.vehicleItem.title') }}</span>
+
+                        </a>
+                    </li>
+                    @endcan
+                    <li class="{{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ?
+                        "active"
+                        : "" }}">
+                        <a href="{{ route("admin.systemCalendar") }}">
+                            <i class="fas fa-fw fa-calendar">
+
+                            </i>
+                            <span>{{ trans('global.systemCalendar') }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endcan
             @can('my_document_access')
             <li class="{{ request()->is("admin/my-documents") || request()->is("admin/my-documents/*") ? "active" : ""
                 }}">
@@ -1061,114 +1169,6 @@
                     <span>{{ trans('cruds.adminContract.title') }}</span>
 
                 </a>
-            </li>
-            @endcan
-            @can('vehicle_access')
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa-fw fas fa-car">
-
-                    </i>
-                    <span>{{ trans('cruds.vehicle.title') }}</span>
-                    <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
-                </a>
-                <ul class="treeview-menu">
-                    @can('vehicle_setting_access')
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa-fw fas fa-cogs">
-
-                            </i>
-                            <span>{{ trans('cruds.vehicleSetting.title') }}</span>
-                            <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
-                        </a>
-                        <ul class="treeview-menu">
-                            @can('vehicle_brand_access')
-                            <li class="{{ request()->is("admin/vehicle-brands") || request()->
-                                is("admin/vehicle-brands/*") ? "active" : "" }}">
-                                <a href="{{ route("admin.vehicle-brands.index") }}">
-                                    <i class="fa-fw fas fa-car">
-
-                                    </i>
-                                    <span>{{ trans('cruds.vehicleBrand.title') }}</span>
-
-                                </a>
-                            </li>
-                            @endcan
-                            @can('vehicle_model_access')
-                            <li class="{{ request()->is("admin/vehicle-models") || request()->
-                                is("admin/vehicle-models/*") ? "active" : "" }}">
-                                <a href="{{ route("admin.vehicle-models.index") }}">
-                                    <i class="fa-fw fas fa-car">
-
-                                    </i>
-                                    <span>{{ trans('cruds.vehicleModel.title') }}</span>
-
-                                </a>
-                            </li>
-                            @endcan
-                            @can('vehicle_event_type_access')
-                            <li class="{{ request()->is("admin/vehicle-event-types") || request()->
-                                is("admin/vehicle-event-types/*") ? "active" : "" }}">
-                                <a href="{{ route("admin.vehicle-event-types.index") }}">
-                                    <i class="fa-fw fas fa-calendar">
-
-                                    </i>
-                                    <span>{{ trans('cruds.vehicleEventType.title') }}</span>
-
-                                </a>
-                            </li>
-                            @endcan
-                            @can('vehicle_event_warning_time_access')
-                            <li class="{{ request()->is("admin/vehicle-event-warning-times") || request()->
-                                is("admin/vehicle-event-warning-times/*") ? "active" : "" }}">
-                                <a href="{{ route("admin.vehicle-event-warning-times.index") }}">
-                                    <i class="fa-fw fas fa-stopwatch">
-
-                                    </i>
-                                    <span>{{ trans('cruds.vehicleEventWarningTime.title') }}</span>
-
-                                </a>
-                            </li>
-                            @endcan
-                        </ul>
-                    </li>
-                    @endcan
-                    @can('vehicle_event_access')
-                    <li class="{{ request()->is("admin/vehicle-events") || request()->is("admin/vehicle-events/*") ?
-                        "active" : "" }}">
-                        <a href="{{ route("admin.vehicle-events.index") }}">
-                            <i class="fa-fw fas fa-calendar">
-
-                            </i>
-                            <span>{{ trans('cruds.vehicleEvent.title') }}</span>
-
-                        </a>
-                    </li>
-                    @endcan
-                    @can('vehicle_item_access')
-                    <li class="{{ request()->is("admin/vehicle-items") || request()->is("admin/vehicle-items/*") ?
-                        "active" : "" }}">
-                        <a href="{{ route("admin.vehicle-items.index") }}">
-                            <i class="fa-fw fas fa-car">
-
-                            </i>
-                            <span>{{ trans('cruds.vehicleItem.title') }}</span>
-
-                        </a>
-                    </li>
-                    @endcan
-                    <li class="{{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ?
-                        "active"
-                        : "" }}">
-                        <a href="{{ route("admin.systemCalendar") }}">
-                            <i class="fas fa-fw fa-calendar">
-
-                            </i>
-                            <span>{{ trans('global.systemCalendar') }}</span>
-                        </a>
-                    </li>
-                </ul>
             </li>
             @endcan
             @can('stand_tvde_menu_access')
