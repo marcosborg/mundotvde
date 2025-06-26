@@ -215,6 +215,20 @@ class MyDocumentController extends Controller
             }
         }
 
+        if (count($document->vehicle_inspection) > 0) {
+            foreach ($document->vehicle_inspection as $media) {
+                if (!in_array($media->file_name, $request->input('vehicle_inspection', []))) {
+                    $media->delete();
+                }
+            }
+        }
+        $media = $document->vehicle_inspection->pluck('file_name')->toArray();
+        foreach ($request->input('vehicle_inspection', []) as $file) {
+            if (count($media) === 0 || !in_array($file, $media)) {
+                $document->addMedia(storage_path('tmp/uploads/' . basename($file)))->toMediaCollection('vehicle_inspection');
+            }
+        }
+
         return redirect()->route('admin.my-documents.index');
     }
 
