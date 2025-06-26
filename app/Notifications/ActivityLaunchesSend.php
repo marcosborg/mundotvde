@@ -44,33 +44,35 @@ class ActivityLaunchesSend extends Notification
     public function toMail($notifiable)
     {
 
-        $html = "<table>";
+        $html = "<table style='width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;'>";
         $html .= "<thead>";
-        $html .= "<tr>";
-        $html .= "<th style='text-align: left; '>Valor do saldo disponível</th>";
-        $html .= "<td>" . $this->activityLaunche->total . " €</td>";
+        $html .= "<tr style='background-color: #f0f0f0;'>";
+        $html .= "<th colspan='2' style='text-align: left; padding: 10px; font-size: 16px; border: 1px solid #ddd;'>Valor do saldo disponível</th>";
         $html .= "</tr>";
-        $html .= "<tr><td></td><td></td></tr>";
+        $html .= "<tr>";
+        $html .= "<td colspan='2' style='padding: 10px; border: 1px solid #ddd; font-size: 16px; background-color: #ffffff;'><strong>" . $this->activityLaunche->total . " €</strong></td>";
+        $html .= "</tr>";
+        $html .= "<tr><td colspan='2' style='height: 10px;'></td></tr>"; // espaço
         $html .= "</thead>";
         $html .= "<tbody>";
-        $html .= "<tr>";
-        $html .= "<th style='text-align: left;'>Totais da semana</th>";
-        $html .= "<td></td> ";
+        $html .= "<tr style='background-color: #f0f0f0;'>";
+        $html .= "<th colspan='2' style='text-align: left; padding: 10px; font-size: 15px; border: 1px solid #ddd;'>Totais da semana</th>";
         $html .= "</tr>";
         $html .= "<tr>";
-        $html .= "<th style='text-align: left;'>Recebimentos</th>";
-        $html .= "<td>" . $this->activityLaunche->total_after_refund . " €</td>";
+        $html .= "<td style='text-align: left; padding: 10px; border: 1px solid #ddd;'>Recebimentos</td>";
+        $html .= "<td style='padding: 10px; border: 1px solid #ddd;'>" . $this->activityLaunche->total_after_refund . " €</td>";
         $html .= "</tr>";
         $html .= "<tr>";
-        $html .= "<th style='text-align: left;'>Descontos</th>";
-        $html .= "<td>" . $this->activityLaunche->total_descount_after_taxes . " €</td>";
+        $html .= "<td style='text-align: left; padding: 10px; border: 1px solid #ddd;'>Descontos</td>";
+        $html .= "<td style='padding: 10px; border: 1px solid #ddd;'>" . $this->activityLaunche->total_descount_after_taxes . " €</td>";
         $html .= "</tr>";
-        $html .= "<tr>";
-        $html .= "<th style='text-align: left;'>Total</th>";
-        $html .= "<th>" . $this->activityLaunche->total . " €</th>";
+        $html .= "<tr style='background-color: #e8f4e5;'>";
+        $html .= "<th style='text-align: left; padding: 10px; border: 1px solid #ddd;'>Total</th>";
+        $html .= "<th style='padding: 10px; border: 1px solid #ddd;'>" . $this->activityLaunche->total . " €</th>";
         $html .= "</tr>";
         $html .= "</tbody>";
         $html .= "</table>";
+
 
         return (new MailMessage)
             ->subject('Extrato Mundo TVDE')
@@ -80,8 +82,8 @@ class ActivityLaunchesSend extends Notification
             ->line('Visite a sua área pessoal para verificar os detalhes e fazer upload do recibo.')
             ->action('Área pessoal', url('https://mundotvde.pt/login'))
             ->line('Ou aceda diretamente pela app:')
-            ->line('[Abrir em Android](https://play.google.com/store/apps/details?id=pt.mundotvde.app&hl=pt)')
-            ->line('[Abrir em iOS](https://apps.apple.com/pt/app/mundotvde/id6743633904)')
+            ->line('<a href="https://play.google.com/store/apps/details?id=pt.mundotvde.app&hl=pt" target="_blank">Abrir no Android</a>')
+            ->line('<a href="https://apps.apple.com/pt/app/mundotvde/id6743633904" target="_blank">Abrir no iOS</a>')
             ->line('Obrigado pela preferência')
             ->salutation('Equipa Mundo TVDE');
     }
