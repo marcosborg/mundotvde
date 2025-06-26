@@ -113,6 +113,15 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.document.fields.ipo_vehicle_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('vehicle_inspection') ? 'has-error' : '' }}">
+                            <label for="vehicle_inspection">{{ trans('cruds.document.fields.vehicle_inspection') }}</label>
+                            <div class="needsclick dropzone" id="vehicle_inspection-dropzone">
+                            </div>
+                            @if($errors->has('vehicle_inspection'))
+                                <span class="help-block" role="alert">{{ $errors->first('vehicle_inspection') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.document.fields.vehicle_inspection_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('notes') ? 'has-error' : '' }}">
                             <label for="notes">{{ trans('cruds.document.fields.notes') }}</label>
                             <textarea class="form-control" name="notes" id="notes">{{ old('notes') }}</textarea>
@@ -676,6 +685,62 @@ Dropzone.options.ipoVehicleDropzone = {
               this.options.addedfile.call(this, file)
               file.previewElement.classList.add('dz-complete')
               $('form').append('<input type="hidden" name="ipo_vehicle[]" value="' + file.file_name + '">')
+            }
+@endif
+    },
+     error: function (file, response) {
+         if ($.type(response) === 'string') {
+             var message = response //dropzone sends it's own error messages in string
+         } else {
+             var message = response.errors.file
+         }
+         file.previewElement.classList.add('dz-error')
+         _ref = file.previewElement.querySelectorAll('[data-dz-errormessage]')
+         _results = []
+         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+             node = _ref[_i]
+             _results.push(node.textContent = message)
+         }
+
+         return _results
+     }
+}
+</script>
+<script>
+    var uploadedVehicleInspectionMap = {}
+Dropzone.options.vehicleInspectionDropzone = {
+    url: '{{ route('admin.documents.storeMedia') }}',
+    maxFilesize: 2, // MB
+    addRemoveLinks: true,
+    headers: {
+      'X-CSRF-TOKEN': "{{ csrf_token() }}"
+    },
+    params: {
+      size: 2
+    },
+    success: function (file, response) {
+      $('form').append('<input type="hidden" name="vehicle_inspection[]" value="' + response.name + '">')
+      uploadedVehicleInspectionMap[file.name] = response.name
+    },
+    removedfile: function (file) {
+      file.previewElement.remove()
+      var name = ''
+      if (typeof file.file_name !== 'undefined') {
+        name = file.file_name
+      } else {
+        name = uploadedVehicleInspectionMap[file.name]
+      }
+      $('form').find('input[name="vehicle_inspection[]"][value="' + name + '"]').remove()
+    },
+    init: function () {
+@if(isset($document) && $document->vehicle_inspection)
+          var files =
+            {!! json_encode($document->vehicle_inspection) !!}
+              for (var i in files) {
+              var file = files[i]
+              this.options.addedfile.call(this, file)
+              file.previewElement.classList.add('dz-complete')
+              $('form').append('<input type="hidden" name="vehicle_inspection[]" value="' + file.file_name + '">')
             }
 @endif
     },

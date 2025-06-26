@@ -43,6 +43,7 @@ class Document extends Model implements HasMedia
         'dua_vehicle',
         'car_insurance',
         'ipo_vehicle',
+        'vehicle_inspection',
     ];
 
     protected function serializeDate(DateTimeInterface $date)
@@ -116,5 +117,10 @@ class Document extends Model implements HasMedia
     public function getIpoVehicleAttribute()
     {
         return $this->getMedia('ipo_vehicle');
+    }
+
+    public function getVehicleInspectionAttribute()
+    {
+        return $this->getMedia('vehicle_inspection');
     }
 }
