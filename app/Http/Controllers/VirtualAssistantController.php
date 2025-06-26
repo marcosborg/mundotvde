@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\Bot;
 use App\Models\WebsiteMessage;
+use App\Models\AppMessage;
 
 class VirtualAssistantController extends Controller
 {
@@ -58,5 +59,43 @@ class VirtualAssistantController extends Controller
         );
 
         return response()->json(['reply' => $reply]);
+    }
+
+    public function handleDriverMessage(Request $request)
+    {
+        $request->validate([
+            'user' => 'required|string', // ID ou email do motorista
+            'conversation' => 'required|array',
+        ]);
+
+        // Obter instruções do bot 3
+        $bot = Bot::findOrFail(3);
+        $instructions = $bot->instructions;
+
+        $conversation = $request->conversation;
+
+        $messages = collect($conversation)->map(function ($item) {
+            return [
+                'role' => $item['role'],
+                'content' => $item['content'],
+            ];
+        })->toArray();
+
+        // Adicionar instruções ao início
+        array_unshift($messages, ['role' => 'system', 'content' => $instructions]);
+
+        // Chamar o ChatGPT (pseudocódigo, usa o teu serviço real aqui)
+        $reply = app('openai')->chat($messages); // ajusta conforme teu serviço
+
+        // Gravar a nova conversa
+        AppMessage::updateOrCreate(
+            ['user' => $request->user],
+            ['messages' => json_encode($conversation)]
+        );
+
+        return response()->json([
+            'success' => true,
+            'reply' => $reply,
+        ]);
     }
 }

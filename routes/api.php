@@ -121,3 +121,5 @@ Route::get('/message', 'Api\\BotController@getMessage');
 Route::post('/message', 'Api\\BotController@saveMessage');
 
 Route::post('/assistente-virtual', [VirtualAssistantController::class, 'handleMessage']);
+// Assistente Virtual para Motoristas (Bot ID 3)
+Route::post('/assistente-motorista', [VirtualAssistantController::class, 'handleDriverMessage']);
