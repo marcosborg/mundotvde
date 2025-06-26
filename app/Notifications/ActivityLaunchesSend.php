@@ -11,16 +11,17 @@ class ActivityLaunchesSend extends Notification
 {
     use Queueable;
 
-    private $data;
+    private $activityLaunche;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($activityLaunche)
     {
-        $this->data = $data;
+
+        $this->activityLaunche = $activityLaunche;
     }
 
     /**
@@ -42,38 +43,47 @@ class ActivityLaunchesSend extends Notification
      */
     public function toMail($notifiable)
     {
-        $html = '<table style="width: 100%;">';
-        $html .= '<thead>';
-        $html .= '<tr>';
-        $html .= '<th>N.</th>';
-        $html .= '<th>Semana</th>';
-        $html .= '<th>Recebimentos</th>';
-        $html .= '<th>Descontos</th>';
-        $html .= '<th>Total</th>';
-        $html .= '</tr>';
-        $html .= '</thead>';
-        $html .= '<tbody>';
-        foreach ($this->data as $value) {
-            $html .= '<tr>';
-            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['number'] . '</td>';
-            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['start_date'] . '<br>' . $value['end_date'] . '</td>';
-            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['sum'] . '</td>';
-            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['sub'] + $value['refund'] . '</td>';
-            $html .= '<td style="border-bottom: solid 1px #cccccc; text-align: center;">' . $value['total'] . '</td>';
-            $html .= '</tr>';
-        }
-        $html .= '</tbody>';
-        $html .= '</table>';
+
+        $html = "<table>";
+        $html .= "<thead>";
+        $html .= "<tr>";
+        $html .= "<th style='text-align: left; '>Valor do saldo disponível</th>";
+        $html .= "<td>" . $this->activityLaunche->total . " €</td>";
+        $html .= "</tr>";
+        $html .= "<tr><td></td><td></td></tr>";
+        $html .= "</thead>";
+        $html .= "<tbody>";
+        $html .= "<tr>";
+        $html .= "<th style='text-align: left;'>Totais da semana</th>";
+        $html .= "<td></td> ";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<th style='text-align: left;'>Recebimentos</th>";
+        $html .= "<td>" . $this->activityLaunche->total_after_refund . " €</td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<th style='text-align: left;'>Descontos</th>";
+        $html .= "<td>" . $this->activityLaunche->total_descount_after_taxes . " €</td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<th style='text-align: left;'>Total</th>";
+        $html .= "<th>" . $this->activityLaunche->total . " €</th>";
+        $html .= "</tr>";
+        $html .= "</tbody>";
+        $html .= "</table>";
 
         return (new MailMessage)
-                    ->subject('Extrato Mundo TVDE')
-                    ->greeting('Olá!')
-                    ->line('O Mundo TVDE lançou o extrato abaixo.')
-                    ->line($html)
-                    ->line('Visite a sua área pessoal para verificar os detalhes e fazer upload do recibo.')
-                    ->action('Área pessoal', url('https://mundotvde.pt/login'))
-                    ->line('Obrigado pela preferência')
-                    ->salutation('Equipa Mundo TVDE');
+            ->subject('Extrato Mundo TVDE')
+            ->greeting('Olá!')
+            ->line('O Mundo TVDE lançou o extrato abaixo.')
+            ->line($html)
+            ->line('Visite a sua área pessoal para verificar os detalhes e fazer upload do recibo.')
+            ->action('Área pessoal', url('https://mundotvde.pt/login'))
+            ->line('Ou aceda diretamente pela app:')
+            ->line('[Abrir em Android](https://play.google.com/store/apps/details?id=pt.mundotvde.app&hl=pt)')
+            ->line('[Abrir em iOS](https://apps.apple.com/pt/app/mundotvde/id6743633904)')
+            ->line('Obrigado pela preferência')
+            ->salutation('Equipa Mundo TVDE');
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLaunch;
 use App\Notifications\ActivityLaunchesSend;
 use App\Notifications\PaidReceipt;
+use App\Models\User;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
@@ -25,10 +26,10 @@ class PayoutsToDriversController extends Controller
         abort_if(Gate::denies('payouts_to_driver_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $activityLaunches = ActivityLaunch::with([
-                'week',
-                'driver',
-                'activityPerOperators.tvde_operator',
-            ])
+            'week',
+            'driver',
+            'activityPerOperators.tvde_operator',
+        ])
             ->get();
 
         foreach ($activityLaunches as $activityLaunch) {
@@ -63,59 +64,51 @@ class PayoutsToDriversController extends Controller
     {
 
         $activityLaunches = json_decode($request->activityLaunches);
-        $activityLaunchesByDriver = collect();
-        //Atualizar ActivityLaunches
         foreach ($activityLaunches as $activity_launch_id) {
-            $activityLaunch = ActivityLaunch::where('id', $activity_launch_id)
-                ->with([
-                    'driver.user',
-                    'activityPerOperators',
-                    'week',
-                ])
-                ->first();
-            $activityLaunch->send = true;
-            $activityLaunch->save();
-            $activityLaunchesByDriver->add(collect([
-                'driver_id' => $activityLaunch->driver->id,
-                'user' => $activityLaunch->driver->user,
-                'activityLaunch' => $activityLaunch,
-            ]));
+            $this->data($activity_launch_id);
         }
-        //Identificar Drivers
-        $activityLaunchesByDriver = $activityLaunchesByDriver->groupBy('driver_id');
-        foreach ($activityLaunchesByDriver as $activityLaunches) {
-            $data = [];
-            //Fazer calculos
-            foreach ($activityLaunches as $value) {
-                $sub = [
-                    $value['activityLaunch']['rent'],
-                    $value['activityLaunch']['management'],
-                    $value['activityLaunch']['insurance'],
-                    $value['activityLaunch']['fuel'],
-                    $value['activityLaunch']['tolls'],
-                    $value['activityLaunch']['others'],
-                ];
-                $sub = array_sum($sub);
-                $sum = [];
-                foreach ($value['activityLaunch']['activityPerOperators'] as $v) {
-                    $sum[] = $v['net'] - $v['taxes'];
-                }
-                $sum = array_sum($sum);
-                $total = $sum - $sub + $value['activityLaunch']['refund'];
-                $data[] = [
-                    'number' => $value['activityLaunch']['week']['number'],
-                    'start_date' => Carbon::parse($value['activityLaunch']['week']['start_date'])->format('d-m-Y'),
-                    'end_date' => Carbon::parse($value['activityLaunch']['week']['end_date'])->format('d-m-Y'),
-                    'sum' => $sum,
-                    'sub' => $sub,
-                    'total' => $total,
-                    'refund' => floatval($value['activityLaunch']['refund']),
-                ];
-            }
-            //Enviar email
-            $user = $activityLaunches[0]['user'];
-            $user->notify(new ActivityLaunchesSend($data));
+    }
+
+    private function data($activity_launch_id)
+    {
+        $activityLaunche = ActivityLaunch::find($activity_launch_id)
+            ->load([
+                'week',
+                'activityPerOperators.tvde_operator',
+                'driver.user',
+            ]);
+
+        $activityLaunche->send = true;
+        $activityLaunche->save();
+
+        $sub = [
+            $activityLaunche->rent,
+            $activityLaunche->management,
+            $activityLaunche->insurance,
+            $activityLaunche->fuel,
+            $activityLaunche->tolls,
+            $activityLaunche->others,
+        ];
+        $taxes = [];
+        $sub = array_sum($sub);
+        $sum = [];
+        $sum_net = [];
+        $taxes = [];
+        foreach ($activityLaunche->activityPerOperators as $activityPerOperator) {
+            $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+            $sum_net[] = $activityPerOperator->net;
+            $taxes[] = $activityPerOperator->taxes;
         }
+        $sum = array_sum($sum);
+        $activityLaunche->total = $sum - $sub + $activityLaunche->refund;
+        $activityLaunche->sum = $sum;
+        $activityLaunche->sub = $sub;
+        $activityLaunche->sum_net = array_sum($sum_net);
+        $activityLaunche->total_after_refund = $activityLaunche->sum_net + $activityLaunche->refund;
+        $activityLaunche->taxes = array_sum($taxes);
+        $activityLaunche->total_descount_after_taxes = $activityLaunche->sub + $activityLaunche->taxes;
+
+        $activityLaunche->driver->user->notify(new ActivityLaunchesSend($activityLaunche));
 
     }
 
@@ -129,8 +122,5 @@ class PayoutsToDriversController extends Controller
 
         //SEND EMAIL
         $activityLaunch->driver->user->notify(new PaidReceipt());
-
     }
-
-
 }

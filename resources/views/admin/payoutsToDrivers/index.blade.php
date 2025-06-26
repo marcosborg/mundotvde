@@ -31,13 +31,15 @@
                 checkChecked();
             });
             $('.datatable').DataTable({
-                columnDefs: [ {
-                targets: 0, // índice da coluna de checkboxes
-                visible: false // oculta a coluna
-                }],
-                order: [[3, 'desc']]
+                columnDefs: [{
+                    targets: 0, // índice da coluna de checkboxes
+                    visible: false // oculta a coluna
+                }]
+                , order: [
+                    [3, 'desc']
+                ]
             });
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
                 $('.datatable').DataTable().draw();
             });
             $('.select-checkbox:before').css('display', 'none');
@@ -52,35 +54,35 @@
     }
     confirmSend = () => {
         Swal.fire({
-            title: 'Confirmar envio?',
-            text: "Um email vai ser enviado e não poderá reverter o processo!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sim, confirmar envio!'
-            }).then((result) => {
+            title: 'Confirmar envio?'
+            , text: "Um email vai ser enviado e não poderá reverter o processo!"
+            , icon: 'warning'
+            , showCancelButton: true
+            , confirmButtonColor: '#3085d6'
+            , cancelButtonColor: '#d33'
+            , confirmButtonText: 'Sim, confirmar envio!'
+        }).then((result) => {
             if (result.isConfirmed) {
                 $.LoadingOverlay('show');
                 var activityLaunches = [];
                 $('.checkboxes:checked').each(function() {
                     activityLaunches.push($(this).val());
-                }); 
+                });
                 var form = new FormData();
                 form.append("activityLaunches", JSON.stringify(activityLaunches));
                 var settings = {
-                    "url": "/admin/payouts-to-drivers/confirm-send",
-                    "method": "POST",
-                    "timeout": 0,
-                    "headers": {
+                    "url": "/admin/payouts-to-drivers/confirm-send"
+                    , "method": "POST"
+                    , "timeout": 0
+                    , "headers": {
                         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                    },
-                    "processData": false,
-                    "mimeType": "multipart/form-data",
-                    "contentType": false,
-                    "data": form
+                    }
+                    , "processData": false
+                    , "mimeType": "multipart/form-data"
+                    , "contentType": false
+                    , "data": form
                 };
-                $.ajax(settings).done(function (response) {
+                $.ajax(settings).done(function(response) {
                     $.LoadingOverlay('hide');
                     ajax();
                     Swal.fire(
@@ -102,6 +104,7 @@
     selectAllToSend = () => {
         $('input[type="checkbox"]').prop('checked', true);
     }
+
 </script>
 
 @endsection
