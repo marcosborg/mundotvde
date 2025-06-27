@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\VirtualAssistantController;
 
 Route::get('/', 'Website\HomePageController@index');
 Route::prefix('tvde')->group(function () {
@@ -19,13 +18,6 @@ Route::prefix('tvde')->group(function () {
     Route::get('transfer-tour/{id}', 'Website\TransferTourController@transferTour');
     Route::get('consultadoria', 'Website\ConsultingController@index');
 });
-
-Route::post('/assistente-virtual', [VirtualAssistantController::class, 'handleMessage'])->name('assistente.virtual');
-Route::get('/api/website-messages/{email}', function ($email) {
-    $message = \App\Models\WebsiteMessage::where('email', $email)->first();
-    return $message ? json_decode($message->messages, true) : [];
-});
-
 
 Route::get('noticia/{article_id}/{slug}', 'Website\ArticlesController@index');
 

@@ -120,4 +120,16 @@ Route::get('/bot/{id}/instructions', 'Api\\BotController@getInstructions');
 Route::get('/message', 'Api\\BotController@getMessage');
 Route::post('/message', 'Api\\BotController@saveMessage');
 
-Route::post('/assistente-virtual', [VirtualAssistantController::class, 'handleMessage']);
+Route::post('assistente-virtual', [VirtualAssistantController::class, 'handleMessage'])->name('assistente.virtual');
+Route::get('website-messages/{email}', function ($email) {
+    $message = \App\Models\WebsiteMessage::where('email', $email)->first();
+    return $message ? json_decode($message->messages, true) : [];
+});
+
+Route::middleware('auth:sanctum')->post('assistente-motorista', [VirtualAssistantController::class, 'handleMotoristaMessage'])->name('assistente.motorista');
+
+Route::middleware('auth:sanctum')->get('motorista-messages', function (Request $request) {
+    $user = $request->user();
+    $message = \App\Models\AppMessage::where('user_id', $user->id)->first();
+    return $message ? json_decode($message->messages, true) : [];
+});
