@@ -442,8 +442,8 @@ class AppController extends Controller
         $content1 = $pdf1->output();
         $content2 = $pdf2->output();
 
-        Storage::put("pdfs/stmt_{$driver->id}.pdf", $content1);
-        Storage::put("pdfs/contract_{$driver->id}.pdf", $content2);
+        Storage::disk('public')->put("{$driver->id}/stmt_{$driver->id}.pdf", $content1);
+        Storage::disk('public')->put("{$driver->id}/contract_{$driver->id}.pdf", $content2);
 
         $url1 = Storage::url("pdfs/stmt_{$driver->id}.pdf");
         $url2 = Storage::url("pdfs/contract_{$driver->id}.pdf");
