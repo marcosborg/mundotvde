@@ -1015,6 +1015,12 @@ return [
             'notes_helper'          => ' ',
             'bolt_name'             => 'Nome Bolt',
             'bolt_name_helper'      => ' ',
+            'citizen_card_expiry_date' => 'Data de expiração do cartão de cidadão',
+            'citizen_card_expiry_date_helper' => ' ',
+            'drivers_certificate' => 'Certificado de motorista TVDE',
+            'drivers_certificate_helper' => ' ',
+            'drivers_certificate_expiration_date' => 'Data de expiração do certificado de motorista TVDE',
+            'drivers_certificate_expiration_date_helper' => ''
         ],
     ],
     'card' => [

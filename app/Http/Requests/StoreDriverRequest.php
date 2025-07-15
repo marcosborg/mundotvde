@@ -55,6 +55,18 @@ class StoreDriverRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'citizen_card_expiry_date' => [
+                'date_format:' . config('panel.date_format'),
+                'nullable',
+            ],
+            'drivers_certificate' => [
+                'string',
+                'nullable',
+            ],
+            'drivers_certificate_expiration_date' => [
+                'date_format:' . config('panel.date_format'),
+                'nullable',
+            ],
             'iban' => [
                 'string',
                 'nullable',

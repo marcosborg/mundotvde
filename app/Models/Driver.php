@@ -17,6 +17,8 @@ class Driver extends Model
     protected $dates = [
         'start_date',
         'end_date',
+        'citizen_card_expiry_date',
+        'drivers_certificate_expiration_date',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -35,6 +37,9 @@ class Driver extends Model
         'phone',
         'payment_vat',
         'citizen_card',
+        'citizen_card_expiry_date',
+        'drivers_certificate',
+        'drivers_certificate_expiration_date',
         'email',
         'iban',
         'address',

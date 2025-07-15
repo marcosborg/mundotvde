@@ -139,6 +139,30 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.driver.fields.citizen_card_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('citizen_card_expiry_date') ? 'has-error' : '' }}">
+                            <label for="citizen_card_expiry_date">{{ trans('cruds.driver.fields.citizen_card_expiry_date') }}</label>
+                            <input class="form-control date" type="text" name="citizen_card_expiry_date" id="citizen_card_expiry_date" value="{{ old('citizen_card_expiry_date') }}">
+                            @if($errors->has('citizen_card_expiry_date'))
+                                <span class="help-block" role="alert">{{ $errors->first('citizen_card_expiry_date') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.citizen_card_expiry_date_helper') }}</span>
+                        </div>
+                        <div class="form-group {{ $errors->has('drivers_certificate') ? 'has-error' : '' }}">
+                            <label for="drivers_certificate">{{ trans('cruds.driver.fields.drivers_certificate') }}</label>
+                            <input class="form-control" type="text" name="drivers_certificate" id="drivers_certificate" value="{{ old('drivers_certificate', '') }}">
+                            @if($errors->has('drivers_certificate'))
+                                <span class="help-block" role="alert">{{ $errors->first('drivers_certificate') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.drivers_certificate_helper') }}</span>
+                        </div>
+                        <div class="form-group {{ $errors->has('drivers_certificate_expiration_date') ? 'has-error' : '' }}">
+                            <label for="drivers_certificate_expiration_date">{{ trans('cruds.driver.fields.drivers_certificate_expiration_date') }}</label>
+                            <input class="form-control date" type="text" name="drivers_certificate_expiration_date" id="drivers_certificate_expiration_date" value="{{ old('drivers_certificate_expiration_date') }}">
+                            @if($errors->has('drivers_certificate_expiration_date'))
+                                <span class="help-block" role="alert">{{ $errors->first('drivers_certificate_expiration_date') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.drivers_certificate_expiration_date_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
                             <label for="email">{{ trans('cruds.driver.fields.email') }}</label>
                             <input class="form-control" type="email" name="email" id="email" value="{{ old('email') }}">

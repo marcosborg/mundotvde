@@ -18,6 +18,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use \Carbon\Carbon;
 
 class DriverController extends Controller
 {
@@ -96,6 +97,19 @@ class DriverController extends Controller
             });
             $table->editColumn('citizen_card', function ($row) {
                 return $row->citizen_card ? $row->citizen_card : '';
+            });
+            $table->editColumn('citizen_card_expiry_date', function ($row) {
+                return $row->citizen_card_expiry_date
+                    ? Carbon::parse($row->citizen_card_expiry_date)->format('Y-m-d')
+                    : '';
+            });
+            $table->editColumn('drivers_certificate', function ($row) {
+                return $row->drivers_certificate ? $row->drivers_certificate : '';
+            });
+            $table->editColumn('drivers_certificate_expiration_date', function ($row) {
+                return $row->drivers_certificate_expiration_date
+                    ? Carbon::parse($row->drivers_certificate_expiration_date)->format('Y‑m‑d')
+                    : '';
             });
             $table->editColumn('email', function ($row) {
                 return $row->email ? $row->email : '';
