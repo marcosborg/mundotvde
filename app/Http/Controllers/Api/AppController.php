@@ -14,6 +14,10 @@ use App\Models\User;
 use App\Notifications\NewReceipt;
 use App\Models\Document;
 use App\Models\TimeLog;
+use \Carbon\Carbon;
+use App\Models\AdminStatementResponsibility;
+use App\Models\AdminContract;
+use Illuminate\Support\Facades\Storage;
 
 class AppController extends Controller
 {
@@ -395,5 +399,58 @@ class AppController extends Controller
         }
 
         return response()->json($groupedLogs);
+    }
+
+    public function contracts(Request $request)
+    {
+        $user = $request->user();
+        $driver = Driver::where('user_id', $user->id)->first();
+
+        if (!$driver) {
+            return response()->json(['error' => 'Driver not found'], 404);
+        }
+
+        $adminStatementResponsibility = AdminStatementResponsibility::where([
+            'driver_id' => $driver->id
+        ])
+            ->first();
+
+        setlocale(LC_TIME, 'pt_PT.utf8');
+        Carbon::setLocale('pt_PT');
+
+        $pdf1 = Pdf::loadView('admin.adminStatementResponsibilities.show', [
+            'adminStatementResponsibility' => $adminStatementResponsibility,
+        ])->setOption([
+            'isRemoteEnabled' => true,
+            'enable_html5_parser' => true,
+        ]);
+
+        $adminContract = AdminContract::where([
+            'driver_id' => $driver->id
+        ])->first();
+
+        setlocale(LC_TIME, 'pt_PT.utf8');
+        Carbon::setLocale('pt_PT');
+
+        $pdf2 = PDF::loadView('admin.adminContracts.show', [
+            'adminContract' => $adminContract,
+        ])->setOption([
+            'isRemoteEnabled' => true,
+            'enable_html5_parser' => true,
+        ]);
+
+        $content1 = $pdf1->output();
+        $content2 = $pdf2->output();
+
+        Storage::put("pdfs/stmt_{$driver->id}.pdf", $content1);
+        Storage::put("pdfs/contract_{$driver->id}.pdf", $content2);
+
+        $url1 = Storage::url("pdfs/stmt_{$driver->id}.pdf");
+        $url2 = Storage::url("pdfs/contract_{$driver->id}.pdf");
+
+        return response()->json([
+            'statement_of_responsibilities' => $url1,
+            'contract' => $url2
+        ]);
     }
 }

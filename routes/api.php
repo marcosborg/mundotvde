@@ -97,6 +97,7 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
         Route::get('new-time-log/{status}', 'Api\\AppController@newTimeLog');
         Route::get('get-time-logs', 'Api\\AppController@getTimeLogs');
     });
+    Route::get('contracts', 'Api\\AppController@contracts');
 });
 
 Route::get('app/reports/pdf/{activity_launch_id}', 'Api\\AppController@pdf');
