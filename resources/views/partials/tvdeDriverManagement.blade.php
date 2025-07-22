@@ -148,10 +148,10 @@
                                                     $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
                                                 @endphp
                                                 <td>
-                                                    {{ $activityPerOperator->net }}
+                                                    {{ $activityPerOperator->gross }}
                                                 </td>
                                                 <td>
-                                                    {{ $activityPerOperator->gross }}
+                                                    {{ $activityPerOperator->net }}
                                                 </td>
                                                 <td>
                                                     {{ $activityPerOperator->taxes }}
@@ -206,7 +206,13 @@
                                                 @if($key == 0)
                                                 @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
                                                 <th>
-                                                    {{ $activityPerOperator->tvde_operator->name }}
+                                                    {{ $activityPerOperator->tvde_operator->name }} Bruto
+                                                </th>
+                                                <th>
+                                                    {{ $activityPerOperator->tvde_operator->name }} Líquido
+                                                </th>
+                                                <th>
+                                                    {{ $activityPerOperator->tvde_operator->name }} Impostos
                                                 </th>
                                                 @endforeach
                                                 @endif
@@ -234,7 +240,13 @@
                                                         $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
                                                     @endphp
                                                     <td>
-                                                        {{ $activityPerOperator->net }}
+                                                    {{ $activityPerOperator->gross }}
+                                                    </td>
+                                                    <td>
+                                                    {{ $activityPerOperator->net }}
+                                                    </td>
+                                                    <td>
+                                                    {{ $activityPerOperator->taxes }}
                                                     </td>
                                                     @endforeach
                                                 @php
