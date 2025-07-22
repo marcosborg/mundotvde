@@ -110,15 +110,49 @@
                 <td widtd="50%" style="text-align: left;">Créditos</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->refund }}</td>
 
-            <tr style="border-bottom: solid 1px #cccccc;">
-                <th width="50%" style="text-align: left;">Saldos</th>
-                <th widtd="50%" style="text-align: right;">€ {{ number_format($activityLaunch->total, 2, '.', '') }}
-                </th>
-            </tr>
             <tr style="background: #eeeeee;">
                 <th width="50%" style="text-align: left;">Resultado da Semana</th>
                 <th widtd="50%" style="text-align: right;">€ {{ number_format($activityLaunch->total, 2, '.', '') }}
                 </th>
+            </tr>
+            <tr style="background: #eeeeee;">
+                <th width="50%" style="text-align: left;">Saldo acumulado</th>
+                <th widtd="50%" style="text-align: right;">€ {{ number_format($balance, 2, '.', '') }}
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    <table width="100%" style="margin-top: 30px;">
+        <tbody>
+            <tr>
+                @php
+                $count = 0;
+                @endphp
+                @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
+                <td style="padding: 0; border-left: solid {{ $count++ == 0 ? '0' : '5' }}px transparent;">
+                    <table width="100%" style="background: #eeeeee; border: solid 1px #cccccc;">
+                        <thead>
+                            <tr style="border-bottom: solid 1px #cccccc;">
+                                <th colspan="2">Rendimentos {{ $activityPerOperator->tvde_operator->name }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Bruto</th>
+                                <td>€ {{ $activityPerOperator->gross }}</td>
+                            </tr>
+                            <tr>
+                                <th>Líquido</th>
+                                <td>€ {{ $activityPerOperator->net }}</td>
+                            </tr>
+                            <tr>
+                                <th>Impostos</th>
+                                <td>€ {{ $activityPerOperator->taxes }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                @endforeach
             </tr>
         </tbody>
     </table>
@@ -192,42 +226,6 @@
             @endforeach
         </tbody>
     </table>
-
-    <table width="100%" style="margin-top: 30px; margin-bottom: 100px;">
-        <tbody>
-            <tr>
-                @php
-                $count = 0;
-                @endphp
-                @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
-                <td style="padding: 0; border-left: solid {{ $count++ == 0 ? '0' : '5' }}px transparent;">
-                    <table width="100%" style="background: #eeeeee; border: solid 1px #cccccc;">
-                        <thead>
-                            <tr style="border-bottom: solid 1px #cccccc;">
-                                <th colspan="2">Rendimentos {{ $activityPerOperator->tvde_operator->name }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th>Bruto</th>
-                                <td>€ {{ $activityPerOperator->gross }}</td>
-                            </tr>
-                            <tr>
-                                <th>Líquido</th>
-                                <td>€ {{ $activityPerOperator->net }}</td>
-                            </tr>
-                            <tr>
-                                <th>Impostos</th>
-                                <td>€ {{ $activityPerOperator->taxes }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-                @endforeach
-            </tr>
-        </tbody>
-    </table>
-
 
     <footer>
         Mundo TVDE ©

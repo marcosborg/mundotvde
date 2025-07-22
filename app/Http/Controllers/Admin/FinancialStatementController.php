@@ -60,7 +60,7 @@ class FinancialStatementController extends Controller
     {
         abort_if(Gate::denies('financial_statement_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $driver = Driver::where('user_id', auth()->user()->id)->first();
+        $driver = Driver::where('user_id', auth()->user()->id)->first()->load('activity_launches');
 
         abort_if(!$driver, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -75,6 +75,8 @@ class FinancialStatementController extends Controller
             ->first();
 
         $driver_id = $activityLaunch->driver_id;
+
+        $driver = Driver::find($driver_id)->load('activity_launches');
 
         $sub = [
             $activityLaunch->rent,
@@ -135,9 +137,36 @@ class FinancialStatementController extends Controller
             $activityLaunch60->sub = $sub;
         }
 
+        $balance = 0;
+
+        foreach ($driver->activity_launches as $launch) {
+            $sub = [
+                $launch->rent,
+                $launch->management,
+                $launch->insurance,
+                $launch->fuel,
+                $launch->tolls,
+                $launch->others
+            ];
+            $sub = array_sum($sub);
+
+            $sum = [];
+            foreach ($launch->activityPerOperators as $activityPerOperator) {
+                $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
+            }
+            $sum = array_sum($sum);
+
+            $result = $sum - $sub + $launch->refund;
+
+            if (!$launch->paid) {
+                $balance += $result;
+            }
+        }
+
         $pdf = Pdf::loadView('admin.financialStatements.pdf', [
             'activityLaunch' => $activityLaunch,
             'activityLaunches60' => $activityLaunches60,
+            'balance' => $balance,
         ])->setOption([
             'isRemoteEnabled' => true,
         ]);
