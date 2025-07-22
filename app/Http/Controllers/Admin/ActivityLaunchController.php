@@ -77,6 +77,9 @@ class ActivityLaunchController extends Controller
             $table->editColumn('tolls', function ($row) {
                 return $row->tolls ? $row->tolls : '';
             });
+            $table->editColumn('garage', function ($row) {
+                return $row->garage ? $row->garage : '';
+            });
             $table->editColumn('others', function ($row) {
                 return $row->others ? $row->others : '';
             });

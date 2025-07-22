@@ -40,6 +40,9 @@ class UpdateActivityLaunchRequest extends FormRequest
             'tolls' => [
                 'required',
             ],
+            'garage' => [
+                'required',
+            ],
             'others' => [
                 'required',
             ],

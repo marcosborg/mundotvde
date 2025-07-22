@@ -57,6 +57,9 @@
                                     {{ trans('cruds.activityLaunch.fields.tolls') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.activityLaunch.fields.garage') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.activityLaunch.fields.others') }}
                                 </th>
                                 <th>
@@ -144,6 +147,7 @@
 { data: 'insurance', name: 'insurance' },
 { data: 'fuel', name: 'fuel' },
 { data: 'tolls', name: 'tolls' },
+{ data: 'garage', name: 'garage' },
 { data: 'others', name: 'others' },
 { data: 'refund', name: 'refund' },
 { data: 'initial_kilometers', name: 'initial_kilometers' },

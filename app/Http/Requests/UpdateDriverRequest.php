@@ -115,6 +115,10 @@ class UpdateDriverRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'vehicle_date' => [
+                'date_format:' . config('panel.date_format'),
+                'nullable',
+            ],
         ];
     }
 }

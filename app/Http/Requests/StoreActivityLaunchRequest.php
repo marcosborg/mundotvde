@@ -40,6 +40,9 @@ class StoreActivityLaunchRequest extends FormRequest
             'tolls' => [
                 'required',
             ],
+            'garage' => [
+                'required',
+            ],
             'others' => [
                 'required',
             ],

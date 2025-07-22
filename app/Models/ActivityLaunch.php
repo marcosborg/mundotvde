@@ -27,6 +27,7 @@ class ActivityLaunch extends Model
         'insurance',
         'fuel',
         'tolls',
+        'garage',
         'others',
         'refund',
         'initial_kilometers',

@@ -76,6 +76,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.activityLaunch.fields.tolls_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('garage') ? 'has-error' : '' }}">
+                            <label class="required" for="garage">{{ trans('cruds.activityLaunch.fields.garage') }}</label>
+                            <input class="form-control" type="number" name="garage" id="garage" value="{{ old('garage', $activityLaunch->garage) }}" step="0.01" required>
+                            @if($errors->has('garage'))
+                                <span class="help-block" role="alert">{{ $errors->first('garage') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.activityLaunch.fields.garage_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('others') ? 'has-error' : '' }}">
                             <label class="required" for="others">{{ trans('cruds.activityLaunch.fields.others') }}</label>
                             <input class="form-control" type="number" name="others" id="others" value="{{ old('others', $activityLaunch->others) }}" step="0.01" required>

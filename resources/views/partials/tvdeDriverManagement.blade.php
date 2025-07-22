@@ -105,6 +105,7 @@
                                                 <th>Seguro</th>
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
+                                                <th>Oficina</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)
@@ -129,6 +130,7 @@
                                                 <td>{{ $activityLaunch->insurance }}</td>
                                                 <td>{{ $activityLaunch->fuel }}</td>
                                                 <td>{{ $activityLaunch->tolls }}</td>
+                                                <td>{{ $activityLaunch->garage }}</td>
                                                 <td>{{ $activityLaunch->others }}</td>
                                                 <td>{{ $activityLaunch->refund }}</td>
                                                 @php
@@ -150,6 +152,7 @@
                                                         $activityLaunch->insurance,
                                                         $activityLaunch->fuel,
                                                         $activityLaunch->tolls,
+                                                        $activityLaunch->garage,
                                                         $activityLaunch->others
                                                     ];
                                                     $sub = array_sum($sub);
@@ -181,6 +184,7 @@
                                                 <th>Seguro</th>
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
+                                                <th>Oficina</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)
@@ -204,6 +208,7 @@
                                                 <td>{{ $activityLaunch->insurance }}</td>
                                                 <td>{{ $activityLaunch->fuel }}</td>
                                                 <td>{{ $activityLaunch->tolls }}</td>
+                                                <td>{{ $activityLaunch->garage }}</td>
                                                 <td>{{ $activityLaunch->others }}</td>
                                                 <td>{{ $activityLaunch->refund }}</td>
                                                     @php
@@ -225,6 +230,7 @@
                                                         $activityLaunch->insurance,
                                                         $activityLaunch->fuel,
                                                         $activityLaunch->tolls,
+                                                        $activityLaunch->garage,
                                                         $activityLaunch->others
                                                     ];
                                                     $sub = array_sum($sub);

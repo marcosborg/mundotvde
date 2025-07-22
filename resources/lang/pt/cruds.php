@@ -1020,7 +1020,9 @@ return [
             'drivers_certificate' => 'Certificado de motorista TVDE',
             'drivers_certificate_helper' => ' ',
             'drivers_certificate_expiration_date' => 'Data de expiração do certificado de motorista TVDE',
-            'drivers_certificate_expiration_date_helper' => ''
+            'drivers_certificate_expiration_date_helper' => '',
+            'vehicle_date' => 'Data do veículo',
+            'vehicle_date_helper' => ' ',
         ],
     ],
     'card' => [
@@ -1203,6 +1205,8 @@ return [
             'initial_kilometers_helper' => ' ',
             'final_kilometers'          => 'Quilómetros finais',
             'final_kilometers_helper'   => ' ',
+            'garage'                    => 'Oficina',
+            'garage_helper'             => ' ',
         ],
     ],
     'activityPerOperator' => [

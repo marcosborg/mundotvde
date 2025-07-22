@@ -19,6 +19,7 @@ class Driver extends Model
         'end_date',
         'citizen_card_expiry_date',
         'drivers_certificate_expiration_date',
+        'vehicle_date',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -51,6 +52,7 @@ class Driver extends Model
         'uber_uuid',
         'bolt_name',
         'license_plate',
+        'vehicle_date',
         'brand',
         'model',
         'notes',
@@ -97,6 +99,11 @@ class Driver extends Model
     public function setStartDateAttribute($value)
     {
         $this->attributes['start_date'] = $value ? Carbon::createFromFormat(config('panel.date_format'), $value)->format('Y-m-d') : null;
+    }
+
+    public function setVehicleDateAttribute($value)
+    {
+        $this->attributes['vehicle_date'] = $value ? Carbon::createFromFormat(config('panel.date_format'), $value)->format('Y-m-d') : null;
     }
 
     public function getEndDateAttribute($value)

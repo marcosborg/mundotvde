@@ -256,6 +256,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.driver.fields.license_plate_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('vehicle_date') ? 'has-error' : '' }}">
+                            <label for="vehicle_date">{{ trans('cruds.driver.fields.vehicle_date') }}</label>
+                            <input class="form-control date" type="text" name="vehicle_date" id="vehicle_date" value="{{ old('vehicle_date', $driver->vehicle_date) }}">
+                            @if($errors->has('vehicle_date'))
+                                <span class="help-block" role="alert">{{ $errors->first('vehicle_date') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.vehicle_date_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('brand') ? 'has-error' : '' }}">
                             <label for="brand">{{ trans('cruds.driver.fields.brand') }}</label>
                             <input class="form-control" type="text" name="brand" id="brand" value="{{ old('brand', $driver->brand) }}">

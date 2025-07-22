@@ -72,6 +72,7 @@ class TvdeDriverManagementController extends Controller
         $activityLaunch->insurance = $request->insurance ? $request->insurance : 0;
         $activityLaunch->fuel = $request->fuel ? $request->fuel : 0;
         $activityLaunch->tolls = $request->tolls ? $request->tolls : 0;
+        $activityLaunch->garage = $request->garage ? $request->garage : 0;
         $activityLaunch->others = $request->others ? $request->others : 0;
         $activityLaunch->refund = $request->refund ? $request->refund : 0;
         $activityLaunch->initial_kilometers = $request->initial_kilometers ? $request->initial_kilometers : null;
@@ -142,6 +143,7 @@ class TvdeDriverManagementController extends Controller
         $activityLaunch->insurance = $request->insurance;
         $activityLaunch->fuel = $request->fuel;
         $activityLaunch->tolls = $request->tolls;
+        $activityLaunch->garage = $request->garage;
         $activityLaunch->others = $request->others;
         $activityLaunch->refund = $request->refund;
         $activityLaunch->initial_kilometers = $request->initial_kilometers ? $request->initial_kilometers : null;
@@ -273,6 +275,7 @@ class TvdeDriverManagementController extends Controller
                 'insurance' => 0,
                 'fuel' => 0,
                 'tolls' => 0,
+                'garage' => 0,
                 'others' => 0,
                 'refund' => 0,
                 'initial_kilometers' => null,
