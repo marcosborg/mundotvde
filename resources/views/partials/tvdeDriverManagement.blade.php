@@ -96,6 +96,7 @@
                                 <div role="tabpanel" class="tab-pane {{ $weekCount++ == $weekTotal ? 'active' : '' }}"
                                     id="week-{{ $week->id }}">
                                     <button class="btn btn-default" onclick="exportCsv('week_{{ $week->id }}')" style="margin-bottom: 20px;">Exportar CSV</button>
+                                    <div style="overflow-x: auto; width: 100%;">
                                     <table class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
@@ -112,7 +113,13 @@
                                                 @if($key == 0)
                                                 @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
                                                 <th>
-                                                    {{ $activityPerOperator->tvde_operator->name }}
+                                                    {{ $activityPerOperator->tvde_operator->name }} Bruto
+                                                </th>
+                                                <th>
+                                                    {{ $activityPerOperator->tvde_operator->name }} Líquido
+                                                </th>
+                                                <th>
+                                                    {{ $activityPerOperator->tvde_operator->name }} Impostos
                                                 </th>
                                                 @endforeach
                                                 @endif
@@ -142,6 +149,12 @@
                                                 @endphp
                                                 <td>
                                                     {{ $activityPerOperator->net }}
+                                                </td>
+                                                <td>
+                                                    {{ $activityPerOperator->gross }}
+                                                </td>
+                                                <td>
+                                                    {{ $activityPerOperator->taxes }}
                                                 </td>
                                                 @endforeach
                                                 @php
@@ -175,6 +188,8 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    </div>
+                                    <div style="overflow-x: auto; width: 100%;">
                                     <table id="week_{{ $week->id }}" style="visibility: hidden;">
                                         <thead>
                                             <tr>
@@ -243,6 +258,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    </div>
                                 </div>
                                 @endforeach
                             </div>
