@@ -84,6 +84,7 @@ class FinancialStatementController extends Controller
             $activityLaunch->insurance,
             $activityLaunch->fuel,
             $activityLaunch->tolls,
+            $activityLaunch->garage,
             $activityLaunch->others
         ];
         $sub = array_sum($sub);
@@ -124,6 +125,7 @@ class FinancialStatementController extends Controller
                 $activityLaunch60->insurance,
                 $activityLaunch60->fuel,
                 $activityLaunch60->tolls,
+                $activityLaunch60->garage,
                 $activityLaunch60->others
             ];
             $sub = array_sum($sub);
@@ -146,6 +148,7 @@ class FinancialStatementController extends Controller
                 $launch->insurance,
                 $launch->fuel,
                 $launch->tolls,
+                $launch->garage,
                 $launch->others
             ];
             $sub = array_sum($sub);
