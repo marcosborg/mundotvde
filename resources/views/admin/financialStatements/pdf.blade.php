@@ -103,6 +103,10 @@
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->tolls }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
+                <td widtd="50%" style="text-align: left;">Oficina (-)</td>
+                <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->garage }}</td>
+            </tr>
+            <tr style="border-bottom: solid 1px #cccccc;">
                 <td widtd="50%" style="text-align: left;">Débitos (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->others }}</td>
             </tr>
