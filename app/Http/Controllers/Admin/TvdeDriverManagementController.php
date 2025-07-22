@@ -187,4 +187,126 @@ class TvdeDriverManagementController extends Controller
         ActivityPerOperator::where('activity_launch_id', $request->activity_launch_id)->delete();
     }
 
+    public function launchAllActivities($tvde_week_id)
+    {
+        $drivers = Driver::with(['tvde_operators', 'card'])->get();
+
+        $drivers = $drivers->map(function ($driver) use ($tvde_week_id) {
+            $uber_activities = TvdeActivity::where([
+                'tvde_week_id' => $tvde_week_id,
+                'driver_code' => $driver->uber_uuid
+            ])->get();
+
+            $bolt_activities = TvdeActivity::where([
+                'tvde_week_id' => $tvde_week_id,
+                'driver_code' => $driver->bolt_name
+            ])->get();
+
+            $driver->results = [
+                'week_id' => $tvde_week_id,
+                'uber_activities' => [
+                    'earnings_one' => $uber_activities->sum('earnings_one'),
+                    'earnings_two' => $uber_activities->sum('earnings_two'),
+                    'earnings_three' => $uber_activities->sum('earnings_three'),
+                ],
+                'bolt_activities' => [
+                    'earnings_one' => $bolt_activities->sum('earnings_one'),
+                    'earnings_two' => $bolt_activities->sum('earnings_two'),
+                    'earnings_three' => $bolt_activities->sum('earnings_three'),
+                ]
+            ];
+
+            return $driver;
+        });
+
+        // Filtra apenas os motoristas com atividade
+        $drivers = $drivers->filter(function ($driver) {
+            $results = $driver->results;
+
+            $totalEarnings = $results['uber_activities']['earnings_one']
+                + $results['uber_activities']['earnings_two']
+                + $results['uber_activities']['earnings_three']
+                + $results['bolt_activities']['earnings_one']
+                + $results['bolt_activities']['earnings_two']
+                + $results['bolt_activities']['earnings_three'];
+
+            return $totalEarnings > 0;
+        });
+
+        return view('admin.tvdeDriverManagements.all', [
+            'drivers' => $drivers,
+            'tvde_week_id' => $tvde_week_id, // <== isto resolve o erro na view
+        ]);
+    }
+
+    public function createSelectedDriverActivity(Request $request)
+    {
+        $weekId = $request->input('week_id');
+        $driverIds = $request->input('driver_ids', []);
+
+        foreach ($driverIds as $driverId) {
+            // Ignorar se já existir ActivityLaunch para este motorista e semana
+            if (ActivityLaunch::where('driver_id', $driverId)->where('week_id', $weekId)->exists()) {
+                continue;
+            }
+
+            // Obter o motorista com os operadores
+            $driver = Driver::with('tvde_operators')->find($driverId);
+
+            // Obter atividades de Uber e Bolt para esta semana
+            $uber_activities = TvdeActivity::where([
+                'tvde_week_id' => $weekId,
+                'driver_code' => $driver->uber_uuid
+            ])->get();
+
+            $bolt_activities = TvdeActivity::where([
+                'tvde_week_id' => $weekId,
+                'driver_code' => $driver->bolt_name
+            ])->get();
+
+            // Criar o registo base (ActivityLaunch)
+            $activityLaunch = ActivityLaunch::create([
+                'driver_id' => $driverId,
+                'week_id' => $weekId,
+                'rent' => 0,
+                'management' => 0,
+                'insurance' => 0,
+                'fuel' => 0,
+                'tolls' => 0,
+                'others' => 0,
+                'refund' => 0,
+                'initial_kilometers' => null,
+                'final_kilometers' => null,
+            ]);
+
+            // Criar registos por operador
+            foreach ($driver->tvde_operators as $operator) {
+                $name = strtolower($operator->name);
+
+                if (str_contains($name, 'uber')) {
+                    $gross = $uber_activities->sum('earnings_one');
+                    $net = $uber_activities->sum('earnings_two');
+                    $taxes = $uber_activities->sum('earnings_three');
+                } elseif (str_contains($name, 'bolt')) {
+                    $gross = $bolt_activities->sum('earnings_one');
+                    $net = $bolt_activities->sum('earnings_two');
+                    $taxes = $bolt_activities->sum('earnings_three');
+                } else {
+                    $gross = 0;
+                    $net = 0;
+                    $taxes = 0;
+                }
+
+                ActivityPerOperator::create([
+                    'activity_launch_id' => $activityLaunch->id,
+                    'tvde_operator_id' => $operator->id,
+                    'gross' => $gross,
+                    'net' => $net,
+                    'taxes' => $taxes,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Atividades criadas com sucesso!');
+    }
 }

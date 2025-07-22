@@ -81,6 +81,9 @@
                                         </div>
                                     </form>
                                 </div>
+                                <div class="col-md-4">
+                                    <a href="/admin/tvde-driver-managements/launch-all-activities/{{ $week->id }}" class="btn btn-primary">Lançar todas as atividades</a>
+                                </div>
                             </div>
                             <!-- Tab panes -->
                                         

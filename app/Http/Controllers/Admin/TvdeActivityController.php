@@ -13,6 +13,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Driver;
 
 class TvdeActivityController extends Controller
 {
@@ -52,7 +53,13 @@ class TvdeActivityController extends Controller
             });
 
             $table->editColumn('driver_code', function ($row) {
-                return $row->driver_code ? $row->driver_code : '';
+                $exists = Driver::where('uber_uuid', $row->driver_code)
+                    ->orWhere('bolt_name', $row->driver_code)
+                    ->exists();
+
+                $badge = !$exists ? ' <span class="badge badge-danger">Não atribuído</span>' : '';
+
+                return $row->driver_code . $badge;
             });
             $table->editColumn('earnings_one', function ($row) {
                 return $row->earnings_one ? $row->earnings_one : '';
@@ -64,7 +71,7 @@ class TvdeActivityController extends Controller
                 return $row->earnings_three ? $row->earnings_three : '';
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'tvde_week']);
+            $table->rawColumns(['actions', 'placeholder', 'tvde_week', 'driver_code']);
 
             return $table->make(true);
         }

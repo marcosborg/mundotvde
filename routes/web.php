@@ -314,6 +314,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
             Route::post('driver', 'TvdeDriverManagementController@driver');
             Route::post('create-activity', 'TvdeDriverManagementController@createActivity');
             Route::get('delete-activity-launch/{activity_louch_id}', 'TvdeDriverManagementController@deleteActivityLaunch');
+            Route::get('launch-all-activities/{tvde_week_id}', 'TvdeDriverManagementController@launchAllActivities');
+            Route::post('create-selected-driver-activity', [App\Http\Controllers\Admin\TvdeDriverManagementController::class, 'createSelectedDriverActivity'])
+                ->name('create.selected.driver.activity');
         }
     );
 
