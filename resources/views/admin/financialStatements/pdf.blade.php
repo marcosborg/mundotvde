@@ -114,7 +114,7 @@
                 <td widtd="50%" style="text-align: left;">Créditos</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->refund }}</td>
 
-            <tr style="background: #eeeeee;">
+            <tr style="border-bottom: solid 1px #cccccc;">
                 <th width="50%" style="text-align: left;">Resultado da Semana</th>
                 <th widtd="50%" style="text-align: right;">€ {{ number_format($activityLaunch->total, 2, '.', '') }}
                 </th>
