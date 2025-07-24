@@ -1285,7 +1285,7 @@ return [
             'car_insurance_helper'           => ' ',
             'ipo_vehicle'                    => 'IPO Viatura',
             'ipo_vehicle_helper'             => ' ',
-            'vehicle_inspection'                    => 'Inspeção da viatura',
+            'vehicle_inspection'                    => 'Vistoria de entrega e recolha de viatura',
             'vehicle_inspection_helper'             => ' ',
             'notify_driver'                  => 'Notificar condutor',
             'notify_driver_helper'           => ' ',
