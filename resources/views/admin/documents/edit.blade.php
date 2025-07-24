@@ -171,13 +171,13 @@
     var uploadedCitizenCardMap = {}
 Dropzone.options.citizenCardDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="citizen_card[]" value="' + response.name + '">')
@@ -227,13 +227,13 @@ Dropzone.options.citizenCardDropzone = {
     var uploadedTvdeDriverCertificateMap = {}
 Dropzone.options.tvdeDriverCertificateDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="tvde_driver_certificate[]" value="' + response.name + '">')
@@ -283,13 +283,13 @@ Dropzone.options.tvdeDriverCertificateDropzone = {
     var uploadedCriminalRecordMap = {}
 Dropzone.options.criminalRecordDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="criminal_record[]" value="' + response.name + '">')
@@ -338,7 +338,7 @@ Dropzone.options.criminalRecordDropzone = {
 <script>
     Dropzone.options.profilePictureDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     acceptedFiles: '.jpeg,.jpg,.png,.gif',
     maxFiles: 1,
     addRemoveLinks: true,
@@ -346,7 +346,7 @@ Dropzone.options.criminalRecordDropzone = {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5,
+      size: 8,
       width: 4096,
       height: 4096
     },
@@ -394,13 +394,13 @@ Dropzone.options.criminalRecordDropzone = {
     var uploadedDrivingLicenseMap = {}
 Dropzone.options.drivingLicenseDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="driving_license[]" value="' + response.name + '">')
@@ -450,13 +450,13 @@ Dropzone.options.drivingLicenseDropzone = {
     var uploadedIbanMap = {}
 Dropzone.options.ibanDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="iban[]" value="' + response.name + '">')
@@ -506,13 +506,13 @@ Dropzone.options.ibanDropzone = {
     var uploadedAddressMap = {}
 Dropzone.options.addressDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="address[]" value="' + response.name + '">')
@@ -562,13 +562,13 @@ Dropzone.options.addressDropzone = {
     var uploadedDuaVehicleMap = {}
 Dropzone.options.duaVehicleDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="dua_vehicle[]" value="' + response.name + '">')
@@ -618,13 +618,13 @@ Dropzone.options.duaVehicleDropzone = {
     var uploadedCarInsuranceMap = {}
 Dropzone.options.carInsuranceDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="car_insurance[]" value="' + response.name + '">')
@@ -674,13 +674,13 @@ Dropzone.options.carInsuranceDropzone = {
     var uploadedIpoVehicleMap = {}
 Dropzone.options.ipoVehicleDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="ipo_vehicle[]" value="' + response.name + '">')
@@ -730,13 +730,13 @@ Dropzone.options.ipoVehicleDropzone = {
     var uploadedVehicleInspectionMap = {}
 Dropzone.options.vehicleInspectionDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5, // MB
+    maxFilesize: 8, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
     },
     params: {
-      size: 5
+      size: 8
     },
     success: function (file, response) {
       $('form').append('<input type="hidden" name="vehicle_inspection[]" value="' + response.name + '">')
