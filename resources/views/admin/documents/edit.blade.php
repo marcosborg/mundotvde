@@ -171,7 +171,7 @@
     var uploadedCitizenCardMap = {}
 Dropzone.options.citizenCardDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -227,7 +227,7 @@ Dropzone.options.citizenCardDropzone = {
     var uploadedTvdeDriverCertificateMap = {}
 Dropzone.options.tvdeDriverCertificateDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -283,7 +283,7 @@ Dropzone.options.tvdeDriverCertificateDropzone = {
     var uploadedCriminalRecordMap = {}
 Dropzone.options.criminalRecordDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -338,7 +338,7 @@ Dropzone.options.criminalRecordDropzone = {
 <script>
     Dropzone.options.profilePictureDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     acceptedFiles: '.jpeg,.jpg,.png,.gif',
     maxFiles: 1,
     addRemoveLinks: true,
@@ -394,7 +394,7 @@ Dropzone.options.criminalRecordDropzone = {
     var uploadedDrivingLicenseMap = {}
 Dropzone.options.drivingLicenseDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -450,7 +450,7 @@ Dropzone.options.drivingLicenseDropzone = {
     var uploadedIbanMap = {}
 Dropzone.options.ibanDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -506,7 +506,7 @@ Dropzone.options.ibanDropzone = {
     var uploadedAddressMap = {}
 Dropzone.options.addressDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -562,7 +562,7 @@ Dropzone.options.addressDropzone = {
     var uploadedDuaVehicleMap = {}
 Dropzone.options.duaVehicleDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -618,7 +618,7 @@ Dropzone.options.duaVehicleDropzone = {
     var uploadedCarInsuranceMap = {}
 Dropzone.options.carInsuranceDropzone = {
     url: '{{ route('admin.documents.storeMedia') }}',
-    maxFilesize: 5 // MB
+    maxFilesize: 5, // MB
     addRemoveLinks: true,
     headers: {
       'X-CSRF-TOKEN': "{{ csrf_token() }}"
