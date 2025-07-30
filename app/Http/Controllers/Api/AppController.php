@@ -48,6 +48,7 @@ class AppController extends Controller
                 $activityLaunch->management,
                 $activityLaunch->insurance,
                 $activityLaunch->fuel,
+                $activityLaunch->garage,
                 $activityLaunch->tolls,
                 $activityLaunch->others,
             ];
@@ -96,6 +97,7 @@ class AppController extends Controller
                 $activity_launch->management,
                 $activity_launch->insurance,
                 $activity_launch->fuel,
+                $activity_launch->garage,
                 $activity_launch->tolls,
                 $activity_launch->others
             ];
