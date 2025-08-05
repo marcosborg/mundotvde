@@ -30,6 +30,7 @@ class DriversBalanceController extends Controller
                     $activity_launch->management,
                     $activity_launch->insurance,
                     $activity_launch->fuel,
+                    $activity_launch->garage,
                     $activity_launch->tolls,
                     $activity_launch->others
                 ];
