@@ -121,7 +121,7 @@
             </tr>
             <tr style="background: #eeeeee;">
                 <th width="50%" style="text-align: left;">Saldo acumulado</th>
-                <th widtd="50%" style="text-align: right;">€ {{ number_format($balance, 2, '.', '') }}
+                <th widtd="50%" style="text-align: right;">€ {{ number_format($balance ?? 0, 2, '.', '') }}
                 </th>
             </tr>
         </tbody>
