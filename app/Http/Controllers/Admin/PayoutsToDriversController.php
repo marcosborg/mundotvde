@@ -112,7 +112,6 @@ class PayoutsToDriversController extends Controller
         $activityLaunche->total_descount_after_taxes = $activityLaunche->sub + $activityLaunche->taxes;
 
         $activityLaunche->driver->user->notify(new ActivityLaunchesSend($activityLaunche));
-        User::find(1)->notify(new ActivityLaunchesSend($activityLaunche));
     }
 
     private function getBalance($driver_id)
