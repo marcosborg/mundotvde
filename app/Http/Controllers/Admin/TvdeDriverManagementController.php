@@ -247,6 +247,7 @@ class TvdeDriverManagementController extends Controller
     {
         $weekId = $request->input('week_id');
         $driverIds = $request->input('driver_ids', []);
+        $managementFlags = $request->input('management_fee', []); // <-- FALTAVA ISTO
 
         foreach ($driverIds as $driverId) {
             // Ignorar se já existir ActivityLaunch para este motorista e semana
@@ -268,6 +269,9 @@ class TvdeDriverManagementController extends Controller
                 'driver_code' => $driver->bolt_name
             ])->get();
 
+            // Determinar management_fee (25€ quando checado)
+            $managementFee = (isset($managementFlags[$driverId]) && (int)$managementFlags[$driverId] === 1) ? 25 : 0;
+
             // Criar o registo base (ActivityLaunch)
             $activityLaunch = ActivityLaunch::create([
                 'driver_id' => $driverId,
@@ -278,6 +282,7 @@ class TvdeDriverManagementController extends Controller
                 'fuel' => 0,
                 'tolls' => 0,
                 'garage' => 0,
+                'management_fee' => $managementFee,
                 'others' => 0,
                 'refund' => 0,
                 'initial_kilometers' => null,
