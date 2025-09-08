@@ -165,7 +165,8 @@ class AppController extends Controller
                 $activityLaunch->insurance,
                 $activityLaunch->fuel,
                 $activityLaunch->tolls,
-                $activityLaunch->others
+                $activityLaunch->others,
+                $activityLaunch->management_fee,
             ];
             $sub = array_sum($sub);
             $sum = [];
@@ -202,7 +203,8 @@ class AppController extends Controller
             $activityLaunch->insurance,
             $activityLaunch->fuel,
             $activityLaunch->tolls,
-            $activityLaunch->others
+            $activityLaunch->others,
+            $activityLaunch->management_fee,
         ];
         $sub = array_sum($sub);
         $net = [];
@@ -242,7 +244,8 @@ class AppController extends Controller
                 $activityLaunch60->insurance,
                 $activityLaunch60->fuel,
                 $activityLaunch60->tolls,
-                $activityLaunch60->others
+                $activityLaunch60->others,
+                $activityLaunch60->management_fee,
             ];
             $sub = array_sum($sub);
             $sum = [];
