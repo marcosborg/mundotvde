@@ -56,6 +56,8 @@
                                                 $activityLaunch->management }}</li>
                                             <li class="list-group-item"><strong>Seguro: </strong>€ {{
                                                 $activityLaunch->insurance }}</li>
+                                                <li class="list-group-item"><strong>Gestão: </strong>€ {{
+                                                number_format($activityLaunch->management_fee, 2, '.') }}</li>
                                         </ul>
                                     </div>
                                     <div class="col-md-3">

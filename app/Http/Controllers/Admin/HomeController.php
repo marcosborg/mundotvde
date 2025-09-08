@@ -34,6 +34,7 @@ class HomeController
                 $activityLaunch->insurance,
                 $activityLaunch->fuel,
                 $activityLaunch->garage,
+                $activityLaunch->management_fee,
                 $activityLaunch->tolls,
                 $activityLaunch->others
             ];
