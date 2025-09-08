@@ -28,7 +28,7 @@
                                 <input type="checkbox" disabled>
                             </th>
                             <th rowspan="2">Motorista</th>
-                            <th rowspan="2" class="text-center" style="width:140px;">Gestão (25€)</th>
+                            <th rowspan="2" class="text-center" style="width:140px;">Caução</th>
                             <th colspan="3" class="text-center">Uber</th>
                             <th colspan="3" class="text-center">Bolt</th>
                         </tr>

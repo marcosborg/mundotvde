@@ -56,7 +56,7 @@
                                             <input type="text" class="form-control" name="garage" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label>Gestão</label>
+                                            <label>Caução</label>
                                             <input type="text" class="form-control" name="management_fee" value="25">
                                         </div>
                                         <div class="form-group">
@@ -131,7 +131,7 @@
                                         <input type="text" class="form-control" name="garage">
                                     </div>
                                     <div class="form-group">
-                                        <label>Gestão</label>
+                                        <label>Caução</label>
                                         <input type="text" class="form-control" name="management_fee">
                                     </div>
                                     <div class="form-group">
