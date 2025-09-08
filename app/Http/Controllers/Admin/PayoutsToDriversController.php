@@ -40,6 +40,7 @@ class PayoutsToDriversController extends Controller
                 $activityLaunch->insurance,
                 $activityLaunch->fuel,
                 $activityLaunch->garage,
+                $activityLaunch->management_fee,
                 $activityLaunch->tolls,
                 $activityLaunch->others,
             ];
@@ -89,6 +90,8 @@ class PayoutsToDriversController extends Controller
             $activityLaunche->insurance,
             $activityLaunche->fuel,
             $activityLaunche->tolls,
+            $activityLaunche->garage,
+            $activityLaunche->management_fee,
             $activityLaunche->others,
         ];
         $taxes = [];
@@ -131,6 +134,8 @@ class PayoutsToDriversController extends Controller
                 $activity_launch->insurance,
                 $activity_launch->fuel,
                 $activity_launch->tolls,
+                $activity_launch->garage,
+                $activity_launch->management_fee,
                 $activity_launch->others
             ];
             $sub = array_sum($sub);

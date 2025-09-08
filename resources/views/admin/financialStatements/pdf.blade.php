@@ -107,6 +107,10 @@
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->garage }}</td>
             </tr>
             <tr style="border-bottom: solid 1px #cccccc;">
+                <td widtd="50%" style="text-align: left;">Gestão (-)</td>
+                <td widtd="50%" style="text-align: right;">€ {{ number_format($activityLaunch->management_fee, 2, '.') }}</td>
+            </tr>
+            <tr style="border-bottom: solid 1px #cccccc;">
                 <td widtd="50%" style="text-align: left;">Débitos (-)</td>
                 <td widtd="50%" style="text-align: right;">€ {{ $activityLaunch->others }}</td>
             </tr>
