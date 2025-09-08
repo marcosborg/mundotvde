@@ -51,6 +51,7 @@ class AppController extends Controller
                 $activityLaunch->garage,
                 $activityLaunch->tolls,
                 $activityLaunch->others,
+                $activityLaunch->management_fee,
             ];
             $taxes = [];
             $sub = array_sum($sub);
@@ -99,7 +100,8 @@ class AppController extends Controller
                 $activity_launch->fuel,
                 $activity_launch->garage,
                 $activity_launch->tolls,
-                $activity_launch->others
+                $activity_launch->others,
+                $activity_launch->management_fee,
             ];
             $sub = array_sum($sub);
 

@@ -19,6 +19,10 @@ class ActivityLaunch extends Model
         'deleted_at',
     ];
 
+    protected $casts = [
+        'management_fee' => 'decimal:2',
+    ];
+
     protected $fillable = [
         'driver_id',
         'week_id',
@@ -64,5 +68,4 @@ class ActivityLaunch extends Model
     {
         return $this->hasMany(ActivityPerOperator::class, 'activity_launch_id', 'id');
     }
-
 }
