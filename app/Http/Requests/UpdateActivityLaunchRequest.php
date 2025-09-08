@@ -49,6 +49,9 @@ class UpdateActivityLaunchRequest extends FormRequest
             'refund' => [
                 'required',
             ],
+            'management_fee' => [
+                'required',
+            ],
             'initial_kilometers' => [
                 'nullable',
                 'integer',

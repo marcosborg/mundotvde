@@ -30,6 +30,7 @@ class ActivityLaunch extends Model
         'garage',
         'others',
         'refund',
+        'management_fee',
         'initial_kilometers',
         'final_kilometers',
         'send',

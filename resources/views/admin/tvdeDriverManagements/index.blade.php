@@ -56,6 +56,10 @@
                                             <input type="text" class="form-control" name="garage" value="0">
                                         </div>
                                         <div class="form-group">
+                                            <label>Gestão</label>
+                                            <input type="text" class="form-control" name="management_fee" value="25">
+                                        </div>
+                                        <div class="form-group">
                                             <label>Débitos</label>
                                             <input type="text" class="form-control" name="others" value="0">
                                         </div>
@@ -127,6 +131,10 @@
                                         <input type="text" class="form-control" name="garage">
                                     </div>
                                     <div class="form-group">
+                                        <label>Gestão</label>
+                                        <input type="text" class="form-control" name="management_fee">
+                                    </div>
+                                    <div class="form-group">
                                         <label>Débitos</label>
                                         <input type="text" class="form-control" name="others">
                                     </div>
@@ -188,6 +196,7 @@
                 $('#activityData input[name=fuel]').val(0);
                 $('#activityData input[name=tolls]').val(0);
                 $('#activityData input[name=garage]').val(0);
+                $('#activityData input[name=management_fee]').val(25);
                 $('#activityData input[name=others]').val(0);
                 $('#activityData input[name=refund]').val(0);
                 $('#activityData input[name=initial_kilometers]').val('');
@@ -313,6 +322,7 @@
             $('#updateActivityModal input[name=fuel]').val(activityLaunch.fuel);
             $('#updateActivityModal input[name=tolls]').val(activityLaunch.tolls);
             $('#updateActivityModal input[name=garage]').val(activityLaunch.garage);
+            $('#updateActivityModal input[name=management_fee]').val(activityLaunch.management_fee);
             $('#updateActivityModal input[name=others]').val(activityLaunch.others);
             $('#updateActivityModal input[name=refund]').val(activityLaunch.refund);
             $('#updateActivityModal input[name=initial_kilometers]').val(activityLaunch.initial_kilometers);

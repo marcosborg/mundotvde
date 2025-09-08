@@ -107,6 +107,7 @@
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
                                                 <th>Oficina</th>
+                                                <th>Gestão</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)
@@ -138,6 +139,7 @@
                                                 <td>{{ $activityLaunch->fuel }}</td>
                                                 <td>{{ $activityLaunch->tolls }}</td>
                                                 <td>{{ $activityLaunch->garage }}</td>
+                                                <td>{{ $activityLaunch->management_fee }}</td>
                                                 <td>{{ $activityLaunch->others }}</td>
                                                 <td>{{ $activityLaunch->refund }}</td>
                                                 @php
@@ -163,6 +165,7 @@
                                                         $activityLaunch->rent,
                                                         $activityLaunch->management,
                                                         $activityLaunch->insurance,
+                                                        $activityLaunch->management_fee,
                                                         $activityLaunch->fuel,
                                                         $activityLaunch->tolls,
                                                         $activityLaunch->garage,
@@ -200,6 +203,7 @@
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
                                                 <th>Oficina</th>
+                                                <th>Gestão</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)
@@ -230,6 +234,7 @@
                                                 <td>{{ $activityLaunch->fuel }}</td>
                                                 <td>{{ $activityLaunch->tolls }}</td>
                                                 <td>{{ $activityLaunch->garage }}</td>
+                                                <td>{{ $activityLaunch->management_fee }}</td>
                                                 <td>{{ $activityLaunch->others }}</td>
                                                 <td>{{ $activityLaunch->refund }}</td>
                                                     @php
@@ -255,6 +260,7 @@
                                                         $activityLaunch->rent,
                                                         $activityLaunch->management,
                                                         $activityLaunch->insurance,
+                                                        $activityLaunch->management_fee,
                                                         $activityLaunch->fuel,
                                                         $activityLaunch->tolls,
                                                         $activityLaunch->garage,
