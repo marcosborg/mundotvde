@@ -68,12 +68,12 @@ class TvdeDriverManagementController extends Controller
     {
         $activityLaunch = ActivityLaunch::find($request->activity_launch_id);
         $activityLaunch->rent = $request->rent ? $request->rent : 0;
-        $activityLaunch->management = $request->management ? $request->management : 0;
+        $activityLaunch->management = $request->management ? $request->management : 0; // mantém management
         $activityLaunch->insurance = $request->insurance ? $request->insurance : 0;
         $activityLaunch->fuel = $request->fuel ? $request->fuel : 0;
         $activityLaunch->tolls = $request->tolls ? $request->tolls : 0;
         $activityLaunch->garage = $request->garage ? $request->garage : 0;
-        $activityLaunch->management_fee = $request->management_fee ? $request->management_fee : 0;
+        $activityLaunch->management_fee = $request->management_fee ? $request->management_fee : 0; // permanece para outros fluxos
         $activityLaunch->others = $request->others ? $request->others : 0;
         $activityLaunch->refund = $request->refund ? $request->refund : 0;
         $activityLaunch->initial_kilometers = $request->initial_kilometers ? $request->initial_kilometers : null;
@@ -98,7 +98,6 @@ class TvdeDriverManagementController extends Controller
 
     public function driver(Request $request)
     {
-
         $request->validate([
             'driver_id' => 'required',
         ]);
@@ -135,17 +134,16 @@ class TvdeDriverManagementController extends Controller
 
     public function createActivity(Request $request)
     {
-
         $activityLaunch = new ActivityLaunch;
         $activityLaunch->driver_id = $request->driver_id;
         $activityLaunch->week_id = $request->week_id;
         $activityLaunch->rent = $request->rent;
-        $activityLaunch->management = $request->management;
+        $activityLaunch->management = $request->management; // mantém management
         $activityLaunch->insurance = $request->insurance;
         $activityLaunch->fuel = $request->fuel;
         $activityLaunch->tolls = $request->tolls;
         $activityLaunch->garage = $request->garage;
-        $activityLaunch->management_fee = $request->management_fee;
+        $activityLaunch->management_fee = $request->management_fee; // permanece para outros usos
         $activityLaunch->others = $request->others;
         $activityLaunch->refund = $request->refund;
         $activityLaunch->initial_kilometers = $request->initial_kilometers ? $request->initial_kilometers : null;
@@ -247,7 +245,8 @@ class TvdeDriverManagementController extends Controller
     {
         $weekId = $request->input('week_id');
         $driverIds = $request->input('driver_ids', []);
-        $managementFlags = $request->input('management_fee', []); // <-- FALTAVA ISTO
+        // PASSA A LER 'management[...]' EM VEZ DE 'management_fee[...]'
+        $managementFlags = $request->input('management', []);
 
         foreach ($driverIds as $driverId) {
             // Ignorar se já existir ActivityLaunch para este motorista e semana
@@ -269,20 +268,20 @@ class TvdeDriverManagementController extends Controller
                 'driver_code' => $driver->bolt_name
             ])->get();
 
-            // Determinar management_fee (25€ quando checado)
-            $managementFee = (isset($managementFlags[$driverId]) && (int)$managementFlags[$driverId] === 1) ? 25 : 0;
+            // Determinar management (25€ quando checado)
+            $management = (isset($managementFlags[$driverId]) && (int)$managementFlags[$driverId] === 1) ? 25 : 0;
 
             // Criar o registo base (ActivityLaunch)
             $activityLaunch = ActivityLaunch::create([
                 'driver_id' => $driverId,
                 'week_id' => $weekId,
                 'rent' => 0,
-                'management' => 0,
+                'management' => $management, // <-- AGORA GRAVA EM 'management'
                 'insurance' => 0,
                 'fuel' => 0,
                 'tolls' => 0,
                 'garage' => 0,
-                'management_fee' => $managementFee,
+                'management_fee' => 0, // garantimos que não usa este campo neste fluxo
                 'others' => 0,
                 'refund' => 0,
                 'initial_kilometers' => null,

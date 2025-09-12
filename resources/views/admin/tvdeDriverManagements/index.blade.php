@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Gestão</label>
-                                            <input type="text" class="form-control" name="management" value="0">
+                                            <input type="text" class="form-control" name="management" value="25">
                                         </div>
                                         <div class="form-group">
                                             <label>Seguro</label>
@@ -57,7 +57,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Caução</label>
-                                            <input type="text" class="form-control" name="management_fee" value="25">
+                                            <input type="text" class="form-control" name="management_fee" value="0">
                                         </div>
                                         <div class="form-group">
                                             <label>Débitos</label>
@@ -191,12 +191,12 @@
                     'success'
                 );
                 $('#activityData input[name=rent]').val(0);
-                $('#activityData input[name=management]').val(0);
+                $('#activityData input[name=management]').val(25);
                 $('#activityData input[name=insurance]').val(0);
                 $('#activityData input[name=fuel]').val(0);
                 $('#activityData input[name=tolls]').val(0);
                 $('#activityData input[name=garage]').val(0);
-                $('#activityData input[name=management_fee]').val(25);
+                $('#activityData input[name=management_fee]').val(0);
                 $('#activityData input[name=others]').val(0);
                 $('#activityData input[name=refund]').val(0);
                 $('#activityData input[name=initial_kilometers]').val('');

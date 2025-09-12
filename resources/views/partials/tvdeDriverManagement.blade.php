@@ -107,7 +107,7 @@
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
                                                 <th>Oficina</th>
-                                                <th>Gestão</th>
+                                                <th>Caução</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)
@@ -203,7 +203,7 @@
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
                                                 <th>Oficina</th>
-                                                <th>Gestão</th>
+                                                <th>Caução</th>
                                                 <th>Débitos</th>
                                                 <th>Créditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)

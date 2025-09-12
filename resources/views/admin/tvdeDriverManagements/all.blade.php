@@ -28,7 +28,7 @@
                                 <input type="checkbox" disabled>
                             </th>
                             <th rowspan="2">Motorista</th>
-                            <th rowspan="2" class="text-center" style="width:140px;">Caução</th>
+                            <th rowspan="2" class="text-center" style="width:140px;">Gestão</th>
                             <th colspan="3" class="text-center">Uber</th>
                             <th colspan="3" class="text-center">Bolt</th>
                         </tr>
@@ -57,7 +57,8 @@
                                     ->first();
 
                                 $hasActivity = (bool) $existingActivity;
-                                $existingManagementFee = $existingActivity?->management_fee ?? 0;
+                                // PASSA A VALER O CAMPO 'management'
+                                $existingManagement = $existingActivity?->management ?? 0;
 
                                 // Somatórios
                                 $total['uber']['gross'] += $driver->results['uber_activities']['earnings_one'];
@@ -93,7 +94,7 @@
                                            class="mgmt-checkbox"
                                            data-driver-id="{{ $driver->id }}"
                                            {{ $hasActivity ? 'disabled' : '' }}
-                                           {{ (!$hasActivity || $existingManagementFee > 0) ? 'checked' : '' }}>
+                                           {{ (!$hasActivity || $existingManagement > 0) ? 'checked' : '' }}>
                                 </td>
 
                                 {{-- Uber --}}
@@ -188,7 +189,8 @@ document.getElementById('validate-selection').addEventListener('click', function
 
         const mgmtInput = document.createElement('input');
         mgmtInput.type = 'hidden';
-        mgmtInput.name = `management_fee[${id}]`;
+        // AGORA ENVIA PARA 'management[...]'
+        mgmtInput.name = `management[${id}]`;
         mgmtInput.value = mgmtByDriver[id] ? 1 : 0;
         form.appendChild(mgmtInput);
     });
