@@ -1207,6 +1207,8 @@ return [
             'final_kilometers_helper'   => ' ',
             'garage'                    => 'Oficina',
             'garage_helper'             => ' ',
+            'management_fee'                    => 'Caução',
+            'management_fee_helper'             => ' ',
         ],
     ],
     'activityPerOperator' => [

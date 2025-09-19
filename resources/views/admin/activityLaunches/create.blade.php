@@ -99,6 +99,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.activityLaunch.fields.refund_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('management_fee') ? 'has-error' : '' }}">
+                            <label class="required" for="management_fee">{{ trans('cruds.activityLaunch.fields.management_fee') }}</label>
+                            <input class="form-control" type="number" name="management_fee" id="management_fee" value="{{ old('management_fee', '0') }}" step="0.01" required>
+                            @if($errors->has('management_fee'))
+                                <span class="help-block" role="alert">{{ $errors->first('management_fee') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.activityLaunch.fields.management_fee_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('initial_kilometers') ? 'has-error' : '' }}">
                             <label for="initial_kilometers">{{ trans('cruds.activityLaunch.fields.initial_kilometers') }}</label>
                             <input class="form-control" type="number" name="initial_kilometers" id="initial_kilometers" value="{{ old('initial_kilometers', '') }}" step="1">
