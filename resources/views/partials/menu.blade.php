@@ -1323,6 +1323,129 @@
                 </ul>
             </li>
         @endcan
+        @can('crm_menu_access')
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa-fw fas fa-sitemap">
+
+                        </i>
+                        <span>{{ trans('cruds.crmMenu.title') }}</span>
+                        <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('crm_category_access')
+                            <li class="{{ request()->is("admin/crm-categories") || request()->is("admin/crm-categories/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-categories.index") }}">
+                                    <i class="fa-fw fas fa-th-large">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmCategory.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_stage_access')
+                            <li class="{{ request()->is("admin/crm-stages") || request()->is("admin/crm-stages/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-stages.index") }}">
+                                    <i class="fa-fw fas fa-th">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmStage.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_stage_email_access')
+                            <li class="{{ request()->is("admin/crm-stage-emails") || request()->is("admin/crm-stage-emails/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-stage-emails.index") }}">
+                                    <i class="fa-fw fas fa-envelope">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmStageEmail.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_emails_queue_access')
+                            <li class="{{ request()->is("admin/crm-emails-queues") || request()->is("admin/crm-emails-queues/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-emails-queues.index") }}">
+                                    <i class="fa-fw fas fa-clock">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmEmailsQueue.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_form_access')
+                            <li class="{{ request()->is("admin/crm-forms") || request()->is("admin/crm-forms/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-forms.index") }}">
+                                    <i class="fa-fw fas fa-file-alt">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmForm.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_form_field_access')
+                            <li class="{{ request()->is("admin/crm-form-fields") || request()->is("admin/crm-form-fields/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-form-fields.index") }}">
+                                    <i class="fa-fw fas fa-mouse-pointer">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmFormField.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_form_submission_access')
+                            <li class="{{ request()->is("admin/crm-form-submissions") || request()->is("admin/crm-form-submissions/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-form-submissions.index") }}">
+                                    <i class="fa-fw far fa-share-square">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmFormSubmission.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_card_access')
+                            <li class="{{ request()->is("admin/crm-cards") || request()->is("admin/crm-cards/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-cards.index") }}">
+                                    <i class="fa-fw fas fa-address-card">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmCard.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_card_note_access')
+                            <li class="{{ request()->is("admin/crm-card-notes") || request()->is("admin/crm-card-notes/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-card-notes.index") }}">
+                                    <i class="fa-fw far fa-sticky-note">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmCardNote.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('crm_card_activity_access')
+                            <li class="{{ request()->is("admin/crm-card-activities") || request()->is("admin/crm-card-activities/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.crm-card-activities.index") }}">
+                                    <i class="fa-fw fas fa-tasks">
+
+                                    </i>
+                                    <span>{{ trans('cruds.crmCardActivity.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan
             @php($unread = \App\Models\QaTopic::unreadCount())
             <li class="{{ request()->is("admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
                 <a href="{{ route("admin.messenger.index") }}">

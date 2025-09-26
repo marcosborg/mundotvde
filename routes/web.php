@@ -480,6 +480,52 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::get('export/{tvde_year_id}', 'BillingAnalysisController@export');
         Route::get('/{tvde_year_id?}', 'BillingAnalysisController@index')->name('billing-analysis.index');
     });
+
+    // Crm Categories
+    Route::delete('crm-categories/destroy', 'CrmCategoriesController@massDestroy')->name('crm-categories.massDestroy');
+    Route::resource('crm-categories', 'CrmCategoriesController');
+
+    // Crm Stages
+    Route::delete('crm-stages/destroy', 'CrmStagesController@massDestroy')->name('crm-stages.massDestroy');
+    Route::resource('crm-stages', 'CrmStagesController');
+
+    // Crm Stage Emails
+    Route::delete('crm-stage-emails/destroy', 'CrmStageEmailsController@massDestroy')->name('crm-stage-emails.massDestroy');
+    Route::post('crm-stage-emails/media', 'CrmStageEmailsController@storeMedia')->name('crm-stage-emails.storeMedia');
+    Route::post('crm-stage-emails/ckmedia', 'CrmStageEmailsController@storeCKEditorImages')->name('crm-stage-emails.storeCKEditorImages');
+    Route::resource('crm-stage-emails', 'CrmStageEmailsController');
+
+    // Crm Emails Queue
+    Route::delete('crm-emails-queues/destroy', 'CrmEmailsQueueController@massDestroy')->name('crm-emails-queues.massDestroy');
+    Route::post('crm-emails-queues/media', 'CrmEmailsQueueController@storeMedia')->name('crm-emails-queues.storeMedia');
+    Route::post('crm-emails-queues/ckmedia', 'CrmEmailsQueueController@storeCKEditorImages')->name('crm-emails-queues.storeCKEditorImages');
+    Route::resource('crm-emails-queues', 'CrmEmailsQueueController');
+
+    // Crm Forms
+    Route::delete('crm-forms/destroy', 'CrmFormsController@massDestroy')->name('crm-forms.massDestroy');
+    Route::resource('crm-forms', 'CrmFormsController');
+
+    // Crm Form Fields
+    Route::delete('crm-form-fields/destroy', 'CrmFormFieldsController@massDestroy')->name('crm-form-fields.massDestroy');
+    Route::resource('crm-form-fields', 'CrmFormFieldsController');
+
+    // Crm Form Submissions
+    Route::delete('crm-form-submissions/destroy', 'CrmFormSubmissionsController@massDestroy')->name('crm-form-submissions.massDestroy');
+    Route::resource('crm-form-submissions', 'CrmFormSubmissionsController');
+
+    // Crm Cards
+    Route::delete('crm-cards/destroy', 'CrmCardsController@massDestroy')->name('crm-cards.massDestroy');
+    Route::post('crm-cards/media', 'CrmCardsController@storeMedia')->name('crm-cards.storeMedia');
+    Route::post('crm-cards/ckmedia', 'CrmCardsController@storeCKEditorImages')->name('crm-cards.storeCKEditorImages');
+    Route::resource('crm-cards', 'CrmCardsController');
+
+    // Crm Card Notes
+    Route::delete('crm-card-notes/destroy', 'CrmCardNotesController@massDestroy')->name('crm-card-notes.massDestroy');
+    Route::resource('crm-card-notes', 'CrmCardNotesController');
+
+    // Crm Card Activities
+    Route::delete('crm-card-activities/destroy', 'CrmCardActivitiesController@massDestroy')->name('crm-card-activities.massDestroy');
+    Route::resource('crm-card-activities', 'CrmCardActivitiesController');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
