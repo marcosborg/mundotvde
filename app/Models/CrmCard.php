@@ -141,4 +141,26 @@ class CrmCard extends Model implements HasMedia
     {
         return $this->getMedia('crm_card_attachments');
     }
+
+    public function notes()
+    {
+        return $this->hasMany(CrmCardNote::class, 'card_id');
+    }
+    public function activities()
+    {
+        return $this->hasMany(CrmCardActivity::class, 'card_id');
+    }
+    public function submission()
+    {
+        return $this->hasOne(CrmFormSubmission::class, 'created_card_id');
+    }
+    public function emailsQueue()
+    {
+        return $this->hasMany(CrmEmailsQueue::class, 'card_id');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('crm_card_attachments');
+    }
 }

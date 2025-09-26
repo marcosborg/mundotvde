@@ -48,4 +48,17 @@ class CrmForm extends Model
     {
         return $this->belongsTo(CrmCategory::class, 'category_id');
     }
+
+    public function fields()
+    {
+        return $this->hasMany(CrmFormField::class, 'form_id');
+    }
+    public function submissions()
+    {
+        return $this->hasMany(CrmFormSubmission::class, 'form_id');
+    }
+    public function cards()
+    {
+        return $this->hasMany(CrmCard::class, 'form_id');
+    }
 }

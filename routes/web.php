@@ -526,6 +526,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Crm Card Activities
     Route::delete('crm-card-activities/destroy', 'CrmCardActivitiesController@massDestroy')->name('crm-card-activities.massDestroy');
     Route::resource('crm-card-activities', 'CrmCardActivitiesController');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

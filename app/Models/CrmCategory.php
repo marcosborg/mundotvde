@@ -33,4 +33,17 @@ class CrmCategory extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+    public function stages()
+    {
+        return $this->hasMany(CrmStage::class, 'category_id');
+    }
+    public function forms()
+    {
+        return $this->hasMany(CrmForm::class, 'category_id');
+    }
+    public function cards()
+    {
+        return $this->hasMany(CrmCard::class, 'category_id');
+    }
 }

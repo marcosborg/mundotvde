@@ -46,4 +46,13 @@ class CrmStage extends Model
     {
         return $this->belongsTo(User::class, 'auto_assign_to_user_id');
     }
+
+    public function cards()
+    {
+        return $this->hasMany(CrmCard::class, 'stage_id');
+    }
+    public function stageEmails()
+    {
+        return $this->hasMany(CrmStageEmail::class, 'stage_id');
+    }
 }

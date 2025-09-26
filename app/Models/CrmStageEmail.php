@@ -52,4 +52,9 @@ class CrmStageEmail extends Model implements HasMedia
     {
         return $this->belongsTo(CrmStage::class, 'stage_id');
     }
+
+    public function emailsQueue()
+    {
+        return $this->hasMany(CrmEmailsQueue::class, 'stage_email_id');
+    }
 }
