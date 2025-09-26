@@ -2139,5 +2139,6 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
+    'crmKanban.title' => 'CRM Kanban',
 
 ];

@@ -527,6 +527,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('crm-card-activities/destroy', 'CrmCardActivitiesController@massDestroy')->name('crm-card-activities.massDestroy');
     Route::resource('crm-card-activities', 'CrmCardActivitiesController');
 
+    // mantém a notação string aqui para ser 100% consistente com o teu ficheiro
+    Route::get('crm-kanban/{categoryId?}', 'CrmKanbanController@index')->name('crm-kanban.index');
+    Route::patch('crm-cards/{crm_card}/move', 'CrmKanbanController@move')->name('crm-cards.move');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

@@ -134,3 +134,8 @@ Route::middleware('auth:sanctum')->get('motorista-messages', function (Request $
     $message = \App\Models\AppMessage::where('user_id', $user->id)->first();
     return $message ? json_decode($message->messages, true) : [];
 });
+
+use App\Http\Controllers\Api\PublicCrmFormsController;
+
+Route::post('crm/forms/{slug}/submit', [PublicCrmFormsController::class, 'submit'])
+    ->name('api.crm.forms.submit');
