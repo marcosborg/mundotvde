@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\CrmKanbanController;
 
 Route::get('/', 'Website\HomePageController@index');
 Route::prefix('tvde')->group(function () {
@@ -526,10 +527,25 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Crm Card Activities
     Route::delete('crm-card-activities/destroy', 'CrmCardActivitiesController@massDestroy')->name('crm-card-activities.massDestroy');
     Route::resource('crm-card-activities', 'CrmCardActivitiesController');
-
+    
+    // HUB de categorias
+    // HUB
+    Route::get('crm-kanban', [CrmKanbanController::class, 'hub'])->name('crm-kanban.hub');
+    Route::post('crm-kanban/category', [CrmKanbanController::class, 'storeCategory'])->name('crm-kanban.category.store');
     // mantém a notação string aqui para ser 100% consistente com o teu ficheiro
-    Route::get('crm-kanban/{categoryId?}', 'CrmKanbanController@index')->name('crm-kanban.index');
+    Route::get('crm-kanban/{category}', [CrmKanbanController::class, 'index'])->name('crm-kanban.index');
     Route::patch('crm-cards/{crm_card}/move', 'CrmKanbanController@move')->name('crm-cards.move');
+    // criação rápida via AJAX (JSON)
+    Route::post('crm-cards/quick', 'CrmKanbanController@quickCreate')->name('crm-cards.quick');
+    // Quick edit (JSON)
+    Route::get('crm-cards/{crm_card}/quick',  'CrmKanbanController@quickShow')->name('crm-cards.quick-show');
+    Route::patch('crm-cards/{crm_card}/quick','CrmKanbanController@quickUpdate')->name('crm-cards.quick-update');
+    // Estados (stages) no HUB
+    Route::post('crm-kanban/{category}/stages', [CrmKanbanController::class, 'storeStage'])->name('crm-kanban.stage.store');
+    Route::patch('crm-kanban/stages/{stage}', [CrmKanbanController::class, 'updateStage'])->name('crm-kanban.stage.update');
+    Route::delete('crm-kanban/stages/{stage}', [CrmKanbanController::class, 'destroyStage'])->name('crm-kanban.stage.destroy');
+    Route::patch('crm-kanban/{category}/stages/reorder', [CrmKanbanController::class, 'reorderStages'])->name('crm-kanban.stage.reorder');
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

@@ -1448,9 +1448,9 @@
             @endcan
             @can('crm_kanban_access')
             <li class="{{ request()->is('admin/crm-kanban*') ? 'active' : '' }}">
-                <a href="{{ route('admin.crm-kanban.index', ['categoryId' => 1]) }}">
-                <i class="fa-fw fas fa-columns"></i>
-                <span>{{ trans('cruds.crmKanban.title') }}</span>
+                <a href="{{ route('admin.crm-kanban.hub') }}">
+                    <i class="fa-fw fas fa-columns"></i>
+                    <span>{{ trans('cruds.crmKanban.title') }}</span>
                 </a>
             </li>
             @endcan
