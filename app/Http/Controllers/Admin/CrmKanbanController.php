@@ -7,6 +7,8 @@ use App\Models\{CrmCard, CrmCategory, CrmStage};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Schema;
+use Carbon\Carbon;
 
 class CrmKanbanController extends Controller
 {
@@ -111,118 +113,6 @@ class CrmKanbanController extends Controller
                 'position'  => $card->position,
                 'status'    => $card->status,
             ],
-        ]);
-    }
-
-    public function quickCreate(\Illuminate\Http\Request $request)
-    {
-        \Illuminate\Support\Facades\Gate::authorize('crm_card_create');
-
-        $v = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'category_id' => ['required', 'exists:crm_categories,id'],
-            'stage_id' => ['required', 'exists:crm_stages,id'],
-            'priority' => ['nullable', 'in:low,medium,high'],
-            'value_amount' => ['nullable', 'numeric'],
-            'value_currency' => ['nullable', 'string', 'size:3'],
-            'due_at' => ['nullable', 'date'],
-        ]);
-
-        $pos = (int)((\App\Models\CrmCard::where('stage_id', $v['stage_id'])->max('position') ?? 0) + 1000);
-
-        $card = \App\Models\CrmCard::create([
-            'title' => $v['title'],
-            'category_id' => (int)$v['category_id'],
-            'stage_id' => (int)$v['stage_id'],
-            'position' => $pos,
-            'status' => 'open',
-            'source' => 'manual',
-            'priority' => $v['priority'] ?? 'medium',
-            'value_amount' => $v['value_amount'] ?? null,
-            'value_currency' => $v['value_currency'] ?? 'EUR',
-            'due_at' => $v['due_at'] ?? null,
-            'created_by_id' => auth()->id(),
-        ]);
-
-        return response()->json([
-            'ok' => true,
-            'card' => [
-                'id' => $card->id,
-                'title' => $card->title,
-                'priority' => $card->priority,
-                'value_amount' => $card->value_amount,
-                'value_currency' => $card->value_currency,
-                'position' => $card->position,
-                'stage_id' => $card->stage_id,
-                'show_url' => route('admin.crm-cards.show', $card->id),
-            ],
-        ]);
-    }
-
-    public function quickShow(\App\Models\CrmCard $crm_card)
-    {
-        \Gate::authorize('crm_card_edit');
-        $card = $crm_card->only(['id', 'title', 'priority', 'value_amount', 'value_currency', 'due_at', 'stage_id', 'category_id']);
-        $card['due_at'] = $crm_card->due_at ? \Carbon\Carbon::parse($crm_card->due_at)->format('Y-m-d') : null;
-
-        $stages = \App\Models\CrmStage::where('category_id', $crm_card->category_id)->orderBy('position')->get(['id', 'name']);
-        return response()->json(['ok' => true, 'card' => $card, 'stages' => $stages]);
-    }
-
-    public function quickUpdate(\Illuminate\Http\Request $request, \App\Models\CrmCard $crm_card)
-    {
-        \Gate::authorize('crm_card_edit');
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'priority' => ['nullable', 'in:low,medium,high'],
-            'value_amount' => ['nullable', 'numeric'],
-            'value_currency' => ['nullable', 'string', 'size:3'],
-            'due_at' => ['nullable', 'date'],
-            'stage_id' => ['required', 'integer', 'exists:crm_stages,id'],
-        ]);
-        $stageChanged = (int)$data['stage_id'] !== (int)$crm_card->stage_id;
-
-        $crm_card->fill([
-            'title' => $data['title'],
-            'priority' => $data['priority'] ?? 'medium',
-            'value_amount' => $data['value_amount'] ?? null,
-            'value_currency' => $data['value_currency'] ?? ($crm_card->value_currency ?? 'EUR'),
-            'due_at' => $data['due_at'] ?? null,
-            'stage_id' => (int)$data['stage_id'],
-        ]);
-
-        if ($stageChanged) {
-            $crm_card->position = (int)((\App\Models\CrmCard::where('stage_id', $crm_card->stage_id)->max('position') ?? 0) + 1000);
-            $toStage = \App\Models\CrmStage::find($crm_card->stage_id);
-            if ($toStage?->is_won) {
-                $crm_card->status = 'won';
-                $crm_card->won_at = now();
-                $crm_card->closed_at = now();
-            } elseif ($toStage?->is_lost) {
-                $crm_card->status = 'lost';
-                $crm_card->closed_at = now();
-            } elseif (in_array($crm_card->status, ['won', 'lost', 'archived'])) {
-                $crm_card->status = 'open';
-                $crm_card->won_at = null;
-                $crm_card->closed_at = null;
-            }
-        }
-
-        $crm_card->save();
-
-        return response()->json([
-            'ok' => true,
-            'card' => [
-                'id' => $crm_card->id,
-                'title' => $crm_card->title,
-                'priority' => $crm_card->priority,
-                'value_amount' => $crm_card->value_amount,
-                'value_currency' => $crm_card->value_currency,
-                'due_at' => $crm_card->due_at ? \Carbon\Carbon::parse($crm_card->due_at)->format('Y-m-d') : null,
-                'stage_id' => $crm_card->stage_id,
-                'position' => $crm_card->position,
-                'show_url' => route('admin.crm-cards.show', $crm_card->id),
-            ]
         ]);
     }
 

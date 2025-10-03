@@ -305,7 +305,6 @@
     .finally(()=> { $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
   });
 
-
   // Criar estado (adiciona linha na lista da categoria)
   $('#createStageForm').on('submit', function(e){
     e.preventDefault();
@@ -489,5 +488,35 @@
       }
     });
   });
+
+  $('#editCardForm').on('submit', function(e){
+    e.preventDefault();
+    const $btn = $(this).find('button[type="submit"]');
+    const $errors = $('#editCardErrors');
+    $errors.hide().empty();
+    $btn.prop('disabled', true); $btn.find('.txt').hide(); $btn.find('.spinner').show();
+
+    const id = $(this).find('[name="id"]').val();
+    const fd = new FormData(this);
+    const url = '{{ route('admin.crm-cards.quick-update', ['crm_card' => '___ID___']) }}' . replace('___ID___', id);
+
+    fetch(url, { method: 'PATCH', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}, body: fd })
+      .then(async r => {
+        if(!r.ok){
+          const data = await r.json().catch(()=>({}));
+          const msgs = data.errors ? Object.values(data.errors).map(a=>a.join('<br>')).join('<br>') : (data.message || 'Erro ao gravar.');
+          throw new Error(msgs);
+        }
+        return r.json();
+      })
+      .then(resp => {
+        // ... atualizar o card no UI (já tinhas isto)
+        $('#editCardModal').modal('hide');
+      })
+      .catch(err => { $errors.html(err.message).show(); })
+      .finally(()=>{ $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
+  });
+
+
 </script>
 @endsection

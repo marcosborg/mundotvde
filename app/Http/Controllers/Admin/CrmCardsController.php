@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Schema;
+use Carbon\Carbon;
 
 class CrmCardsController extends Controller
 {
@@ -224,5 +226,169 @@ class CrmCardsController extends Controller
         $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
+    }
+
+    public function quickShow(\App\Models\CrmCard $crm_card)
+    {
+        \Gate::authorize('crm_card_access');
+
+        return response()->json([
+            'ok' => true,
+            'card' => [
+                'id'             => $crm_card->id,
+                'title'          => $crm_card->title,
+                'priority'       => $crm_card->priority,
+                'stage_id'       => $crm_card->stage_id,
+                'position'       => $crm_card->position,
+                'value_amount'   => $crm_card->value_amount,
+                'value_currency' => $crm_card->value_currency,
+                'due_at'         => $crm_card->due_at ? $crm_card->due_at->format('Y-m-d') : null,
+                'show_url'       => route('admin.crm-cards.show', $crm_card->id),
+            ],
+        ]);
+    }
+
+    public function quickStore(\Illuminate\Http\Request $request)
+    {
+        \Gate::authorize('crm_card_create');
+
+        $data = $request->validate([
+            'category_id'    => ['required', 'integer', 'exists:crm_categories,id'],
+            'stage_id'       => ['required', 'integer', 'exists:crm_stages,id'],
+            'title'          => ['required', 'string', 'max:255'],
+            'priority'       => ['nullable', 'in:low,medium,high'],
+            'due_at'         => ['nullable', 'string'],
+            'value_amount'   => ['nullable'],
+            'value_currency' => ['nullable', 'string', 'max:3'],
+        ]);
+
+        $card = new \App\Models\CrmCard();
+        $card->category_id = (int) $data['category_id'];
+        $card->stage_id    = (int) $data['stage_id'];
+        $card->title       = $data['title'];
+        $card->priority    = $data['priority'] ?? 'medium';
+        $card->status      = 'open';
+
+        // position (no fim da coluna)
+        $max = \App\Models\CrmCard::where('stage_id', $card->stage_id)->max('position') ?? 0;
+        if (\Schema::hasColumn('crm_cards', 'position')) $card->position = $max + 1000;
+
+        // due_at
+        $due = $data['due_at'] ?? null;
+        if ($due) {
+            try {
+                $card->due_at = preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $due)
+                    ? \Carbon\Carbon::createFromFormat('d/m/Y', $due)->toDateString()
+                    : \Carbon\Carbon::parse($due)->toDateString();
+            } catch (\Throwable $e) {
+                $card->due_at = null;
+            }
+        }
+
+        // valor
+        if (\Schema::hasColumn('crm_cards', 'value_amount')) {
+            $val = $request->input('value_amount');
+            $card->value_amount = ($val === null || $val === '') ? null : (float) str_replace(',', '.', $val);
+        }
+        if (\Schema::hasColumn('crm_cards', 'value_currency') && array_key_exists('value_currency', $data)) {
+            $card->value_currency = strtoupper($data['value_currency'] ?: 'EUR');
+        }
+
+        $card->source = 'manual';
+        $card->save();
+
+        return response()->json([
+            'ok' => true,
+            'card' => [
+                'id'             => $card->id,
+                'title'          => $card->title,
+                'priority'       => $card->priority,
+                'stage_id'       => $card->stage_id,
+                'position'       => $card->position,
+                'value_amount'   => $card->value_amount,
+                'value_currency' => $card->value_currency,
+                'due_at'         => $card->due_at ? $card->due_at->format('Y-m-d') : null,
+                'show_url'       => route('admin.crm-cards.show', $card->id),
+            ],
+        ]);
+    }
+
+    public function quickUpdate(\Illuminate\Http\Request $request, \App\Models\CrmCard $crm_card)
+    {
+        \Illuminate\Support\Facades\Gate::authorize('crm_card_edit');
+
+        $data = $request->validate([
+            'title'          => ['required', 'string', 'max:255'],
+            'stage_id'       => ['required', 'integer', 'exists:crm_stages,id'],
+            'priority'       => ['nullable', 'in:low,medium,high'],
+            'due_at'         => ['nullable', 'string'], // aceitamos vários formatos
+            'value_amount'   => ['nullable'],          // pode vir "" (vamos tratar)
+            'value_currency' => ['nullable', 'string', 'max:3'],
+        ]);
+
+        // Campos base
+        $crm_card->title    = $data['title'];
+        $crm_card->stage_id = (int) $data['stage_id'];
+        $crm_card->priority = $data['priority'] ?? 'medium';
+
+        // Data (YYYY-MM-DD ou DD/MM/YYYY). Sem 500 se vier inválida:
+        $dueInput = isset($data['due_at']) ? trim((string)$data['due_at']) : '';
+        if ($dueInput === '') {
+            $crm_card->due_at = null;
+        } else {
+            try {
+                $crm_card->due_at = preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $dueInput)
+                    ? Carbon::createFromFormat('d/m/Y', $dueInput)->format('Y-m-d')
+                    : Carbon::parse($dueInput)->format('Y-m-d');
+            } catch (\Throwable $e) {
+                // Se não conseguir interpretar, não rebenta:
+                $crm_card->due_at = null;
+            }
+        }
+
+        // Valor (só se as colunas existirem)
+        if (Schema::hasColumn('crm_cards', 'value_amount')) {
+            $val = $request->input('value_amount');
+            $crm_card->value_amount = ($val === null || $val === '') ? null : (float) str_replace(',', '.', $val);
+        }
+        if (Schema::hasColumn('crm_cards', 'value_currency')) {
+            $curr = $request->input('value_currency');
+            $crm_card->value_currency = $curr ? strtoupper($curr) : 'EUR';
+        }
+
+        // Guardar sem deixar 500 escapar:
+        try {
+            $crm_card->save();
+        } catch (\Throwable $e) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Falha ao gravar o card.',
+            ], 422);
+        }
+
+        // Preparar due_at para JSON mesmo que seja string na BD
+        $dueOut = null;
+        if (!empty($crm_card->due_at)) {
+            try {
+                $dueOut = Carbon::parse($crm_card->due_at)->format('Y-m-d');
+            } catch (\Throwable $e) {
+                $dueOut = (string) $crm_card->due_at;
+            }
+        }
+
+        return response()->json([
+            'ok'   => true,
+            'card' => [
+                'id'             => $crm_card->id,
+                'title'          => $crm_card->title,
+                'priority'       => $crm_card->priority,
+                'stage_id'       => $crm_card->stage_id,
+                'position'       => $crm_card->position,
+                'value_amount'   => $crm_card->value_amount,
+                'value_currency' => $crm_card->value_currency,
+                'due_at'         => $dueOut,
+                'show_url'       => route('admin.crm-cards.show', $crm_card->id),
+            ],
+        ]);
     }
 }

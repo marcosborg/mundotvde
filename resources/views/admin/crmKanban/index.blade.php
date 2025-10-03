@@ -475,77 +475,107 @@
   });
 
   // --- Submit Editar ---
-  $('#editCardForm').on('submit', function(e){
+    // helper: atualiza/insere card na DOM
+  function upsertCard(c){
+    let cardEl = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
+    const targetCol = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
+
+    // cria se não existir (ou se mudou de coluna, move)
+    if (!cardEl) {
+      if (!targetCol) return;
+      cardEl = buildCardElement(c);
+      targetCol.appendChild(cardEl);
+      refreshCol(targetCol);
+    } else {
+      // move de coluna se mudou o estágio
+      const fromCol = cardEl.closest('.kanban-col');
+      if (targetCol && fromCol !== targetCol) {
+        targetCol.appendChild(cardEl);
+        refreshCol(fromCol); refreshCol(targetCol);
+      }
+    }
+
+    // ——— Atualizações visuais do card ———
+    // título
+    const titleEl = cardEl.querySelector('.kc-title');
+    if (titleEl) titleEl.textContent = c.title || '';
+    // dataset usado na pesquisa
+    cardEl.dataset.title = (c.title || '').toLowerCase();
+
+    // prioridade (badge)
+    const priBadge = cardEl.querySelector('.badge');
+    if (priBadge) {
+      priBadge.classList.remove('pri-low','pri-medium','pri-high');
+      priBadge.classList.add(c.priority === 'high' ? 'pri-high' : (c.priority === 'low' ? 'pri-low' : 'pri-medium'));
+      priBadge.textContent = (c.priority || 'medium').replace(/^./, s=>s.toUpperCase());
+    }
+
+    // valor
+    let valBadge = cardEl.querySelector('.badge-value');
+    if (c.value_amount !== null && c.value_amount !== undefined && c.value_amount !== '') {
+      if (!valBadge) {
+        valBadge = document.createElement('span');
+        valBadge.className = 'badge badge-value';
+        cardEl.querySelector('.kc-top').appendChild(valBadge);
+      }
+      valBadge.textContent = Number(c.value_amount).toFixed(2) + ' ' + (c.value_currency || 'EUR');
+    } else if (valBadge) {
+      valBadge.remove();
+    }
+
+    // datasets
+    cardEl.dataset.priority = c.priority || 'medium';
+    cardEl.dataset.value_amount = c.value_amount ?? '';
+    cardEl.dataset.value_currency = c.value_currency || 'EUR';
+    cardEl.dataset.due_at = c.due_at || '';
+    cardEl.dataset.stage_id = c.stage_id;
+    if (c.position) cardEl.dataset.pos = c.position;
+
+    // pequeno “flash” para feedback
+    cardEl.style.transition = 'background-color .4s';
+    cardEl.style.backgroundColor = '#f0fdf4';
+    setTimeout(()=> cardEl.style.backgroundColor = '', 400);
+  }
+
+  // --- Submit Editar (POST + _method=PATCH para aceitar FormData) ---
+  $('#editCardForm').on('submit', function (e) {
     e.preventDefault();
+
     const $btn = $(this).find('button[type="submit"]');
     const $errors = $('#editCardErrors');
     $errors.hide().empty();
     $btn.prop('disabled', true); $btn.find('.txt').hide(); $btn.find('.spinner').show();
 
-    const id = $(this).find('[name="id"]').val();
+    const id  = $(this).find('[name="id"]').val();
+    const url = @json(route('admin.crm-cards.quick-update', ['crm_card' => '___ID___'])).replace('___ID___', id);
+
     const fd = new FormData(this);
-    const url = '{{ route('admin.crm-cards.quick-update', ['crm_card' => '___ID___']) }}'.replace('___ID___', id);
+    fd.append('_method', 'PATCH');
 
     fetch(url, {
-      method: 'PATCH',
-      headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'Accept': 'application/json'
+      },
       body: fd
     })
-    .then(async r=>{
-      if(!r.ok){
+    .then(async r => {
+      if (!r.ok) {
         const data = await r.json().catch(()=>({}));
-        const msgs = data.errors ? Object.values(data.errors).map(a=>a.join('<br>')).join('<br>') : 'Erro ao gravar.';
+        const msgs = data?.errors ? Object.values(data.errors).flat().join('<br>') : 'Erro ao gravar.';
         throw new Error(msgs);
       }
       return r.json();
     })
-    .then(resp=>{
-      if(!resp.ok) throw new Error('Erro ao gravar.');
-      const c = resp.card;
-
-      let cardEl = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
-      const targetCol = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
-
-      // move de coluna se necessário
-      if (cardEl && targetCol && cardEl.closest('.kanban-col') !== targetCol) {
-        const fromCol = cardEl.closest('.kanban-col');
-        targetCol.appendChild(cardEl);
-        refreshCol(fromCol); refreshCol(targetCol);
-      }
-
-      // atualizar conteúdo e datasets
-      if (cardEl) {
-        cardEl.querySelector('.kc-title').textContent = c.title;
-
-        const priBadge = cardEl.querySelector('.badge');
-        priBadge.classList.remove('pri-low','pri-medium','pri-high');
-        priBadge.classList.add(c.priority === 'high' ? 'pri-high' : (c.priority === 'low' ? 'pri-low' : 'pri-medium'));
-        priBadge.textContent = c.priority.charAt(0).toUpperCase() + c.priority.slice(1);
-
-        let valBadge = cardEl.querySelector('.badge-value');
-        if (c.value_amount !== null && c.value_amount !== undefined) {
-          if (!valBadge) {
-            valBadge = document.createElement('span');
-            valBadge.className = 'badge badge-value';
-            cardEl.querySelector('.kc-top').appendChild(valBadge);
-          }
-          valBadge.textContent = Number(c.value_amount).toFixed(2)+' '+(c.value_currency || 'EUR');
-        } else if (valBadge) {
-          valBadge.remove();
-        }
-
-        cardEl.dataset.priority = c.priority || 'medium';
-        cardEl.dataset.value_amount = c.value_amount ?? '';
-        cardEl.dataset.value_currency = c.value_currency || 'EUR';
-        cardEl.dataset.due_at = c.due_at || '';
-        cardEl.dataset.stage_id = c.stage_id;
-        cardEl.dataset.pos = c.position;
-      }
-
+    .then(resp => {
+      if (!resp.ok) throw new Error('Erro ao gravar.');
+      upsertCard(resp.card);          // << atualiza a DOM aqui
       $('#editCardModal').modal('hide');
     })
-    .catch(err=>{ $errors.html(err.message).show(); })
-    .finally(()=>{ $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
+    .catch(err => $errors.html(err.message).show())
+    .finally(() => { $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
   });
+
 </script>
 @endsection
