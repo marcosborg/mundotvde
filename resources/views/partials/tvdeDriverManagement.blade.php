@@ -101,7 +101,10 @@
                                         <thead>
                                             <tr>
                                                 <th>Condutor</td>
-                                                <th>Aluguer</td>
+                                                <th>Código</th>
+                                                <th>Cartão</th>
+                                                <th>Operação</th>
+                                                <th>Aluguer</th>
                                                 <th>Gestão</th>
                                                 <th>Seguro</th>
                                                 <th>Combustivel</th>
@@ -133,6 +136,9 @@
                                             @foreach ($week->activityLaunches as $activityLaunch)
                                             <tr>
                                                 <td>{{ $activityLaunch->driver->name }}</td>
+                                                <td>{{ $activityLaunch->driver->code }}</td>
+                                                <td>{{ $activityLaunch->driver->card->code ?? '' }}</td>
+                                                <td>{{ $activityLaunch->driver->operation->name ?? '' }}</td>
                                                 <td>{{ $activityLaunch->rent }}</td>
                                                 <td>{{ $activityLaunch->management }}</td>
                                                 <td>{{ $activityLaunch->insurance }}</td>
@@ -197,6 +203,9 @@
                                         <thead>
                                             <tr>
                                                 <th>Condutor</td>
+                                                <th>Código</th>
+                                                <th>Cartão</th>
+                                                <th>Operação</th>
                                                 <th>Aluguer</td>
                                                 <th>Gestão</th>
                                                 <th>Seguro</th>
@@ -228,6 +237,9 @@
                                             @foreach ($week->activityLaunches as $activityLaunch)
                                             <tr>
                                                 <td>{{ $activityLaunch->driver->name }}</td>
+                                                <td>{{ $activityLaunch->driver->code }}</td>
+                                                <td>{{ $activityLaunch->driver->card->code ?? '' }}</td>
+                                                <td>{{ $activityLaunch->driver->operation->name ?? '' }}</td>
                                                 <td>{{ $activityLaunch->rent }}</td>
                                                 <td>{{ $activityLaunch->management }}</td>
                                                 <td>{{ $activityLaunch->insurance }}</td>

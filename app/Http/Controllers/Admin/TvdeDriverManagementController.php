@@ -58,6 +58,7 @@ class TvdeDriverManagementController extends Controller
         $activityLaunch = ActivityLaunch::where('id', $request->activity_launch_id)
             ->with([
                 'driver.card',
+                'driver.operation',
                 'activityPerOperators.tvde_operator',
             ])
             ->first();
