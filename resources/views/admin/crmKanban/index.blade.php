@@ -36,7 +36,6 @@
   .badge.pri-low{background:#ECFDF5;border-color:#10B981;color:#065F46}
   .badge.pri-medium{background:#DBEAFE;border-color:#3B82F6;color:#1E3A8A}
   .badge.pri-high{background:#FEF3C7;border-color:#F59E0B;color:#92400E}
-  .badge-value{background:#f5f3ff;border-color:#ddd6fe}
 
   .btn-add{border-radius:999px}
 
@@ -44,6 +43,8 @@
   .kc-actions{position:absolute; right:8px; top:8px; opacity:0; transition:opacity .2s; z-index:5; pointer-events:auto;}
   .kc-actions .btn{pointer-events:auto;}
   .kanban-card:hover .kc-actions{opacity:1}
+
+  .help-text{font-size:12px;color:#6b7280;margin-top:4px}
 </style>
 @endsection
 
@@ -103,10 +104,8 @@
                      data-pos="{{ $card->position }}"
                      data-title="{{ strtolower($card->title) }}"
                      data-priority="{{ $card->priority ?? 'medium' }}"
-                     data-value_amount="{{ $card->value_amount ?? '' }}"
-                     data-value_currency="{{ $card->value_currency ?? 'EUR' }}"
-                     data-due_at="{{ $card->due_at ? \Carbon\Carbon::parse($card->due_at)->format('Y-m-d') : '' }}"
-                     data-stage_id="{{ $stage->id }}">
+                     data-due_at="{{ $card->due_at_html }}"
+                     data-stage_id="{{ $card->stage_id }}">
                     <div class="kc-actions">
                       <button type="button" class="btn btn-xs btn-default btn-edit-card" data-id="{{ $card->id }}">
                         <i class="fa fa-pencil"></i>
@@ -116,11 +115,6 @@
                       <span class="badge {{ $card->priority === 'high' ? 'pri-high' : ($card->priority === 'low' ? 'pri-low' : 'pri-medium') }}">
                         {{ ucfirst($card->priority ?? 'medium') }}
                       </span>
-                      @if(!is_null($card->value_amount))
-                        <span class="badge badge-value">
-                          {{ number_format((float)$card->value_amount, 2, ',', ' ') }} {{ $card->value_currency ?? 'EUR' }}
-                        </span>
-                      @endif
                     </div>
                     <div class="kc-title">{{ $card->title }}</div>
                     <div class="kc-meta">#{{ $card->id }}</div>
@@ -185,20 +179,29 @@
             </div>
           </div>
 
+          <hr style="margin:10px 0">
           <div class="row">
-            <div class="col-xs-7">
+            <div class="col-xs-6">
               <div class="form-group">
-                <label>Valor</label>
-                <input type="number" step="0.01" name="value_amount" class="form-control" placeholder="ex.: 1200.00">
+                <label>Fonte</label>
+                <select name="source" class="form-control">
+                  <option value="manual" selected>Manual</option>
+                  <option value="form">Form</option>
+                  <option value="import">Import</option>
+                  <option value="api">API</option>
+                </select>
               </div>
             </div>
-            <div class="col-xs-5">
-              <div class="form-group">
-                <label>Moeda</label>
-                <input type="text" name="value_currency" class="form-control" value="EUR" maxlength="3">
-              </div>
+            <div class="col-xs-6">
+              <div class="help-text">Opcional — use “Form” se estiver a colar dados do site.</div>
             </div>
           </div>
+
+          <div class="form-group">
+            <label>Dados do formulário (JSON) <small class="text-muted">(opcional)</small></label>
+            <textarea name="fields_snapshot_json" class="form-control" rows="4" placeholder='{"nome":"João","email":"..."}'></textarea>
+          </div>
+
         </div>
 
         <div class="modal-footer">
@@ -259,19 +262,25 @@
             </div>
           </div>
 
+          <hr style="margin:10px 0">
           <div class="row">
-            <div class="col-xs-7">
+            <div class="col-xs-6">
               <div class="form-group">
-                <label>Valor</label>
-                <input type="number" step="0.01" name="value_amount" class="form-control">
+                <label>Fonte</label>
+                <select name="source" class="form-control">
+                  <option value="manual">Manual</option>
+                  <option value="form">Form</option>
+                  <option value="import">Import</option>
+                  <option value="api">API</option>
+                </select>
               </div>
             </div>
-            <div class="col-xs-5">
-              <div class="form-group">
-                <label>Moeda</label>
-                <input type="text" name="value_currency" class="form-control" maxlength="3" value="EUR">
-              </div>
-            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Dados do formulário (JSON) <small class="text-muted">(opcional)</small></label>
+            <textarea name="fields_snapshot_json" class="form-control" rows="4" placeholder='{"nome":"João","email":"..."}'></textarea>
+            <div class="help-text">Se o card veio de um formulário, este JSON guarda um snapshot dos campos.</div>
           </div>
 
         </div>
@@ -313,8 +322,6 @@
     a.dataset.pos  = c.position || '';
     a.dataset.title = (c.title || '').toLowerCase();
     a.dataset.priority = c.priority || 'medium';
-    a.dataset.value_amount = (c.value_amount ?? '');
-    a.dataset.value_currency = c.value_currency || 'EUR';
     a.dataset.due_at = c.due_at || '';
     a.dataset.stage_id = c.stage_id;
 
@@ -328,11 +335,8 @@
         <span class="badge ${c.priority === 'high' ? 'pri-high' : (c.priority === 'low' ? 'pri-low' : 'pri-medium')}">
           ${(c.priority || 'medium').replace(/^./, s=>s.toUpperCase())}
         </span>
-        ${(c.value_amount !== null && c.value_amount !== undefined)
-          ? `<span class="badge badge-value">${Number(c.value_amount).toFixed(2)} ${c.value_currency || 'EUR'}</span>`
-          : ''}
       </div>
-      <div class="kc-title">${c.title}</div>
+      <div class="kc-title">${c.title || ''}</div>
       <div class="kc-meta">#${c.id}</div>
     `;
     return a;
@@ -345,15 +349,62 @@
       $f.find('[name="id"]').val(el.dataset.card);
       $f.find('[name="title"]').val(el.querySelector('.kc-title')?.textContent?.trim() || '');
       $f.find('[name="priority"]').val(el.dataset.priority || 'medium');
-      $f.find('[name="value_amount"]').val(el.dataset.value_amount || '');
-      $f.find('[name="value_currency"]').val(el.dataset.value_currency || 'EUR');
       $f.find('[name="due_at"]').val(el.dataset.due_at || '');
       const stageId = el.dataset.stage_id || el.closest('.kanban-col')?.dataset.stage;
       $f.find('[name="stage_id"]').val(String(stageId));
+
+      // Source / JSON do formulário ficam em branco por omissão (se o backend devolver no quick-show, podes popular)
+      $f.find('[name="source"]').val('manual');
+      $f.find('[name="fields_snapshot_json"]').val('');
+
       $('#editCardModal').modal('show');
     } else {
       alert('Card não encontrado.');
     }
+  }
+
+  // Atualiza/insere card na DOM
+  function upsertCard(c){
+    let cardEl = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
+    const targetCol = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
+
+    // cria se não existir (ou move se mudou de coluna)
+    if (!cardEl) {
+      if (!targetCol) return;
+      cardEl = buildCardElement(c);
+      targetCol.appendChild(cardEl);
+      refreshCol(targetCol);
+    } else {
+      const fromCol = cardEl.closest('.kanban-col');
+      if (targetCol && fromCol !== targetCol) {
+        targetCol.appendChild(cardEl);
+        refreshCol(fromCol); refreshCol(targetCol);
+      }
+    }
+
+    // título
+    const titleEl = cardEl.querySelector('.kc-title');
+    if (titleEl) titleEl.textContent = c.title || '';
+    cardEl.dataset.title = (c.title || '').toLowerCase();
+
+    // prioridade
+    const priBadge = cardEl.querySelector('.badge');
+    if (priBadge) {
+      priBadge.classList.remove('pri-low','pri-medium','pri-high');
+      priBadge.classList.add(c.priority === 'high' ? 'pri-high' : (c.priority === 'low' ? 'pri-low' : 'pri-medium'));
+      priBadge.textContent = (c.priority || 'medium').replace(/^./, s=>s.toUpperCase());
+    }
+
+    // datasets
+    cardEl.dataset.priority = c.priority || 'medium';
+    cardEl.dataset.due_at = c.due_at || '';
+    cardEl.dataset.stage_id = c.stage_id;
+    if (c.position) cardEl.dataset.pos = c.position;
+
+    // pequeno “flash”
+    cardEl.style.transition = 'background-color .4s';
+    cardEl.style.backgroundColor = '#f0fdf4';
+    setTimeout(()=> cardEl.style.backgroundColor = '', 400);
   }
 
   // --- Sortable (drag & drop) ---
@@ -373,7 +424,7 @@
         const prev = findSiblingCardId(el, 'previousElementSibling');
         const next = findSiblingCardId(el, 'nextElementSibling');
 
-        refreshCol(evt.from); 
+        refreshCol(evt.from);
         refreshCol(evt.to);
 
         const moveUrl = '{{ route('admin.crm-cards.move', ['crm_card' => '___ID___']) }}'.replace('___ID___', cardId);
@@ -385,17 +436,13 @@
         })
         .then(r => r.ok ? r.json() : Promise.reject())
         .then(data => {
-          if (data && data.ok) {
-            // ATUALIZA o DOM com o que ficou gravado
+          if (data && data.ok && data.card) {
             el.dataset.stage_id = String(data.card.stage_id);
             el.dataset.pos = String(data.card.position || '');
           }
         })
-        .catch(() => {
-          // opcional: podes reverter visualmente, mostrar toast, etc.
-        });
+        .catch(() => { /* opcional: reverter visualmente */ });
       }
-
     });
   });
 
@@ -459,83 +506,18 @@
   });
 
   // --- Abrir Modal Editar ---
-  // Clicar no lápis
   $(document).on('click', '.btn-edit-card', function(e){
     e.preventDefault(); e.stopPropagation();
     const id = $(this).data('id');
     const el = document.querySelector(`.kanban-card[data-card="${id}"]`);
     openEditFromEl(el);
   });
-  // Clicar no próprio card (sem Ctrl/Cmd/middle)
   $(document).on('click', '.kanban-card', function(e){
-    if (e.metaKey || e.ctrlKey || e.button === 1) return; // permitir nova aba
+    if (e.metaKey || e.ctrlKey || e.button === 1) return; // nova aba
     if (e.target.closest('.btn-edit-card')) return;
     e.preventDefault();
     openEditFromEl(this);
   });
-
-  // --- Submit Editar ---
-    // helper: atualiza/insere card na DOM
-  function upsertCard(c){
-    let cardEl = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
-    const targetCol = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
-
-    // cria se não existir (ou se mudou de coluna, move)
-    if (!cardEl) {
-      if (!targetCol) return;
-      cardEl = buildCardElement(c);
-      targetCol.appendChild(cardEl);
-      refreshCol(targetCol);
-    } else {
-      // move de coluna se mudou o estágio
-      const fromCol = cardEl.closest('.kanban-col');
-      if (targetCol && fromCol !== targetCol) {
-        targetCol.appendChild(cardEl);
-        refreshCol(fromCol); refreshCol(targetCol);
-      }
-    }
-
-    // ——— Atualizações visuais do card ———
-    // título
-    const titleEl = cardEl.querySelector('.kc-title');
-    if (titleEl) titleEl.textContent = c.title || '';
-    // dataset usado na pesquisa
-    cardEl.dataset.title = (c.title || '').toLowerCase();
-
-    // prioridade (badge)
-    const priBadge = cardEl.querySelector('.badge');
-    if (priBadge) {
-      priBadge.classList.remove('pri-low','pri-medium','pri-high');
-      priBadge.classList.add(c.priority === 'high' ? 'pri-high' : (c.priority === 'low' ? 'pri-low' : 'pri-medium'));
-      priBadge.textContent = (c.priority || 'medium').replace(/^./, s=>s.toUpperCase());
-    }
-
-    // valor
-    let valBadge = cardEl.querySelector('.badge-value');
-    if (c.value_amount !== null && c.value_amount !== undefined && c.value_amount !== '') {
-      if (!valBadge) {
-        valBadge = document.createElement('span');
-        valBadge.className = 'badge badge-value';
-        cardEl.querySelector('.kc-top').appendChild(valBadge);
-      }
-      valBadge.textContent = Number(c.value_amount).toFixed(2) + ' ' + (c.value_currency || 'EUR');
-    } else if (valBadge) {
-      valBadge.remove();
-    }
-
-    // datasets
-    cardEl.dataset.priority = c.priority || 'medium';
-    cardEl.dataset.value_amount = c.value_amount ?? '';
-    cardEl.dataset.value_currency = c.value_currency || 'EUR';
-    cardEl.dataset.due_at = c.due_at || '';
-    cardEl.dataset.stage_id = c.stage_id;
-    if (c.position) cardEl.dataset.pos = c.position;
-
-    // pequeno “flash” para feedback
-    cardEl.style.transition = 'background-color .4s';
-    cardEl.style.backgroundColor = '#f0fdf4';
-    setTimeout(()=> cardEl.style.backgroundColor = '', 400);
-  }
 
   // --- Submit Editar (POST + _method=PATCH para aceitar FormData) ---
   $('#editCardForm').on('submit', function (e) {
@@ -570,12 +552,11 @@
     })
     .then(resp => {
       if (!resp.ok) throw new Error('Erro ao gravar.');
-      upsertCard(resp.card);          // << atualiza a DOM aqui
+      upsertCard(resp.card);
       $('#editCardModal').modal('hide');
     })
     .catch(err => $errors.html(err.message).show())
     .finally(() => { $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
   });
-
 </script>
 @endsection
