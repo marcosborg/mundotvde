@@ -608,4 +608,5 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 
     }
 });
 
-Route::post('/forms/submit', [PublicFormsController::class, 'submit'])->name('public-forms.submit');
+Route::post('/forms/submit', [PublicFormsController::class, 'submit'])
+    ->name('public-forms.submit');

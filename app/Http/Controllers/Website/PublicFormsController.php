@@ -4,96 +4,126 @@ namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{CrmForm, CrmFormField, CrmFormSubmission, CrmCard, CrmStage};
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Models\CrmForm;
+use App\Models\CrmFormSubmission;
+use App\Models\CrmCard;
+use App\Models\CrmCardActivity;
 
 class PublicFormsController extends Controller
 {
     public function submit(Request $request)
-    {
-        $form = CrmForm::with('fields')->findOrFail($request->input('form_id'));
+{
+    $slug = (string) ($request->input('form_slug') ?? $request->input('slug'));
+    $form = CrmForm::with(['fields' => fn($q) => $q->orderBy('position')])
+        ->where('slug', $slug)
+        ->where('status', 'published')
+        ->firstOrFail();
 
-        // construir regras dinamicamente
-        $rules = ['form_id' => ['required','integer','exists:crm_forms,id']];
-        foreach ($form->fields as $f) {
-            $key = "f.{$f->id}";
-            $r = [];
-            if ($f->required) $r[] = 'required';
-            switch ($f->type) {
-                case 'number':
-                    $r[] = 'numeric';
-                    if (!is_null($f->min_value)) $r[] = 'min:'.$f->min_value;
-                    if (!is_null($f->max_value)) $r[] = 'max:'.$f->max_value;
-                    break;
-                case 'select':
-                    $opts = json_decode($f->options_json ?: '[]', true) ?: [];
-                    if ($opts) $r[] = 'in:'.implode(',', array_map(fn($v)=>str_replace(',','\,',$v), $opts));
-                    break;
-                case 'checkbox':
-                    // checkbox não obrigatório = sometimes|accepted
-                    $r[] = $f->required ? 'accepted' : 'nullable';
-                    break;
-                default:
-                    $r[] = 'string';
-            }
-            $rules[$key] = $r;
+    // Regras dinâmicas
+    $rules = [];
+    foreach ($form->fields as $f) {
+        $name = 'field_'.$f->id;
+        $r = [];
+        if ($f->required) $r[] = 'required';
+        switch ($f->type) {
+            case 'number':
+                $r[] = 'numeric';
+                if (!is_null($f->min_value)) $r[] = 'min:'.$f->min_value;
+                if (!is_null($f->max_value)) $r[] = 'max:'.$f->max_value;
+                break;
+            case 'checkbox':
+                $r[] = 'nullable';
+                break;
+            default:
+                $r[] = 'nullable|string';
         }
-
-        $data = $request->validate($rules);
-
-        // guardar submissão
-        $payload = $request->input('f', []);
-        $sub = new CrmFormSubmission();
-        $sub->form_id     = $form->id;
-        $sub->category_id = $form->category_id;
-        $sub->submitted_at= Carbon::now()->format('Y-m-d H:i:s');
-        $sub->user_agent  = substr($request->userAgent() ?? '', 0, 255);
-        $sub->referer     = substr($request->headers->get('referer',''),0,255);
-        $sub->utm_json    = json_encode([
-            'utm_source'   => $request->get('utm_source'),
-            'utm_medium'   => $request->get('utm_medium'),
-            'utm_campaign' => $request->get('utm_campaign'),
-        ]);
-        $sub->data_json   = json_encode($payload);
-        $sub->save();
-
-        // criar card, se configurado
-        if ($form->create_card_on_submit) {
-            $stage = CrmStage::where('category_id', $form->category_id)->orderBy('position')->first();
-            if ($stage) {
-                // tentar título com 1.º campo de texto com conteúdo
-                $title = 'Formulário: '.$form->name;
-                foreach ($form->fields as $f) {
-                    if (in_array($f->type, ['text','textarea']) && !empty($payload[$f->id] ?? null)) {
-                        $title = (string) $payload[$f->id];
-                        break;
-                    }
-                }
-
-                $card = new CrmCard();
-                $card->category_id = $stage->category_id;
-                $card->stage_id    = $stage->id;
-                $card->title       = mb_substr($title,0,190);
-                $card->priority    = 'medium';
-                $card->status      = 'open';
-                $card->source      = 'form';
-                $card->form_id     = $form->id;
-                $card->form_submission_id = $sub->id; // (está no teu modelo CrmCard)
-                $card->fields_snapshot_json = $sub->data_json;
-
-                $card->position = ((int) CrmCard::where('stage_id',$stage->id)->max('position')) + 1000;
-                $card->save();
-
-                $sub->created_card_id = $card->id;
-                $sub->save();
-            }
-        }
-
-        // sucesso
-        $msg = $form->confirmation_message ?: 'Obrigado! Recebemos a sua mensagem.';
-        if ($form->redirect_url) {
-            return redirect()->to($form->redirect_url)->with('form_ok_'.$form->id, $msg);
-        }
-        return back()->with('form_ok_'.$form->id, $msg)->withInput([]);
+        $rules[$name] = implode('|', $r);
     }
+    $validated = $request->validate($rules);
+
+    // Normalizar dados em payload legível
+    $payload = [];
+    foreach ($form->fields as $f) {
+        $key = 'field_'.$f->id;
+        $val = $validated[$key] ?? null;
+        if ($f->type === 'checkbox') {
+            $val = $request->has($key) ? 1 : 0;
+        }
+        $payload[$f->label] = $val;
+    }
+
+    // Guardar submissão
+    $submission = CrmFormSubmission::create([
+        'form_id'      => $form->id,
+        'category_id'  => $form->category_id,
+        'submitted_at' => now(),
+        'user_agent'   => substr((string) $request->userAgent(), 0, 255),
+        'referer'      => substr((string) ($request->headers->get('referer') ?? url()->previous()), 0, 255),
+        'utm_json'     => json_encode($request->only(['utm_source','utm_medium','utm_campaign','utm_term','utm_content'])),
+        'data_json'    => json_encode($payload),
+    ]);
+
+    // Primeiro estádio da categoria
+    $firstStage = \App\Models\CrmStage::where('category_id', $form->category_id)
+        ->orderBy('position')->orderBy('id')
+        ->first();
+
+    // Criar card se configurado
+    if ($form->create_card_on_submit) {
+        try {
+            $title = ($payload['Nome'] ?? $payload['name'] ?? $payload['email'] ?? ($form->name.' — Submissão'));
+
+            $card = new CrmCard();
+            $card->title                 = $title;
+            $card->category_id           = $form->category_id;
+            $card->stage_id              = optional($firstStage)->id;
+            $card->priority              = 'medium';      // <-- como pediste
+            $card->source                = 'form';        // <-- minúsculas para bater certo com o enum/labels
+            $card->status                = 'open';        // <-- como pediste
+            $card->form_id               = $form->id;
+            $card->fields_snapshot_json  = json_encode($payload); // <-- usar este campo
+            $card->save();
+
+            $submission->update(['created_card_id' => $card->id]);
+
+            CrmCardActivity::create([
+                'card_id'       => $card->id,
+                'type'          => 'form_submission',
+                'meta_json'     => json_encode([
+                    'form_slug'      => $form->slug,
+                    'submission_id'  => $submission->id,
+                ]),
+                'created_by_id' => auth()->id(),
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Create card on form submit failed: '.$e->getMessage());
+        }
+    }
+
+    // Notificações por email
+    if (!empty($form->notify_emails)) {
+        $emails = array_filter(array_map('trim', preg_split('/[;,]+/', $form->notify_emails)));
+        foreach ($emails as $to) {
+            try {
+                \Mail::raw(
+                    "Nova submissão ao formulário {$form->name} ({$form->slug})\n\n".print_r($payload, true),
+                    function ($m) use ($to, $form) {
+                        $m->to($to)->subject('Nova submissão: '.$form->name);
+                    }
+                );
+            } catch (\Throwable $e) {
+                \Log::error('Notify email failed: '.$e->getMessage());
+            }
+        }
+    }
+
+    // Redirect ou mensagem
+    if (!empty($form->redirect_url)) {
+        return redirect()->to($form->redirect_url);
+    }
+    return back()->with('crm_form_ok', $form->confirmation_message ?: 'Submissão recebida com sucesso.');
+}
+
 }

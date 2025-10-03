@@ -1,4 +1,10 @@
 @if($form)
+@if (session('crm_form_ok'))
+  <div class="alert alert-success" role="alert" style="margin-bottom:12px">
+    {{ session('crm_form_ok') }}
+  </div>
+@endif
+
 <form action="{{ route('public-forms.submit') }}" method="POST" class="crm-form" data-slug="{{ $form->slug }}">
   @csrf
   <input type="hidden" name="form_slug" value="{{ $form->slug }}">
