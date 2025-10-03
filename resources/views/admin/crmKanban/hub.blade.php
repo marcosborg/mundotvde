@@ -290,7 +290,7 @@
       body: new FormData(this)
     })
     .then(async r => {
-      if(!r.ok){
+      if (!r.ok) {
         const data = await r.json().catch(()=>({}));
         const msg = data.errors ? Object.values(data.errors).map(a=>a.join('<br>')).join('<br>') : 'Erro ao criar.';
         throw new Error(msg);
@@ -298,14 +298,13 @@
       return r.json();
     })
     .then(resp => {
-      if(!resp.ok) throw new Error('Falhou a criação.');
-      // Abre imediatamente a board da nova categoria
       const url = '{{ route('admin.crm-kanban.index', ['category' => '___ID___']) }}'.replace('___ID___', resp.category.id);
-      window.location = url;
+      window.location = url; // abre a board da nova categoria
     })
     .catch(err => { $err.html(err.message).show(); })
     .finally(()=> { $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
   });
+
 
   // Criar estado (adiciona linha na lista da categoria)
   $('#createStageForm').on('submit', function(e){

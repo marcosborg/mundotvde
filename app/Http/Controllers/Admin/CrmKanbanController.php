@@ -48,7 +48,6 @@ class CrmKanbanController extends Controller
         ]);
     }
 
-
     public function move(Request $request, \App\Models\CrmCard $crm_card)
     {
         \Illuminate\Support\Facades\Gate::authorize('crm_card_edit');
@@ -229,43 +228,63 @@ class CrmKanbanController extends Controller
 
     public function storeCategory(\Illuminate\Http\Request $request)
     {
-        \Gate::authorize('crm_category_create');
+        \Illuminate\Support\Facades\Gate::authorize('crm_category_create');
 
         $data = $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'description'   => ['nullable', 'string', 'max:1000'],
-            'color'         => ['nullable', 'string', 'max:20'],
-            'with_defaults' => ['nullable', 'boolean'],
+            'name'           => ['required', 'string', 'max:255'],
+            'description'    => ['nullable', 'string', 'max:1000'],
+            'color'          => ['nullable', 'string', 'max:20'],
+            'with_defaults'  => ['nullable', 'boolean'],
         ]);
 
-        $cat = \App\Models\CrmCategory::create([
-            'name'        => $data['name'],
-            'description' => $data['description'] ?? null,
-            'color'       => $data['color'] ?? null,
-            'position'    => (int)((\App\Models\CrmCategory::max('position') ?? 0) + 1000),
-            'is_active'   => 1,
-        ]);
+        // Criar categoria (só define colunas que existirem na tabela)
+        $cat = new \App\Models\CrmCategory();
+        $cat->name = $data['name'];
 
-        // cria 3 estados por omissão (opcional, por defeito ligado)
-        if ($request->boolean('with_defaults', true)) {
+        if (\Illuminate\Support\Facades\Schema::hasColumn('crm_categories', 'position')) {
+            $cat->position = (int) ((\App\Models\CrmCategory::max('position') ?? 0) + 1000);
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('crm_categories', 'description') && array_key_exists('description', $data)) {
+            $cat->description = $data['description'];
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('crm_categories', 'color') && array_key_exists('color', $data)) {
+            $cat->color = $data['color'];
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('crm_categories', 'slug')) {
+            $base = \Illuminate\Support\Str::slug($data['name']) ?: 'categoria';
+            $slug = $base;
+            $i = 2;
+            while (\App\Models\CrmCategory::where('slug', $slug)->exists()) {
+                $slug = $base . '-' . $i++;
+            }
+            $cat->slug = $slug;
+        }
+        $cat->save();
+
+        // Estados por omissão (opcional)
+        if ($request->boolean('with_defaults')) {
             $defaults = [
-                ['name' => 'New',         'position' => 1000],
-                ['name' => 'In progress', 'position' => 2000],
-                ['name' => 'Done',        'position' => 3000, 'is_won' => 1],
+                ['name' => 'Novo',        'color' => '#e5e7eb', 'is_won' => false, 'is_lost' => false],
+                ['name' => 'Em contacto', 'color' => '#dbeafe', 'is_won' => false, 'is_lost' => false],
+                ['name' => 'Qualificado', 'color' => '#cffafe', 'is_won' => false, 'is_lost' => false],
+                ['name' => 'Ganho',       'color' => '#dcfce7', 'is_won' => true,  'is_lost' => false],
+                ['name' => 'Perdido',     'color' => '#fee2e2', 'is_won' => false, 'is_lost' => true],
             ];
+            $pos = (int) ((\App\Models\CrmStage::where('category_id', $cat->id)->max('position') ?? 0) + 1000);
             foreach ($defaults as $d) {
-                \App\Models\CrmStage::create([
-                    'category_id' => $cat->id,
-                    'name'        => $d['name'],
-                    'position'    => $d['position'],
-                    'color'       => $data['color'] ?? null,
-                    'is_won'      => $d['is_won']  ?? 0,
-                    'is_lost'     => $d['is_lost'] ?? 0,
-                ]);
+                $st = new \App\Models\CrmStage();
+                $st->category_id = $cat->id;
+                $st->name = $d['name'];
+                if (\Illuminate\Support\Facades\Schema::hasColumn('crm_stages', 'position')) $st->position = $pos;
+                if (\Illuminate\Support\Facades\Schema::hasColumn('crm_stages', 'color'))    $st->color    = $d['color'];
+                if (\Illuminate\Support\Facades\Schema::hasColumn('crm_stages', 'is_won'))   $st->is_won   = $d['is_won'];
+                if (\Illuminate\Support\Facades\Schema::hasColumn('crm_stages', 'is_lost'))  $st->is_lost  = $d['is_lost'];
+                $st->save();
+                $pos += 1000;
             }
         }
 
-        return response()->json(['ok' => true, 'category' => ['id' => $cat->id, 'name' => $cat->name]]);
+        return response()->json(['ok' => true, 'category' => ['id' => $cat->id]]);
     }
 
     public function hub()
