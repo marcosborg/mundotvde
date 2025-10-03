@@ -16,6 +16,10 @@
                         <a class="dropdown-item" href="/tvde/consultadoria">Consultadoria</a>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('pagina/7/seguros') ? 'active' : '' }}"
+                        href="/pagina/7/seguros">Seguros</a>
+                </li>
                 <li class="nav-item dropdown"><a
                         class="nav-link {{ request()->is('tvde/estafetas') || request()->is('tvde/estafetas/1') || request()->is('tvde/estafetas/2') ? 'active' : '' }}"
                         aria-expanded="false" data-bs-toggle="dropdown" href="#">Bolsa TVDE <i

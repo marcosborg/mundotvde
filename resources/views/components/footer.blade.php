@@ -45,7 +45,7 @@
     </a>
 </div>
 <div class="whatsapp-button">
-    <a href="https://api.whatsapp.com/send?phone=351964028006" target="_blank">
+    <a href="https://api.whatsapp.com/send?phone=351962366777" target="_blank">
         <img src="/assets/website/img/whatsapp.png" width="200">
     </a>
 </div>
