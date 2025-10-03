@@ -283,6 +283,49 @@
             <div class="help-text">Se o card veio de um formulário, este JSON guarda um snapshot dos campos.</div>
           </div>
 
+          <ul class="nav nav-tabs" role="tablist" style="margin-bottom:10px">
+            <li class="active"><a href="#tab-details" role="tab" data-toggle="tab">Detalhes</a></li>
+            <li><a href="#tab-notes" role="tab" data-toggle="tab">Notas</a></li>
+            <li><a href="#tab-files" role="tab" data-toggle="tab">Anexos</a></li>
+          </ul>
+
+          <div class="tab-content">
+            <!-- Detalhes (o que já tens) -->
+            <div role="tabpanel" class="tab-pane active" id="tab-details">
+              <!-- ... os teus inputs: título, stage_id, priority, due_at ... -->
+            </div>
+
+            <!-- Notas -->
+            <div role="tabpanel" class="tab-pane" id="tab-notes">
+              <div id="editNotesErrors" class="alert alert-danger" style="display:none"></div>
+
+              <div class="form-group">
+                <label>Nova nota</label>
+                <textarea id="noteContent" class="form-control" rows="3" placeholder="Escreve uma nota curta…"></textarea>
+                <button type="button" id="btnAddNote" class="btn btn-default" style="margin-top:6px">Adicionar nota</button>
+              </div>
+
+              <div id="notesList" class="list-group" style="max-height:240px; overflow:auto">
+                <!-- notas aparecem aqui -->
+              </div>
+            </div>
+
+            <!-- Anexos -->
+            <div role="tabpanel" class="tab-pane" id="tab-files">
+              <div id="editFilesErrors" class="alert alert-danger" style="display:none"></div>
+
+              <div class="form-inline" style="margin-bottom:8px">
+                <input type="file" id="attachFile" class="form-control" style="display:inline-block">
+                <button type="button" id="btnUploadFile" class="btn btn-default">Carregar</button>
+              </div>
+
+              <ul id="filesList" class="list-unstyled" style="max-height:240px; overflow:auto">
+                <!-- anexos aparecem aqui -->
+              </ul>
+            </div>
+          </div>
+
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -558,5 +601,134 @@
     .catch(err => $errors.html(err.message).show())
     .finally(() => { $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
   });
+
+  function loadNotes(cardId){
+    const url = @json(route('admin.crm-cards.notes.index',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
+    fetch(url, {headers:{'Accept':'application/json'}})
+      .then(r=>r.json())
+      .then(data=>{
+        if(!data.ok) return;
+        const box = document.getElementById('notesList');
+        box.innerHTML = '';
+        data.notes.forEach(n=>{
+          const item = document.createElement('div');
+          item.className = 'list-group-item';
+          item.innerHTML = `<div style="font-size:12px;color:#6b7280">${n.user_name||'—'} • ${n.created_at}</div>
+                            <div>${escapeHtml(n.content)}</div>`;
+          box.appendChild(item);
+        });
+      });
+  }
+
+  function addNote(cardId, content){
+    const url = @json(route('admin.crm-cards.notes.store',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
+    const fd = new FormData(); fd.append('content', content);
+    return fetch(url, {
+      method:'POST',
+      headers:{'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content},
+      body: fd
+    }).then(r=>r.json());
+  }
+
+  function loadFiles(cardId){
+    const url = @json(route('admin.crm-cards.attachments.index',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
+    fetch(url, {headers:{'Accept':'application/json'}})
+      .then(r=>r.json())
+      .then(data=>{
+        if(!data.ok) return;
+        const ul = document.getElementById('filesList');
+        ul.innerHTML = '';
+        data.attachments.forEach(a=>{
+          const li = document.createElement('li');
+          li.dataset.mediaId = a.id;
+          li.style.marginBottom = '6px';
+          li.innerHTML = `
+            <a href="${a.url}" target="_blank">${a.name}</a>
+            <small>(${a.size})</small>
+            <button type="button" class="btn btn-xs btn-danger pull-right btn-del-file">remover</button>`;
+          ul.appendChild(li);
+        });
+      });
+  }
+
+  function uploadFile(cardId, file){
+    const url = @json(route('admin.crm-cards.attachments.store',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
+    const fd = new FormData(); fd.append('file', file);
+    return fetch(url, {
+      method:'POST',
+      headers:{'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content},
+      body: fd
+    }).then(r=>r.json());
+  }
+
+  function deleteFile(cardId, mediaId){
+    const url = @json(route('admin.crm-cards.attachments.destroy',['crm_card'=>'__ID__','media'=>'__MID__']))
+                  .replace('__ID__', cardId).replace('__MID__', mediaId);
+    return fetch(url, {
+      method:'DELETE',
+      headers:{
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'Accept':'application/json'
+      }
+    }).then(r=>r.json());
+  }
+
+  // util simples
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+  // quando abres o modal de edição, além de preencher os campos…
+  $('#editCardModal').on('shown.bs.modal', function(){
+    const id = $('#editCardForm [name="id"]').val();
+    loadNotes(id);
+    loadFiles(id);
+  });
+
+  // botão "Adicionar nota"
+  $('#btnAddNote').on('click', function(){
+    const id = $('#editCardForm [name="id"]').val();
+    const $ta = $('#noteContent'); const content = $ta.val().trim();
+    const $err = $('#editNotesErrors');
+    if (!content) return;
+
+    addNote(id, content)
+    .then(resp=>{
+      if(!resp.ok) throw new Error('Falhou ao gravar nota.');
+      $('#noteContent').val('');
+      loadNotes(id);
+    })
+    .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
+  });
+
+  // upload
+  $('#btnUploadFile').on('click', function(){
+    const id = $('#editCardForm [name="id"]').val();
+    const f = document.getElementById('attachFile').files[0];
+    const $err = $('#editFilesErrors');
+    if (!f) return;
+
+    uploadFile(id, f)
+      .then(resp=>{
+        if(!resp.ok) throw new Error('Falhou upload.');
+        document.getElementById('attachFile').value = '';
+        loadFiles(id);
+      })
+      .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
+  });
+
+  // apagar ficheiro
+  $(document).on('click', '.btn-del-file', function(){
+    const id = $('#editCardForm [name="id"]').val();
+    const mediaId = $(this).closest('li').data('mediaId');
+    const $err = $('#editFilesErrors');
+
+    deleteFile(id, mediaId)
+      .then(resp=>{
+        if(!resp.ok) throw new Error('Falhou ao remover.');
+        loadFiles(id);
+      })
+      .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
+  });
+
+
 </script>
 @endsection

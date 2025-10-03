@@ -557,6 +557,18 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('crm-cards/media', 'CrmCardsController@storeMedia')->name('crm-cards.storeMedia');
     Route::post('crm-cards/ckmedia', 'CrmCardsController@storeCKEditorImages')->name('crm-cards.storeCKEditorImages');
     Route::resource('crm-cards', 'CrmCardsController');
+
+    // Notas rápidas
+    Route::get('crm-cards/{crm_card}/notes', [\App\Http\Controllers\Admin\CrmCardsController::class, 'quickListNotes'])->name('crm-cards.notes.index');
+    Route::post('crm-cards/{crm_card}/notes', [\App\Http\Controllers\Admin\CrmCardsController::class, 'quickAddNote'])->name('crm-cards.notes.store');
+
+    // Anexos rápidos (Spatie Media Library)
+    Route::get('crm-cards/{crm_card}/attachments', [\App\Http\Controllers\Admin\CrmCardsController::class, 'quickListAttachments'])->name('crm-cards.attachments.index');
+    Route::post('crm-cards/{crm_card}/attachments', [\App\Http\Controllers\Admin\CrmCardsController::class, 'quickUploadAttachment'])->name('crm-cards.attachments.store');
+    Route::delete('crm-cards/{crm_card}/attachments/{media}', [\App\Http\Controllers\Admin\CrmCardsController::class, 'quickDeleteAttachment'])->name('crm-cards.attachments.destroy');
+
+    // (Opcional) timeline simples
+    Route::get('crm-cards/{crm_card}/activities', [\App\Http\Controllers\Admin\CrmCardsController::class, 'quickListActivities'])->name('crm-cards.activities.index');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

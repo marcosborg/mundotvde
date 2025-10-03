@@ -105,6 +105,20 @@ class CrmKanbanController extends Controller
 
         $card->save();
 
+        $oldStageId = $card->stage_id;
+        // … atualizas stage_id/position …
+        $card->save();
+
+        if ($oldStageId != $card->stage_id) {
+            \App\Models\CrmCardActivity::create([
+                'card_id'       => $card->id,
+                'type'          => 'stage_change',
+                'meta_json'     => json_encode(['from' => $oldStageId, 'to' => $card->stage_id]),
+                'created_by_id' => auth()->id(),
+            ]);
+        }
+
+
         return response()->json([
             'ok'   => true,
             'card' => [

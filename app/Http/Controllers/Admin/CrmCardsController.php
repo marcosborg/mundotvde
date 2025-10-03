@@ -19,6 +19,10 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 use App\Models\{CrmCard, CrmFormSubmission};
+use Illuminate\Support\Facades\Auth;
+use App\Models\CrmCardNote;
+use App\Models\CrmCardActivity;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 class CrmCardsController extends Controller
 {
@@ -359,5 +363,135 @@ class CrmCardsController extends Controller
                 'show_url' => route('admin.crm-cards.show', $crm_card->id),
             ],
         ]);
+    }
+
+    public function quickListNotes(CrmCard $crm_card)
+    {
+        \Gate::authorize('crm_card_access');
+
+        $notes = $crm_card->notes()->with('user')->latest()->get()->map(function ($n) {
+            return [
+                'id'        => $n->id,
+                'user_name' => optional($n->user)->name,
+                'content'   => $n->content,
+                'created_at' => $n->created_at->diffForHumans(),
+            ];
+        });
+
+        return response()->json(['ok' => true, 'notes' => $notes]);
+    }
+
+    public function quickAddNote(Request $request, CrmCard $crm_card)
+    {
+        \Gate::authorize('crm_card_edit');
+
+        $data = $request->validate([
+            'content' => ['required', 'string', 'max:5000'],
+        ]);
+
+        $note = CrmCardNote::create([
+            'card_id' => $crm_card->id,
+            'user_id' => Auth::id(),
+            'content' => $data['content'],
+        ]);
+
+        // Regista atividade
+        CrmCardActivity::create([
+            'card_id'       => $crm_card->id,
+            'type'          => 'note',
+            'meta_json'     => json_encode(['note_id' => $note->id]),
+            'created_by_id' => Auth::id(),
+        ]);
+
+        return response()->json([
+            'ok' => true,
+            'note' => [
+                'id' => $note->id,
+                'user_name' => optional($note->user)->name,
+                'content' => $note->content,
+                'created_at' => $note->created_at->diffForHumans(),
+            ]
+        ], 201);
+    }
+
+    public function quickListAttachments(CrmCard $crm_card)
+    {
+        \Gate::authorize('crm_card_access');
+
+        $items = $crm_card->getMedia('crm_card_attachments')->map(function ($m) {
+            return [
+                'id'   => $m->id,
+                'name' => $m->file_name,
+                'size' => $m->human_readable_size,
+                'url'  => $m->getUrl(),
+            ];
+        });
+
+        return response()->json(['ok' => true, 'attachments' => $items]);
+    }
+
+    public function quickUploadAttachment(Request $request, CrmCard $crm_card)
+    {
+        \Gate::authorize('crm_card_edit');
+
+        $request->validate([
+            'file' => ['required', 'file', 'max:20480'], // 20MB
+        ]);
+
+        $media = $crm_card->addMediaFromRequest('file')->toMediaCollection('crm_card_attachments');
+
+        // atividade
+        CrmCardActivity::create([
+            'card_id'       => $crm_card->id,
+            'type'          => 'attachment',
+            'meta_json'     => json_encode(['media_id' => $media->id, 'file' => $media->file_name]),
+            'created_by_id' => Auth::id(),
+        ]);
+
+        return response()->json([
+            'ok' => true,
+            'attachment' => [
+                'id' => $media->id,
+                'name' => $media->file_name,
+                'size' => $media->human_readable_size,
+                'url' => $media->getUrl(),
+            ]
+        ], 201);
+    }
+
+    public function quickDeleteAttachment(CrmCard $crm_card, SpatieMedia $media)
+    {
+        \Gate::authorize('crm_card_edit');
+
+        // garante que pertence a este card
+        abort_unless($media->model_type === CrmCard::class && (int)$media->model_id === (int)$crm_card->id, 404);
+
+        $media->delete();
+
+        CrmCardActivity::create([
+            'card_id'       => $crm_card->id,
+            'type'          => 'attachment',
+            'meta_json'     => json_encode(['deleted_media_id' => $media->id]),
+            'created_by_id' => Auth::id(),
+        ]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function quickListActivities(CrmCard $crm_card)
+    {
+        \Gate::authorize('crm_card_access');
+
+        $items = $crm_card->activities()->latest()->get()->map(function ($a) {
+            return [
+                'id'   => $a->id,
+                'type' => $a->type,
+                'meta' => json_decode($a->meta_json, true),
+                'who'  => optional($a->created_by)->name,
+                'when' => $a->created_at->diffForHumans(),
+            ];
+        });
+
+        return response()->json(['ok' => true, 'activities' => $items]);
     }
 }
