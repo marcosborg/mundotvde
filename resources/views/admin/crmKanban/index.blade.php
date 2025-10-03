@@ -103,9 +103,12 @@
                      data-card="{{ $card->id }}"
                      data-pos="{{ $card->position }}"
                      data-title="{{ strtolower($card->title) }}"
-                     data-priority="{{ $card->priority ?? 'medium' }}"
+                     data-priority="{{ strtolower($card->priority ?? 'medium') }}"
                      data-due_at="{{ $card->due_at_html }}"
-                     data-stage_id="{{ $card->stage_id }}">
+                     data-stage_id="{{ $card->stage_id }}"
+                     data-source="{{ strtolower($card->source ?? 'manual') }}"
+                     data-snapshot="{{ e($card->fields_snapshot_json ?? '') }}"
+                  >
                     <div class="kc-actions">
                       <button type="button" class="btn btn-xs btn-default btn-edit-card" data-id="{{ $card->id }}">
                         <i class="fa fa-pencil"></i>
@@ -290,12 +293,8 @@
           </ul>
 
           <div class="tab-content">
-            <!-- Detalhes (o que já tens) -->
-            <div role="tabpanel" class="tab-pane active" id="tab-details">
-              <!-- ... os teus inputs: título, stage_id, priority, due_at ... -->
-            </div>
+            <div role="tabpanel" class="tab-pane active" id="tab-details"></div>
 
-            <!-- Notas -->
             <div role="tabpanel" class="tab-pane" id="tab-notes">
               <div id="editNotesErrors" class="alert alert-danger" style="display:none"></div>
 
@@ -305,12 +304,9 @@
                 <button type="button" id="btnAddNote" class="btn btn-default" style="margin-top:6px">Adicionar nota</button>
               </div>
 
-              <div id="notesList" class="list-group" style="max-height:240px; overflow:auto">
-                <!-- notas aparecem aqui -->
-              </div>
+              <div id="notesList" class="list-group" style="max-height:240px; overflow:auto"></div>
             </div>
 
-            <!-- Anexos -->
             <div role="tabpanel" class="tab-pane" id="tab-files">
               <div id="editFilesErrors" class="alert alert-danger" style="display:none"></div>
 
@@ -319,12 +315,9 @@
                 <button type="button" id="btnUploadFile" class="btn btn-default">Carregar</button>
               </div>
 
-              <ul id="filesList" class="list-unstyled" style="max-height:240px; overflow:auto">
-                <!-- anexos aparecem aqui -->
-              </ul>
+              <ul id="filesList" class="list-unstyled" style="max-height:240px; overflow:auto"></ul>
             </div>
           </div>
-
 
         </div>
         <div class="modal-footer">
@@ -356,6 +349,11 @@
     while (s && !s.classList.contains('kanban-card')) s = s[dir];
     return s ? s.dataset.card : null;
   }
+  function prettyJSON(s){
+    if (!s) return '';
+    try { return JSON.stringify(JSON.parse(s), null, 2); }
+    catch(e){ return s; }
+  }
   function buildCardElement(c){
     const a = document.createElement('a');
     a.className = 'kanban-card';
@@ -364,9 +362,11 @@
     a.dataset.card = c.id;
     a.dataset.pos  = c.position || '';
     a.dataset.title = (c.title || '').toLowerCase();
-    a.dataset.priority = c.priority || 'medium';
+    a.dataset.priority = (c.priority || 'medium').toLowerCase();
     a.dataset.due_at = c.due_at || '';
     a.dataset.stage_id = c.stage_id;
+    a.dataset.source = (c.source || 'manual').toLowerCase();
+    a.dataset.snapshot = c.fields_snapshot_json || '';
 
     a.innerHTML = `
       <div class="kc-actions">
@@ -396,9 +396,11 @@
       const stageId = el.dataset.stage_id || el.closest('.kanban-col')?.dataset.stage;
       $f.find('[name="stage_id"]').val(String(stageId));
 
-      // Source / JSON do formulário ficam em branco por omissão (se o backend devolver no quick-show, podes popular)
-      $f.find('[name="source"]').val('manual');
-      $f.find('[name="fields_snapshot_json"]').val('');
+      // NOVO: preencher Source + JSON snapshot
+      const src = el.dataset.source || 'manual';
+      $f.find('[name="source"]').val(src);
+      const snap = el.dataset.snapshot || '';
+      $f.find('[name="fields_snapshot_json"]').val(prettyJSON(snap));
 
       $('#editCardModal').modal('show');
     } else {
@@ -431,17 +433,20 @@
     cardEl.dataset.title = (c.title || '').toLowerCase();
 
     // prioridade
+    const pri = (c.priority || 'medium').toLowerCase();
     const priBadge = cardEl.querySelector('.badge');
     if (priBadge) {
       priBadge.classList.remove('pri-low','pri-medium','pri-high');
-      priBadge.classList.add(c.priority === 'high' ? 'pri-high' : (c.priority === 'low' ? 'pri-low' : 'pri-medium'));
-      priBadge.textContent = (c.priority || 'medium').replace(/^./, s=>s.toUpperCase());
+      priBadge.classList.add(pri === 'high' ? 'pri-high' : (pri === 'low' ? 'pri-low' : 'pri-medium'));
+      priBadge.textContent = pri.replace(/^./, s=>s.toUpperCase());
     }
 
     // datasets
-    cardEl.dataset.priority = c.priority || 'medium';
+    cardEl.dataset.priority = pri;
     cardEl.dataset.due_at = c.due_at || '';
     cardEl.dataset.stage_id = c.stage_id;
+    cardEl.dataset.source = (c.source || 'manual').toLowerCase();
+    cardEl.dataset.snapshot = c.fields_snapshot_json || '';
     if (c.position) cardEl.dataset.pos = c.position;
 
     // pequeno “flash”
@@ -536,7 +541,7 @@
     })
     .then(resp=>{
       if(!resp.ok) throw new Error('Erro ao criar.');
-      const c = resp.card;
+      const c = resp.card || {};
       const col = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
       if (col) {
         col.appendChild(buildCardElement(c));
@@ -595,7 +600,7 @@
     })
     .then(resp => {
       if (!resp.ok) throw new Error('Erro ao gravar.');
-      upsertCard(resp.card);
+      upsertCard(resp.card || {});
       $('#editCardModal').modal('hide');
     })
     .catch(err => $errors.html(err.message).show())
@@ -728,7 +733,6 @@
       })
       .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
   });
-
 
 </script>
 @endsection
