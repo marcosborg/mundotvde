@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\CrmKanbanController;
-use App\Http\Controllers\Admin\CrmCardsController;
+use App\Http\Controllers\Admin\CrmFormsController;
+use App\Http\Controllers\Website\PublicFormsController;
 
 Route::get('/', 'Website\HomePageController@index');
 Route::prefix('tvde')->group(function () {
@@ -569,6 +569,34 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // (Opcional) timeline simples
     Route::get('crm-cards/{crm_card}/activities', [\App\Http\Controllers\Admin\CrmCardsController::class, 'quickListActivities'])->name('crm-cards.activities.index');
+
+    // === CRM Form Builder (HUB + Builder) ===
+    Route::get('crm-forms-builder', [CrmFormsController::class, 'builderIndex'])->name('crm-forms.builder.index');
+    Route::post('crm-forms-builder', [CrmFormsController::class, 'builderQuickStore'])->name('crm-forms.builder.store');
+    Route::get('crm-forms/{crm_form}/builder', [CrmFormsController::class, 'builder'])->name('crm-forms.builder');
+    Route::patch('crm-forms/{crm_form}/builder', [CrmFormsController::class, 'saveBuilder'])->name('crm-forms.builder.save');
+
+    // Guard para deletes acidentais no /builder vindos do FE (evita 405 no console)
+    Route::delete('crm-forms/{crm_form}/builder', fn() => response()->json(['ok' => true]));
+
+    // === AJAX do builder (fields) ===
+    // cria field dentro do form
+    Route::post('crm-forms/{crm_form}/fields', [CrmFormsController::class, 'fieldsStore'])
+        ->name('crm-forms.fields.store');
+
+    // **UPDATE via POST** (evita proxies/405 em PATCH) — caminho com {field} explícito
+    Route::post('crm-form-fields/{field}/update', [CrmFormsController::class, 'fieldsUpdate'])
+        ->whereNumber('field')
+        ->name('crm-forms.fields.update');
+
+    // delete field
+    Route::delete('crm-form-fields/{field}', [CrmFormsController::class, 'fieldsDestroy'])
+        ->whereNumber('field')
+        ->name('crm-forms.fields.destroy');
+
+    // reorder
+    Route::patch('crm-forms/{crm_form}/fields/reorder', [CrmFormsController::class, 'fieldsReorder'])
+        ->name('crm-forms.fields.reorder');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
@@ -579,3 +607,5 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 
         Route::post('profile/destroy', 'ChangePasswordController@destroy')->name('password.destroyProfile');
     }
 });
+
+Route::post('/forms/submit', [PublicFormsController::class, 'submit'])->name('public-forms.submit');

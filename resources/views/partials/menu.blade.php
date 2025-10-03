@@ -1446,6 +1446,15 @@
                     </ul>
                 </li>
             @endcan
+            @can('crm_form_edit')
+                <li class="{{ request()->is('admin/crm-forms-builder') || request()->is('admin/crm-forms/*/builder') ? 'active' : '' }}">
+                    <a href="{{ route('admin.crm-forms.builder.index') }}">
+                        <i class="fa-fw fas fa-wrench"></i>
+                        <span>Form Builder</span>
+                    </a>
+                </li>
+
+            @endcan
             @can('crm_kanban_access')
             <li class="{{ request()->is('admin/crm-kanban*') ? 'active' : '' }}">
                 <a href="{{ route('admin.crm-kanban.hub') }}">

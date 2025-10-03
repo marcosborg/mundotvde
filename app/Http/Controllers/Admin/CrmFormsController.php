@@ -12,6 +12,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\CrmFormField;
 
 class CrmFormsController extends Controller
 {
@@ -139,5 +140,159 @@ class CrmFormsController extends Controller
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function saveBuilder(\Illuminate\Http\Request $request, \App\Models\CrmForm $crm_form)
+    {
+        \Gate::authorize('crm_form_edit');
+
+        $data = $request->validate([
+            'name'                   => ['required', 'string', 'max:190'],
+            'slug'                   => ['required', 'string', 'max:190', 'unique:crm_forms,slug,' . $crm_form->id],
+            'status'                 => ['required', 'in:draft,published,archived'],
+            'confirmation_message'   => ['nullable', 'string', 'max:255'],
+            'redirect_url'           => ['nullable', 'string', 'max:255'],
+            'notify_emails'          => ['nullable', 'string', 'max:500'],
+            'create_card_on_submit'  => ['nullable', 'boolean'],
+            'category_id'            => ['nullable', 'integer', 'exists:crm_categories,id'],
+        ]);
+
+        $crm_form->fill($data);
+        $crm_form->create_card_on_submit = (bool)($data['create_card_on_submit'] ?? false);
+        $crm_form->save();
+
+        return back()->with('status', 'Formulário guardado.');
+    }
+
+    // CRUD simplificado dos campos (AJAX)
+    public function fieldsStore(\Illuminate\Http\Request $request, \App\Models\CrmForm $crm_form)
+    {
+        \Gate::authorize('crm_form_edit');
+
+        $data = $request->validate([
+            'label'         => ['required', 'string', 'max:190'],
+            'type'          => ['required', 'in:text,textarea,number,checkbox,select'],
+            'required'      => ['nullable', 'boolean'],
+            'help_text'     => ['nullable', 'string', 'max:255'],
+            'placeholder'   => ['nullable', 'string', 'max:190'],
+            'default_value' => ['nullable', 'string'],
+            'is_unique'     => ['nullable', 'boolean'],
+            'min_value'     => ['nullable', 'numeric'],
+            'max_value'     => ['nullable', 'numeric'],
+            'options_json'  => ['nullable', 'string'], // JSON para select
+        ]);
+
+        $pos = (int) $crm_form->fields()->max('position') + 10;
+
+        $field = $crm_form->fields()->create(array_merge($data, [
+            'required' => (bool)($data['required'] ?? false),
+            'is_unique' => (bool)($data['is_unique'] ?? false),
+            'position' => $pos,
+        ]));
+
+        return response()->json(['ok' => true, 'field' => $field]);
+    }
+
+    public function fieldsUpdate(\Illuminate\Http\Request $request, \App\Models\CrmFormField $field)
+    {
+        \Gate::authorize('crm_form_edit');
+
+        $data = $request->validate([
+            'label'         => ['sometimes', 'required', 'string', 'max:190'],
+            'type'          => ['sometimes', 'required', 'in:text,textarea,number,checkbox,select'],
+            'required'      => ['nullable', 'boolean'],
+            'help_text'     => ['nullable', 'string', 'max:255'],
+            'placeholder'   => ['nullable', 'string', 'max:190'],
+            'default_value' => ['nullable', 'string'],
+            'is_unique'     => ['nullable', 'boolean'],
+            'min_value'     => ['nullable', 'numeric'],
+            'max_value'     => ['nullable', 'numeric'],
+            'options_json'  => ['nullable', 'string'],
+        ]);
+
+        $data['required']  = (bool)($data['required'] ?? $field->required);
+        $data['is_unique'] = (bool)($data['is_unique'] ?? $field->is_unique);
+
+        $field->update($data);
+
+        return response()->json(['ok' => true, 'field' => $field->fresh()]);
+    }
+
+    public function fieldsDestroy(\App\Models\CrmFormField $field, Request $request)
+    {
+        \Gate::authorize('crm_form_field_delete');
+
+        $field->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true], 200);
+        }
+
+        return back()->with('status', 'Campo apagado');
+    }
+
+    public function fieldsReorder(\Illuminate\Http\Request $request, \App\Models\CrmForm $crm_form)
+    {
+        \Gate::authorize('crm_form_edit');
+        $ids = $request->validate(['ids' => 'required|array'])['ids'];
+        $pos = 10;
+        foreach ($ids as $id) {
+            $crm_form->fields()->where('id', $id)->update(['position' => $pos]);
+            $pos += 10;
+        }
+        return response()->json(['ok' => true]);
+    }
+
+    public function builderIndex()
+    {
+        Gate::authorize('crm_form_access');
+
+        $forms = CrmForm::withCount(['fields', 'submissions'])
+            ->orderByDesc('updated_at')
+            ->get();
+
+        $categories = CrmCategory::orderBy('position')->orderBy('id')->get(['id', 'name']);
+
+        return view('admin.crmForms.builder-index', compact('forms', 'categories'));
+    }
+
+    public function builderQuickStore(Request $request)
+    {
+        Gate::authorize('crm_form_create');
+
+        $data = $request->validate([
+            'name'        => ['required', 'string', 'max:255'],
+            'category_id' => ['nullable', 'integer', 'exists:crm_categories,id'],
+        ]);
+
+        $form = new CrmForm();
+        $form->category_id = $data['category_id'] ?? null;
+        $form->name        = $data['name'];
+        $form->slug        = Str::slug($data['name']);
+        // garante unicidade simples
+        $base = $form->slug;
+        $i = 2;
+        while (CrmForm::where('slug', $form->slug)->exists()) {
+            $form->slug = $base . '-' . $i++;
+        }
+        $form->status = 'draft';
+        $form->save();
+
+        return redirect()->route('admin.crm-forms.builder', $form);
+    }
+
+    public function builder(CrmForm $crm_form)
+    {
+        Gate::authorize('crm_form_access');
+
+        $crm_form->load([
+            'category',
+            'fields' => fn($q) => $q->orderBy('position')->orderBy('id')
+        ]);
+
+        $categories = CrmCategory::orderBy('position')->orderBy('id')->get(['id', 'name']);
+        $fieldTypes = array_keys(CrmFormField::TYPE_RADIO); // ['text','textarea','number','checkbox','select']
+
+        return view('admin.crmForms.builder', compact('crm_form', 'categories', 'fieldTypes'));
     }
 }
