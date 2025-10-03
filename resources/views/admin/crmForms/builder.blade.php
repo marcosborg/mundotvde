@@ -66,7 +66,8 @@
           <div class="panel-heading">Incorporação no site</div>
           <div class="panel-body">
             <p>Usa o token no conteúdo das páginas/artigos. O teu renderer deve procurar e substituir:</p>
-<pre>@{{ 'render:crm-form slug="{{ $crm_form->slug }}"' }}</pre>
+            <pre>[form:"{{ $crm_form->slug }}"]</pre>
+            <pre>render:crm-form slug="{{ $crm_form->slug }}"</pre>
             <small>Podes criar um middleware/trait para detetar este token e renderizar o HTML do form.</small>
           </div>
         </div>
