@@ -45,6 +45,17 @@
   .kanban-card:hover .kc-actions{opacity:1}
 
   .help-text{font-size:12px;color:#6b7280;margin-top:4px}
+
+  /* Snapshot viewer */
+  .snapshot-wrap{border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;padding:8px;max-height:220px;overflow:auto}
+  .snapshot-empty{color:#9ca3af;font-style:italic;padding:6px}
+  .snapshot-list{list-style:none;margin:0;padding:0}
+  .snapshot-item{display:flex;gap:10px;padding:6px 8px;border-bottom:1px dashed #eee}
+  .snapshot-item:last-child{border-bottom:none}
+  .snapshot-key{min-width:160px;max-width:45%;font-weight:600;color:#374151;word-break:break-word}
+  .snapshot-val{flex:1;white-space:pre-wrap;word-break:break-word}
+  .snapshot-sublist{list-style:disc;margin:0 0 0 18px;padding:0}
+  .snapshot-code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;color:#6b7280}
 </style>
 @endsection
 
@@ -280,10 +291,15 @@
             </div>
           </div>
 
+          {{-- Mantém o valor original para submit --}}
+          <input type="hidden" name="fields_snapshot_json" value="">
+
           <div class="form-group">
-            <label>Dados do formulário (JSON) <small class="text-muted">(opcional)</small></label>
-            <textarea name="fields_snapshot_json" class="form-control" rows="4" placeholder='{"nome":"João","email":"..."}'></textarea>
-            <div class="help-text">Se o card veio de um formulário, este JSON guarda um snapshot dos campos.</div>
+            <label>Dados do formulário</label>
+            <div id="snapshotView" class="snapshot-wrap">
+              <div class="snapshot-empty">Sem dados de formulário.</div>
+            </div>
+            <div class="help-text">Leitura dos dados enviados no formulário que originou este card.</div>
           </div>
 
           <ul class="nav nav-tabs" role="tablist" style="margin-bottom:10px">
@@ -293,8 +309,10 @@
           </ul>
 
           <div class="tab-content">
+            <!-- Detalhes (placeholder) -->
             <div role="tabpanel" class="tab-pane active" id="tab-details"></div>
 
+            <!-- Notas -->
             <div role="tabpanel" class="tab-pane" id="tab-notes">
               <div id="editNotesErrors" class="alert alert-danger" style="display:none"></div>
 
@@ -307,6 +325,7 @@
               <div id="notesList" class="list-group" style="max-height:240px; overflow:auto"></div>
             </div>
 
+            <!-- Anexos -->
             <div role="tabpanel" class="tab-pane" id="tab-files">
               <div id="editFilesErrors" class="alert alert-danger" style="display:none"></div>
 
@@ -336,7 +355,7 @@
 @parent
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
-  // --- Helpers ---
+  // --- Helpers UI ---
   function refreshCol(col){
     const count = col.querySelectorAll('.kanban-card').length;
     const empty = col.querySelector('.kanban-empty');
@@ -349,11 +368,83 @@
     while (s && !s.classList.contains('kanban-card')) s = s[dir];
     return s ? s.dataset.card : null;
   }
-  function prettyJSON(s){
-    if (!s) return '';
-    try { return JSON.stringify(JSON.parse(s), null, 2); }
-    catch(e){ return s; }
+
+  // --- Snapshot helpers ---
+  function decodeHtmlEntities(str){
+    if (!str) return '';
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
   }
+  function renderSnapshot(jsonStr){
+    const box = document.getElementById('snapshotView');
+    if (!box) return;
+    box.innerHTML = '';
+
+    if (!jsonStr || !jsonStr.trim()){
+      const empty = document.createElement('div');
+      empty.className = 'snapshot-empty';
+      empty.textContent = 'Sem dados de formulário.';
+      box.appendChild(empty);
+      return;
+    }
+
+    let data;
+    try { data = JSON.parse(jsonStr); }
+    catch(e){
+      const pre = document.createElement('pre');
+      pre.className = 'snapshot-wrap';
+      pre.textContent = jsonStr;
+      box.appendChild(pre);
+      return;
+    }
+
+    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+    function makeValueNode(v){
+      const div = document.createElement('div');
+      div.className = 'snapshot-val';
+      if (v === null || v === undefined) div.innerHTML = '<span class="snapshot-code">—</span>';
+      else if (Array.isArray(v)){
+        if (!v.length) div.innerHTML = '<span class="snapshot-code">[]</span>';
+        else {
+          const ul = document.createElement('ul'); ul.className = 'snapshot-sublist';
+          v.forEach(it=>{ const li=document.createElement('li'); li.textContent = (typeof it==='object'? JSON.stringify(it): String(it)); ul.appendChild(li); });
+          div.appendChild(ul);
+        }
+      } else if (typeof v === 'object'){
+        const ul = document.createElement('ul'); ul.className = 'snapshot-sublist';
+        Object.keys(v).forEach(k=>{
+          const li=document.createElement('li');
+          li.innerHTML = '<strong>'+escapeHtml(k)+':</strong> '+escapeHtml(String(v[k]));
+          ul.appendChild(li);
+        });
+        div.appendChild(ul);
+      } else {
+        div.textContent = String(v);
+      }
+      return div;
+    }
+
+    const list = document.createElement('ul');
+    list.className = 'snapshot-list';
+
+    if (Array.isArray(data)){
+      data.forEach((v,i)=>{
+        const li = document.createElement('li'); li.className='snapshot-item';
+        const k  = document.createElement('div'); k.className='snapshot-key'; k.textContent = '#'+i;
+        li.appendChild(k); li.appendChild(makeValueNode(v)); list.appendChild(li);
+      });
+    } else if (typeof data === 'object'){
+      Object.keys(data).forEach(key=>{
+        const li = document.createElement('li'); li.className='snapshot-item';
+        const k  = document.createElement('div'); k.className='snapshot-key'; k.textContent = key;
+        li.appendChild(k); li.appendChild(makeValueNode(data[key])); list.appendChild(li);
+      });
+    }
+    box.appendChild(list);
+  }
+
+  // --- Card builders ---
   function buildCardElement(c){
     const a = document.createElement('a');
     a.className = 'kanban-card';
@@ -366,7 +457,7 @@
     a.dataset.due_at = c.due_at || '';
     a.dataset.stage_id = c.stage_id;
     a.dataset.source = (c.source || 'manual').toLowerCase();
-    a.dataset.snapshot = c.fields_snapshot_json || '';
+    a.setAttribute('data-snapshot', c.fields_snapshot_json || '');
 
     a.innerHTML = `
       <div class="kc-actions">
@@ -384,36 +475,10 @@
     `;
     return a;
   }
-  function openEditFromEl(el){
-    const $f = $('#editCardForm');
-    $('#editCardErrors').hide().empty();
-
-    if (el) {
-      $f.find('[name="id"]').val(el.dataset.card);
-      $f.find('[name="title"]').val(el.querySelector('.kc-title')?.textContent?.trim() || '');
-      $f.find('[name="priority"]').val(el.dataset.priority || 'medium');
-      $f.find('[name="due_at"]').val(el.dataset.due_at || '');
-      const stageId = el.dataset.stage_id || el.closest('.kanban-col')?.dataset.stage;
-      $f.find('[name="stage_id"]').val(String(stageId));
-
-      // NOVO: preencher Source + JSON snapshot
-      const src = el.dataset.source || 'manual';
-      $f.find('[name="source"]').val(src);
-      const snap = el.dataset.snapshot || '';
-      $f.find('[name="fields_snapshot_json"]').val(prettyJSON(snap));
-
-      $('#editCardModal').modal('show');
-    } else {
-      alert('Card não encontrado.');
-    }
-  }
-
-  // Atualiza/insere card na DOM
   function upsertCard(c){
     let cardEl = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
     const targetCol = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
 
-    // cria se não existir (ou move se mudou de coluna)
     if (!cardEl) {
       if (!targetCol) return;
       cardEl = buildCardElement(c);
@@ -427,32 +492,50 @@
       }
     }
 
-    // título
     const titleEl = cardEl.querySelector('.kc-title');
     if (titleEl) titleEl.textContent = c.title || '';
     cardEl.dataset.title = (c.title || '').toLowerCase();
 
-    // prioridade
-    const pri = (c.priority || 'medium').toLowerCase();
     const priBadge = cardEl.querySelector('.badge');
     if (priBadge) {
       priBadge.classList.remove('pri-low','pri-medium','pri-high');
-      priBadge.classList.add(pri === 'high' ? 'pri-high' : (pri === 'low' ? 'pri-low' : 'pri-medium'));
-      priBadge.textContent = pri.replace(/^./, s=>s.toUpperCase());
+      priBadge.classList.add(c.priority === 'high' ? 'pri-high' : (c.priority === 'low' ? 'pri-low' : 'pri-medium'));
+      priBadge.textContent = (c.priority || 'medium').replace(/^./, s=>s.toUpperCase());
     }
 
-    // datasets
-    cardEl.dataset.priority = pri;
-    cardEl.dataset.due_at = c.due_at || '';
+    cardEl.dataset.priority = (c.priority || 'medium').toLowerCase();
+    cardEl.dataset.due_at   = c.due_at || '';
     cardEl.dataset.stage_id = c.stage_id;
-    cardEl.dataset.source = (c.source || 'manual').toLowerCase();
-    cardEl.dataset.snapshot = c.fields_snapshot_json || '';
+    cardEl.dataset.source   = (c.source || 'manual').toLowerCase();
+    cardEl.setAttribute('data-snapshot', c.fields_snapshot_json || '');
     if (c.position) cardEl.dataset.pos = c.position;
 
-    // pequeno “flash”
     cardEl.style.transition = 'background-color .4s';
     cardEl.style.backgroundColor = '#f0fdf4';
     setTimeout(()=> cardEl.style.backgroundColor = '', 400);
+  }
+
+  // --- Abrir modal editar a partir do card ---
+  function openEditFromEl(el){
+    const $f = $('#editCardForm');
+    $('#editCardErrors').hide().empty();
+    if (!el) return alert('Card não encontrado.');
+
+    $f.find('[name="id"]').val(el.dataset.card);
+    $f.find('[name="title"]').val(el.querySelector('.kc-title')?.textContent?.trim() || '');
+    $f.find('[name="priority"]').val(el.dataset.priority || 'medium');
+    $f.find('[name="due_at"]').val(el.dataset.due_at || '');
+    const stageId = el.dataset.stage_id || el.closest('.kanban-col')?.dataset.stage;
+    $f.find('[name="stage_id"]').val(String(stageId));
+    $f.find('[name="source"]').val(el.dataset.source || 'manual');
+
+    // snapshot
+    const snapRaw = el.getAttribute('data-snapshot') || '';   // ainda com &quot;
+    const snap    = decodeHtmlEntities(snapRaw);              // JSON válido
+    $f.find('[name="fields_snapshot_json"]').val(snapRaw);    // mantém como veio para submit
+    renderSnapshot(snap);
+
+    $('#editCardModal').modal('show');
   }
 
   // --- Sortable (drag & drop) ---
@@ -489,7 +572,7 @@
             el.dataset.pos = String(data.card.position || '');
           }
         })
-        .catch(() => { /* opcional: reverter visualmente */ });
+        .catch(() => {});
       }
     });
   });
@@ -541,7 +624,7 @@
     })
     .then(resp=>{
       if(!resp.ok) throw new Error('Erro ao criar.');
-      const c = resp.card || {};
+      const c = resp.card;
       const col = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
       if (col) {
         col.appendChild(buildCardElement(c));
@@ -600,13 +683,14 @@
     })
     .then(resp => {
       if (!resp.ok) throw new Error('Erro ao gravar.');
-      upsertCard(resp.card || {});
+      upsertCard(resp.card);
       $('#editCardModal').modal('hide');
     })
     .catch(err => $errors.html(err.message).show())
     .finally(() => { $btn.prop('disabled', false); $btn.find('.spinner').hide(); $btn.find('.txt').show(); });
   });
 
+  // -------- Notas / Anexos (opcional, igual ao teu) ----------
   function loadNotes(cardId){
     const url = @json(route('admin.crm-cards.notes.index',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
     fetch(url, {headers:{'Accept':'application/json'}})
@@ -618,13 +702,12 @@
         data.notes.forEach(n=>{
           const item = document.createElement('div');
           item.className = 'list-group-item';
-          item.innerHTML = `<div style="font-size:12px;color:#6b7280">${n.user_name||'—'} • ${n.created_at}</div>
-                            <div>${escapeHtml(n.content)}</div>`;
+          item.innerHTML = `<div style="font-size:12px;color:#6b7280">${(n.user_name||'—')} • ${n.created_at}</div>
+                            <div>${(n.content||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]))}</div>`;
           box.appendChild(item);
         });
       });
   }
-
   function addNote(cardId, content){
     const url = @json(route('admin.crm-cards.notes.store',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
     const fd = new FormData(); fd.append('content', content);
@@ -634,7 +717,6 @@
       body: fd
     }).then(r=>r.json());
   }
-
   function loadFiles(cardId){
     const url = @json(route('admin.crm-cards.attachments.index',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
     fetch(url, {headers:{'Accept':'application/json'}})
@@ -655,7 +737,6 @@
         });
       });
   }
-
   function uploadFile(cardId, file){
     const url = @json(route('admin.crm-cards.attachments.store',['crm_card'=>'__ID__'])).replace('__ID__', cardId);
     const fd = new FormData(); fd.append('file', file);
@@ -665,7 +746,6 @@
       body: fd
     }).then(r=>r.json());
   }
-
   function deleteFile(cardId, mediaId){
     const url = @json(route('admin.crm-cards.attachments.destroy',['crm_card'=>'__ID__','media'=>'__MID__']))
                   .replace('__ID__', cardId).replace('__MID__', mediaId);
@@ -677,62 +757,35 @@
       }
     }).then(r=>r.json());
   }
-
-  // util simples
-  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
-
-  // quando abres o modal de edição, além de preencher os campos…
   $('#editCardModal').on('shown.bs.modal', function(){
     const id = $('#editCardForm [name="id"]').val();
     loadNotes(id);
     loadFiles(id);
   });
-
-  // botão "Adicionar nota"
   $('#btnAddNote').on('click', function(){
     const id = $('#editCardForm [name="id"]').val();
     const $ta = $('#noteContent'); const content = $ta.val().trim();
     const $err = $('#editNotesErrors');
     if (!content) return;
-
     addNote(id, content)
-    .then(resp=>{
-      if(!resp.ok) throw new Error('Falhou ao gravar nota.');
-      $('#noteContent').val('');
-      loadNotes(id);
-    })
-    .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
+      .then(resp=>{ if(!resp.ok) throw new Error('Falhou ao gravar nota.'); $('#noteContent').val(''); loadNotes(id); })
+      .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
   });
-
-  // upload
   $('#btnUploadFile').on('click', function(){
     const id = $('#editCardForm [name="id"]').val();
     const f = document.getElementById('attachFile').files[0];
-    const $err = $('#editFilesErrors');
-    if (!f) return;
-
+    const $err = $('#editFilesErrors'); if (!f) return;
     uploadFile(id, f)
-      .then(resp=>{
-        if(!resp.ok) throw new Error('Falhou upload.');
-        document.getElementById('attachFile').value = '';
-        loadFiles(id);
-      })
+      .then(resp=>{ if(!resp.ok) throw new Error('Falhou upload.'); document.getElementById('attachFile').value=''; loadFiles(id); })
       .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
   });
-
-  // apagar ficheiro
   $(document).on('click', '.btn-del-file', function(){
     const id = $('#editCardForm [name="id"]').val();
     const mediaId = $(this).closest('li').data('mediaId');
     const $err = $('#editFilesErrors');
-
     deleteFile(id, mediaId)
-      .then(resp=>{
-        if(!resp.ok) throw new Error('Falhou ao remover.');
-        loadFiles(id);
-      })
+      .then(resp=>{ if(!resp.ok) throw new Error('Falhou ao remover.'); loadFiles(id); })
       .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
   });
-
 </script>
 @endsection
