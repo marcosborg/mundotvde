@@ -13,7 +13,6 @@ Ofereçemos um serviço profissional especializado no setor TVDE. Serviço profi
             <div class="post-body">
                 <h3>
                     {{ $consulting->title }}
-                    <button class="btn btn-success float-end" onclick="openConsultingModal()">Pedir contacto</button>
                 </h3>
                 <hr>
                 <p>{{ $consulting->description }}</p>

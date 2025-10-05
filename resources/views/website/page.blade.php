@@ -15,7 +15,6 @@
             <div class="post-body">
                 <h3>
                     {{ $page->title }}
-                    <button class="btn btn-success float-end" onclick="openPageModal()">Pedir contacto</button>
                 </h3>
                 <hr>
                 <p>{!! $page->description !!}</p>

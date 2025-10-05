@@ -13,7 +13,6 @@ Saiba tudo o que precisa fazer para rentabilizar a sua viatura e começar imedia
             <div class="post-body">
                 <h3>
                     {{ $ownCar->title }}
-                    <button class="btn btn-success float-end" onclick="openOwnCarModal()">Pedir contacto</button>
                 </h3>
                 <hr>
                 <p>{{ $ownCar->description }}</p>

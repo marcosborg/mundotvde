@@ -13,7 +13,6 @@ Rentabilize o seu tempo com as nossas parcerias. Com os nossos parceiros pode re
             <div class="post-body">
                 <h3>
                     {{ $courier->title }}
-                    <button class="btn btn-success float-end" onclick="openCourierModal()">Pedir contacto</button>
                 </h3>
                 <hr>
                 <p>{{ $courier->description }}</p>

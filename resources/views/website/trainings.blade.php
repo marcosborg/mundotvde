@@ -13,7 +13,6 @@ A formação TVDE é obrigatória para a atividade. Inscrição em cursos 100% o
             <div class="post-body">
                 <h3>
                     {{ $training->title }}
-                    <button class="btn btn-success float-end" onclick="openTrainingModal()">Pedir contacto</button>
                 </h3>
                 <hr>
                 <p>{{ $training->description }}</p>
