@@ -56,6 +56,12 @@
   .snapshot-val{flex:1;white-space:pre-wrap;word-break:break-word}
   .snapshot-sublist{list-style:disc;margin:0 0 0 18px;padding:0}
   .snapshot-code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;color:#6b7280}
+  .kc-dates{font-size:12px;color:#6b7280;margin-top:4px; display:block}
+  .kc-dates .kc-date-item{display:block}
+  .kc-date-item + .kc-date-item{margin-top:2px}
+  .kc-date-sep{display:none}
+
+
 </style>
 @endsection
 
@@ -109,16 +115,18 @@
 
                 @foreach($cards as $card)
                   <a class="kanban-card"
-                     href="{{ route('admin.crm-cards.show', $card->id) }}"
-                     target="_blank"
-                     data-card="{{ $card->id }}"
-                     data-pos="{{ $card->position }}"
-                     data-title="{{ strtolower($card->title) }}"
-                     data-priority="{{ strtolower($card->priority ?? 'medium') }}"
-                     data-due_at="{{ $card->due_at_html }}"
-                     data-stage_id="{{ $card->stage_id }}"
-                     data-source="{{ strtolower($card->source ?? 'manual') }}"
-                     data-snapshot="{{ e($card->fields_snapshot_json ?? '') }}"
+                    href="{{ route('admin.crm-cards.show', $card->id) }}"
+                    target="_blank"
+                    data-card="{{ $card->id }}"
+                    data-pos="{{ $card->position }}"
+                    data-title="{{ strtolower($card->title) }}"
+                    data-priority="{{ strtolower($card->priority ?? 'medium') }}"
+                    data-due_at="{{ $card->due_at_html }}"
+                    data-stage_id="{{ $card->stage_id }}"
+                    data-source="{{ strtolower($card->source ?? 'manual') }}"
+                    data-snapshot="{{ e($card->fields_snapshot_json ?? '') }}"
+                    data-created_at="{{ optional($card->created_at)->format('d/m/Y H:i') }}"
+                    data-updated_at="{{ optional($card->updated_at)->format('d/m/Y H:i') }}"
                   >
                     <div class="kc-actions">
                       <button type="button" class="btn btn-xs btn-default btn-edit-card" data-id="{{ $card->id }}">
@@ -131,7 +139,14 @@
                       </span>
                     </div>
                     <div class="kc-title">{{ $card->title }}</div>
+
+                    {{-- META: ID + datas --}}
                     <div class="kc-meta">#{{ $card->id }}</div>
+                    <div class="kc-meta kc-dates">
+                      <span class="kc-date-item">Criado: <strong>{{ optional($card->created_at)->format('d/m/Y H:i') }}</strong></span>
+                      <span class="kc-date-sep">•</span>
+                      <span class="kc-date-item">Atualizado: <strong>{{ optional($card->updated_at)->format('d/m/Y H:i') }}</strong></span>
+                    </div>
                   </a>
                 @endforeach
               </div>
@@ -446,6 +461,9 @@
 
   // --- Card builders ---
   function buildCardElement(c){
+    const createdTxt = c.created_at_html || c.created_at || '';
+    const updatedTxt = c.updated_at_html || c.updated_at || '';
+
     const a = document.createElement('a');
     a.className = 'kanban-card';
     a.href = c.show_url || ('{{ url('admin/crm-cards') }}/'+c.id);
@@ -458,6 +476,8 @@
     a.dataset.stage_id = c.stage_id;
     a.dataset.source = (c.source || 'manual').toLowerCase();
     a.setAttribute('data-snapshot', c.fields_snapshot_json || '');
+    a.setAttribute('data-created_at', createdTxt);
+    a.setAttribute('data-updated_at', updatedTxt);
 
     a.innerHTML = `
       <div class="kc-actions">
@@ -472,9 +492,15 @@
       </div>
       <div class="kc-title">${c.title || ''}</div>
       <div class="kc-meta">#${c.id}</div>
+      <div class="kc-meta kc-dates">
+        <span class="kc-date-item">Criado: <strong>${createdTxt || '—'}</strong></span>
+        <span class="kc-date-sep">•</span>
+        <span class="kc-date-item">Atualizado: <strong>${updatedTxt || '—'}</strong></span>
+      </div>
     `;
     return a;
   }
+
   function upsertCard(c){
     let cardEl = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
     const targetCol = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
@@ -508,12 +534,29 @@
     cardEl.dataset.stage_id = c.stage_id;
     cardEl.dataset.source   = (c.source || 'manual').toLowerCase();
     cardEl.setAttribute('data-snapshot', c.fields_snapshot_json || '');
+
+    // >>> NOVO: datas
+    const createdTxt = c.created_at_html || c.created_at || cardEl.getAttribute('data-created_at') || '';
+    const updatedTxt = c.updated_at_html || c.updated_at || ''; // após update, backend deve devolver atualizado
+    cardEl.setAttribute('data-created_at', createdTxt);
+    if (updatedTxt) cardEl.setAttribute('data-updated_at', updatedTxt);
+
+    const datesEl = cardEl.querySelector('.kc-dates');
+    if (datesEl) {
+      datesEl.innerHTML = `
+        <span class="kc-date-item">Criado: <strong>${createdTxt || '—'}</strong></span>
+        <span class="kc-date-sep">•</span>
+        <span class="kc-date-item">Atualizado: <strong>${updatedTxt || cardEl.getAttribute('data-updated_at') || '—'}</strong></span>
+      `;
+    }
+
     if (c.position) cardEl.dataset.pos = c.position;
 
     cardEl.style.transition = 'background-color .4s';
     cardEl.style.backgroundColor = '#f0fdf4';
     setTimeout(()=> cardEl.style.backgroundColor = '', 400);
   }
+
 
   // --- Abrir modal editar a partir do card ---
   function openEditFromEl(el){
