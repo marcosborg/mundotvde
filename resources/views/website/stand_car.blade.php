@@ -57,10 +57,32 @@ Compre a sua viatura {{ $car->brand->name }} {{ $car->car_model->name }}
                                         <p><strong>Localidade: </strong>{{ $car->distance }}</p>
                                     </div>
                                 </div>
+                                @php
+                                    use App\Models\CrmForm;
+
+                                    $formStand = CrmForm::with(['fields' => fn($q) => $q->orderBy('position')])
+                                        ->where('slug', 'stand')->where('status', 'published')->first();
+                                @endphp
+
+                                @if (session('crm_form_ok'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom:12px">
+                                    {{ session('crm_form_ok') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                                </div>
+                                @endif
+
+                                @if($formStand)
+                                {{-- Passa o objeto ou o id da viatura ao form --}}
+                                @include('website.forms.render', [
+                                    'form'      => $formStand,
+                                    'standCar'  => $standCar ?? null,   // se tiveres a viatura como objeto
+                                    // 'car'     => null,                // só para não confundir com 'rent'
+                                ])
+                                @else
+                                <div class="alert alert-warning">Formulário “stand” não disponível.</div>
+                                @endif
+
                             </div>
-                            <button class="btn btn-primary" type="button" onclick="openstandCarModal()">
-                                Pedir contacto
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -68,50 +90,4 @@ Compre a sua viatura {{ $car->brand->name }} {{ $car->car_model->name }}
         </div>
     </div>
 </section>
-<!-- Modal -->
-<div class="modal fade" id="standCarModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5">{{ $car->brand->name }} {{ $car->car_model->name }}</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="/forms/standCarContact" method="post" id="standCarContact">
-                <input type="hidden" name="id" value="{{ $car->id }}">
-                @csrf
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="name">Nome</label>
-                        <input type="text" id="name" name="name" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Telefone</label>
-                        <input type="text" id="phone" name="phone" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="text" id="email" name="email" class="form-control">
-                    </div>
-                    <div class="form-group mt-4">
-                        <label for="message">Mensagem</label>
-                        <textarea name="message" id="message" class="form-control"></textarea>
-                    </div>
-                    <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" id="rgpd" name="rgpd">
-                        <label class="form-check-label" for="rgpd">
-                            Autorizo o tratamento dos dados fornecidos
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Pedir contacto</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<script>
-    console.log({!! $car !!})
-</script>
 @endsection

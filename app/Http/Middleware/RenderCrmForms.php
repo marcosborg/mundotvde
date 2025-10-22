@@ -14,41 +14,62 @@ class RenderCrmForms
         /** @var \Symfony\Component\HttpFoundation\Response $response */
         $response = $next($request);
 
-        // Ignora backoffice e respostas que não são HTML
+        // Ignora backoffice
         if ($request->is('admin/*')) {
             return $response;
         }
-        $ct = $response->headers->get('Content-Type', '');
+
+        // Apenas HTML
+        $ct = (string) $response->headers->get('Content-Type', '');
         if ($ct && stripos($ct, 'text/html') === false) {
             return $response;
         }
 
         $html = $response->getContent();
+        if (!is_string($html) || $html === '') {
+            return $response;
+        }
 
-        // [form:slug] | [form="slug"] | render:crm-form slug="slug"
-        $pattern = '/
-            \[form:(?P<slug1>[a-z0-9\-_]+)\]                                     |
-            \[form=(?:"|\')(?P<slug2>[a-z0-9\-_]+)(?:"|\')\]                      |
-            render:crm-form\s+slug=(?:"|\')(?P<slug3>[a-z0-9\-_]+)(?:"|\')
-        /ix';
+        /**
+         * Tokens suportados:
+         *  - [form:slug]
+         *  - [form="slug"] / [form:'slug'] / [form:"slug"]
+         *  - render:crm-form slug="slug"
+         *  - [form-fields:slug]
+         *  - [form-fields="slug"] / [form-fields:'slug'] / [form-fields:"slug"]
+         *  - render:crm-form-fields slug="slug"
+         *
+         * Usamos ~ como delimitador para evitar conflitos com '/' em comentários (modo 'x').
+         */
+        $pattern = '~
+            \[form:(?P<slug1>[a-z0-9\-_]+)\] |
+            \[form=(?:"|\')(?P<slug2>[a-z0-9\-_]+)(?:"|\')\] |
+            render:crm-form\s+slug=(?:"|\')(?P<slug3>[a-z0-9\-_]+)(?:"|\') |
+            \[form-fields:(?P<slug4>[a-z0-9\-_]+)\] |
+            render:crm-form-fields\s+slug=(?:"|\')(?P<slug5>[a-z0-9\-_]+)(?:"|\') |
+            \[form:(?:"|\')(?P<slug6>[a-z0-9\-_]+)(?:"|\')\] |
+            \[form-fields:(?:"|\')(?P<slug7>[a-z0-9\-_]+)(?:"|\')\]
+        ~ix';
 
         $html = preg_replace_callback($pattern, function ($m) {
-            $slug = $m['slug1'] ?? $m['slug2'] ?? $m['slug3'] ?? null;
+            $slug = $m['slug1'] ?? $m['slug2'] ?? $m['slug3'] ?? $m['slug4'] ?? $m['slug5'] ?? $m['slug6'] ?? $m['slug7'] ?? null;
             if (!$slug) {
                 return $this->dbg('CRM-FORM: slug não capturado');
             }
-            return $this->renderForm($slug);
+            // É fields-only quando veio de form-fields (slug4/slug5/slug7)
+            $fieldsOnly = isset($m['slug4']) || isset($m['slug5']) || isset($m['slug7']);
+            return $this->renderForm($slug, $fieldsOnly);
         }, $html);
 
         $response->setContent($html);
         return $response;
     }
 
-    private function renderForm(string $slug): string
+    private function renderForm(string $slug, bool $fieldsOnly = false): string
     {
-        $form = CrmForm::with(['fields' => fn($q) => $q->orderBy('position')])
+        $form = CrmForm::with(['fields' => fn($q) => $q->orderBy('position')->orderBy('id')])
             ->where('slug', $slug)
-            ->where('status', 'published')   // só publica
+            ->where('status', 'published')
             ->first();
 
         if (!$form) {
@@ -56,15 +77,15 @@ class RenderCrmForms
         }
 
         try {
-            return view('website.forms.render', ['form' => $form])->render();
+            $view = $fieldsOnly ? 'website.forms.fields' : 'website.forms.render';
+            return view($view, ['form' => $form])->render();
         } catch (\Throwable $e) {
-            return $this->dbg("CRM-FORM: '{$slug}' erro a renderizar view: ".$e->getMessage());
+            return $this->dbg("CRM-FORM: '{$slug}' erro a renderizar view: " . $e->getMessage());
         }
     }
 
     private function dbg(string $msg): string
     {
-        // Mostra sempre, para poderes ver no View Source
         return "<!-- {$msg} -->";
     }
 }
