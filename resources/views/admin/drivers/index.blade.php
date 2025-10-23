@@ -196,7 +196,6 @@
 { data: 'local_name', name: 'local.name' },
 { data: 'start_date', name: 'start_date' },
 { data: 'end_date', name: 'end_date' },
-{ data: 'reason', name: 'reason' },
 { data: 'phone', name: 'phone' },
 { data: 'payment_vat', name: 'payment_vat' },
 { data: 'citizen_card', name: 'citizen_card' },
