@@ -1,4 +1,3 @@
-{{-- resources/views/website/forms/fields.blade.php --}}
 @if($form)
   {{-- IMPORTANTE: esta partial não abre nem fecha <form> --}}
   @foreach($form->fields->sortBy('position') as $f)
@@ -9,20 +8,22 @@
         : [];
 
       $name    = 'field_'.$f->id;
-      $oldVal  = old($name, ''); // manter valor após validação
+      $oldVal  = old($name, '');
       $label   = (string) $f->label;
-      $labelLc = mb_strtolower($label); // evitar dependência do Illuminate\Support\Str
+      $labelLc = function_exists('mb_strtolower') ? mb_strtolower($label) : strtolower($label);
 
-      // Heurística simples para tratar telefone como TEXTO
-      $isPhone = str_contains($labelLc, 'telefone')
-              || str_contains($labelLc, 'telemóvel')
-              || str_contains($labelLc, 'telemovel')
-              || str_contains($labelLc, 'phone')
-              || str_contains($labelLc, 'celular');
+      // Heurística p/ tratar telefone como TEXTO (não number)
+      $isPhone = (strpos($labelLc, 'telefone') !== false)
+              || (strpos($labelLc, 'telemóvel') !== false)
+              || (strpos($labelLc, 'telemovel') !== false)
+              || (strpos($labelLc, 'phone') !== false)
+              || (strpos($labelLc, 'celular') !== false);
 
-      // limites vindos do model
       $min = $f->min_value;
       $max = $f->max_value;
+
+      // Helpers de classes de erro
+      $invalidClass = $errors->has($name) ? ' is-invalid' : '';
     @endphp
 
     <div class="form-group" style="margin-bottom:12px">
@@ -32,11 +33,11 @@
       </label>
 
       @if($f->type === 'text' || ($f->type === 'number' && $isPhone))
-        {{-- Telefone/telemóvel como TEXTO (valida por comprimento, não por valor numérico) --}}
+        {{-- Telefone como TEXTO: valida por comprimento --}}
         <input
           type="text"
           name="{{ $name }}"
-          class="form-control"
+          class="form-control{{ $invalidClass }}"
           placeholder="{{ $f->placeholder }}"
           value="{{ $oldVal }}"
           @if($f->required) required @endif
@@ -44,44 +45,58 @@
           @if(!is_null($max)) maxlength="{{ (int) $max }}" @endif
           @if($isPhone) inputmode="tel" autocomplete="tel" @endif
         >
+        @error($name)
+          <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+
       @elseif($f->type === 'textarea')
         <textarea
           name="{{ $name }}"
-          class="form-control"
+          class="form-control{{ $invalidClass }}"
           placeholder="{{ $f->placeholder }}"
           @if($f->required) required @endif
           @if(!is_null($min)) minlength="{{ (int) $min }}" @endif
           @if(!is_null($max)) maxlength="{{ (int) $max }}" @endif
         >{{ $oldVal }}</textarea>
+        @error($name)
+          <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+
       @elseif($f->type === 'number')
-        {{-- Número real: aplica min/max numéricos --}}
+        {{-- Números reais: min/max numéricos --}}
         <input
           type="number"
           name="{{ $name }}"
-          class="form-control"
+          class="form-control{{ $invalidClass }}"
           placeholder="{{ $f->placeholder }}"
           value="{{ $oldVal }}"
           @if($f->required) required @endif
           @if(!is_null($min)) min="{{ (float) $min }}" @endif
           @if(!is_null($max)) max="{{ (float) $max }}" @endif
         >
+        @error($name)
+          <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+
       @elseif($f->type === 'checkbox')
-        {{-- checkbox --}}
-        <div>
+        <div class="{{ $errors->has($name) ? 'is-invalid' : '' }}">
           <label>
-            <input type="checkbox"
-                  name="{{ $name }}"
-                  value="1"
-                  {{ old($name) ? 'checked' : '' }}
-                  @if($f->required) required @endif>
+            <input
+              type="checkbox"
+              name="{{ $name }}"
+              value="1"
+              {{ old($name) ? 'checked' : '' }}
+              @if($f->required) required @endif
+            >
             {{ $f->placeholder ?: 'Selecionar' }}
           </label>
         </div>
         @error($name)
-          <div class="text-danger small mt-1">{{ $message }}</div>
+          <div class="invalid-feedback d-block">{{ $message }}</div>
         @enderror
+
       @elseif($f->type === 'select')
-        <select name="{{ $name }}" class="form-control" @if($f->required) required @endif>
+        <select name="{{ $name }}" class="form-control{{ $invalidClass }}" @if($f->required) required @endif>
           <option value="">—</option>
           @foreach($opts as $o)
             @php
@@ -94,6 +109,9 @@
             </option>
           @endforeach
         </select>
+        @error($name)
+          <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
       @endif
 
       @if($f->help_text)

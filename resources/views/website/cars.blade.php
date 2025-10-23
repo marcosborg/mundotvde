@@ -1,4 +1,3 @@
-{{-- resources/views/website/rent/index.blade.php --}}
 @extends('layouts.website')
 
 @section('title', 'Aluguer de viaturas')
@@ -24,7 +23,6 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
   .mySwiper .swiper-slide-thumb-active{opacity:1}
   .swiper-wrapper{height:100%}
   .swiper-wrapper.thumb{height:100px;margin:10px}
-  /* Mensagem de envio */
   .submit-status{display:none;margin:8px 0 0;font-size:.95rem}
 </style>
 @endsection
@@ -36,10 +34,11 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
       <h2 class="text-info">Aluguer de viaturas</h2>
     </div>
 
-    {{-- ✅ Alerta de sucesso após redirect --}}
-    @if (session('crm_form_ok'))
+    {{-- ✅ Alerta de sucesso após redirect (consumido 1x) --}}
+    @php $crmOk = session()->pull('crm_form_ok'); @endphp
+    @if ($crmOk)
       <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom:16px">
-        {{ session('crm_form_ok') }}
+        {{ $crmOk }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
       </div>
     @endif
@@ -101,8 +100,7 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
         <div class="modal fade" id="carModal-{{ $car->id }}" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
-              {{-- ✅ Sem novalidate; deixamos o browser validar automaticamente --}}
-              <form action="{{ route('public-forms.submit') }}" method="POST" class="js-guard-submit" novalidate>
+              <form action="{{ route('public-forms.submit') }}" method="POST" class="js-guard-submit">
                 @csrf
                 <input type="hidden" name="form_slug" value="rent">
                 <input type="hidden" name="car_id" value="{{ $car->id }}">
@@ -123,7 +121,6 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
                     <div class="alert alert-warning">Formulário "rent" não disponível.</div>
                   @endif
 
-                  {{-- ⚠️ Mensagem durante submissão --}}
                   <div class="submit-status text-muted">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     A enviar o seu pedido...
@@ -167,24 +164,37 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
 </script>
 @endforeach
 
-{{-- ✅ Guard de submissão: não mexe na validação do browser --}}
 <script>
 (function(){
+  // ✅ Reabrir automaticamente o modal correto se houve erros de validação do backend
+  @if ($errors->any() && old('form_slug') === 'rent' && old('car_id'))
+    document.addEventListener('DOMContentLoaded', function(){
+      var id = 'carModal-{{ old('car_id') }}';
+      var el = document.getElementById(id);
+      if (el && window.bootstrap && bootstrap.Modal) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+      } else if (el) {
+        // fallback: trigger data-bs
+        el.classList.add('show');
+        el.style.display = 'block';
+      }
+    });
+  @endif
+
+  // ✅ Guard de submissão + mensagens nativas do HTML5 dentro do modal
   document.querySelectorAll('form.js-guard-submit').forEach(function(form){
     form.addEventListener('submit', function(e){
-      console.log('[rent/cars] submit fired', {submitting: form.dataset.submitting});
-
+      if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof form.reportValidity === 'function') form.reportValidity();
+        return;
+      }
       if (form.dataset.submitting === '1') {
-        console.warn('[rent/cars] blocked: already submitting');
         e.preventDefault();
         return;
       }
-
-      if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
-        console.warn('[rent/cars] blocked: HTML5 invalid');
-        return; // deixa o browser mostrar erros
-      }
-
       form.dataset.submitting = '1';
 
       var btn = form.querySelector('button[type="submit"]');
@@ -198,11 +208,15 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
       var status = form.querySelector('.submit-status');
       if (status) status.style.display = 'block';
 
+      // Failsafe (se não houver redirect)
       setTimeout(function(){
         if (form.dataset.submitting === '1') {
-          console.warn('[rent/cars] failsafe reset');
           form.dataset.submitting = '0';
-          if (btn) { btn.disabled = false; if (btnText) btnText.textContent = 'Pedir contacto'; if (btnSpin) btnSpin.style.display = 'none'; }
+          if (btn) {
+            btn.disabled = false;
+            if (btnText) btnText.textContent = 'Pedir contacto';
+            if (btnSpin) btnSpin.style.display = 'none';
+          }
           if (status) status.style.display = 'none';
         }
       }, 10000);
@@ -210,6 +224,4 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
   });
 })();
 </script>
-
-
 @endsection
