@@ -61,9 +61,6 @@
                                     {{ trans('cruds.driver.fields.end_date') }}
                                 </th>
                                 <th>
-                                    {{ trans('cruds.driver.fields.reason') }}
-                                </th>
-                                <th>
                                     {{ trans('cruds.driver.fields.phone') }}
                                 </th>
                                 <th>
