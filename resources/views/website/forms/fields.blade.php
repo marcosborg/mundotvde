@@ -66,12 +66,20 @@
           @if(!is_null($max)) max="{{ (float) $max }}" @endif
         >
       @elseif($f->type === 'checkbox')
+        {{-- checkbox --}}
         <div>
           <label>
-            <input type="checkbox" name="{{ $name }}" value="1" {{ old($name) ? 'checked' : '' }}>
+            <input type="checkbox"
+                  name="{{ $name }}"
+                  value="1"
+                  {{ old($name) ? 'checked' : '' }}
+                  @if($f->required) required @endif>
             {{ $f->placeholder ?: 'Selecionar' }}
           </label>
         </div>
+        @error($name)
+          <div class="text-danger small mt-1">{{ $message }}</div>
+        @enderror
       @elseif($f->type === 'select')
         <select name="{{ $name }}" class="form-control" @if($f->required) required @endif>
           <option value="">—</option>
