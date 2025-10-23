@@ -101,6 +101,7 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
         <div class="modal fade" id="carModal-{{ $car->id }}" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
+              {{-- ✅ Sem novalidate; deixamos o browser validar automaticamente --}}
               <form action="{{ route('public-forms.submit') }}" method="POST" class="js-guard-submit">
                 @csrf
                 <input type="hidden" name="form_slug" value="rent">
@@ -166,11 +167,12 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
 </script>
 @endforeach
 
-{{-- ✅ Guard de submissão: evita duplos cliques e mostra "A enviar..." --}}
+{{-- ✅ Guard de submissão: não mexe na validação do browser --}}
 <script>
   (function(){
     document.querySelectorAll('form.js-guard-submit').forEach(function(form){
       form.addEventListener('submit', function(e){
+        // Se o browser considerar inválido, este evento nem dispara.
         // Evita multi-submit
         if (form.dataset.submitting === '1') {
           e.preventDefault();
@@ -191,7 +193,7 @@ Aqui, encontrará soluções para alugar a sua viatura TVDE e começar o trabalh
         // Mostra aviso "A enviar..."
         var status = form.querySelector('.submit-status');
         if (status) status.style.display = 'block';
-      }, { passive: true });
+      });
     });
   })();
 </script>

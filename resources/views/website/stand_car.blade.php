@@ -64,12 +64,15 @@ Compre a sua viatura {{ $car->brand->name }} {{ $car->car_model->name }}
                                         ->where('slug', 'stand')->where('status', 'published')->first();
                                 @endphp
 
-                                @if (session('crm_form_ok'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom:12px">
-                                    {{ session('crm_form_ok') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                                </div>
+                                {{-- mostra e consome a flash uma única vez --}}
+                                @php $crmOk = session()->pull('crm_form_ok'); @endphp
+                                @if ($crmOk)
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-bottom:12px">
+                                        {{ $crmOk }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                                    </div>
                                 @endif
+
 
                                 @if($formStand)
                                 {{-- Passa o objeto ou o id da viatura ao form --}}
