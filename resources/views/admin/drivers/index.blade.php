@@ -76,6 +76,9 @@
                                     {{ trans('cruds.driver.fields.citizen_card_expiry_date') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.birth_date') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.driver.fields.drivers_certificate') }}
                                 </th>
                                 <th>
@@ -198,6 +201,7 @@
 { data: 'payment_vat', name: 'payment_vat' },
 { data: 'citizen_card', name: 'citizen_card' },
 { data: 'citizen_card_expiry_date', name: 'citizen_card_expiry_date' },
+{ data: 'birth_date', name: 'birth_date' },
 { data: 'drivers_certificate', name: 'drivers_certificate' },
 { data: 'drivers_certificate_expiration_date', name: 'drivers_certificate_expiration_date' },
 { data: 'email', name: 'email' },

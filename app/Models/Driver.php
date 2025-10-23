@@ -39,6 +39,7 @@ class Driver extends Model
         'payment_vat',
         'citizen_card',
         'citizen_card_expiry_date',
+        'birth_date',
         'drivers_certificate',
         'drivers_certificate_expiration_date',
         'email',

@@ -151,6 +151,11 @@ class DriverController extends Controller
             $table->editColumn('model', function ($row) {
                 return $row->model ? $row->model : '';
             });
+            $table->editColumn('birth_date', function ($row) {
+                return $row->birth_date
+                    ? Carbon::parse($row->birth_date)->format('Y‑m‑d')
+                    : '';
+            });
 
             $table->rawColumns(['actions', 'placeholder', 'user', 'tvde_operator', 'card', 'operation', 'local', 'state']);
 

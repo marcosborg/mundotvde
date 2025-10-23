@@ -1023,6 +1023,8 @@ return [
             'drivers_certificate_expiration_date_helper' => '',
             'vehicle_date' => 'Data do veículo',
             'vehicle_date_helper' => ' ',
+            'birth_date' => 'Data de nascimento',
+            'birth_date_helper' => ' ',
         ],
     ],
     'card' => [

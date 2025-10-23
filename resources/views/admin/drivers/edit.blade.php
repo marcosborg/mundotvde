@@ -148,6 +148,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.driver.fields.citizen_card_expiry_date_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('birth_date') ? 'has-error' : '' }}">
+                            <label for="birth_date">{{ trans('cruds.driver.fields.birth_date') }}</label>
+                            <input class="form-control date" type="text" name="birth_date" id="birth_date" value="{{ old('birth_date', $driver->birth_date) }}">
+                            @if($errors->has('birth_date'))
+                                <span class="help-block" role="alert">{{ $errors->first('birth_date') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.birth_date_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('drivers_certificate') ? 'has-error' : '' }}">
                             <label for="drivers_certificate">{{ trans('cruds.driver.fields.drivers_certificate') }}</label>
                             <input class="form-control" type="text" name="drivers_certificate" id="drivers_certificate" value="{{ old('drivers_certificate', $driver->drivers_certificate) }}">

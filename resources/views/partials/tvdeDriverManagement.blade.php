@@ -104,6 +104,7 @@
                                                 <th>Código</th>
                                                 <th>Cartão</th>
                                                 <th>Operação</th>
+                                                <th>Matrícula</th>
                                                 <th>Aluguer</th>
                                                 <th>Gestão</th>
                                                 <th>Seguro</th>
@@ -139,6 +140,7 @@
                                                 <td>{{ $activityLaunch->driver->code }}</td>
                                                 <td>{{ $activityLaunch->driver->card->code ?? '' }}</td>
                                                 <td>{{ $activityLaunch->driver->operation->name ?? '' }}</td>
+                                                <td>{{ $activityLaunch->driver->license_plate ?? '' }}</td>
                                                 <td>{{ $activityLaunch->rent }}</td>
                                                 <td>{{ $activityLaunch->management }}</td>
                                                 <td>{{ $activityLaunch->insurance }}</td>
@@ -206,6 +208,7 @@
                                                 <th>Código</th>
                                                 <th>Cartão</th>
                                                 <th>Operação</th>
+                                                <th>Matrícula</th>
                                                 <th>Aluguer</td>
                                                 <th>Gestão</th>
                                                 <th>Seguro</th>
@@ -240,6 +243,7 @@
                                                 <td>{{ $activityLaunch->driver->code }}</td>
                                                 <td>{{ $activityLaunch->driver->card->code ?? '' }}</td>
                                                 <td>{{ $activityLaunch->driver->operation->name ?? '' }}</td>
+                                                <td>{{ $activityLaunch->driver->license_plate ?? '' }}</td>
                                                 <td>{{ $activityLaunch->rent }}</td>
                                                 <td>{{ $activityLaunch->management }}</td>
                                                 <td>{{ $activityLaunch->insurance }}</td>
