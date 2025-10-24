@@ -73,6 +73,8 @@ class DocumentGeneratedController extends Controller
 
         $document_managements = DocumentManagement::pluck('title', 'id')->prepend(trans('global.pleaseSelect'), '');
 
+        $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        
         $owners = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         return view('admin.documentGenerateds.create', compact('document_managements', 'drivers', 'owners'));
