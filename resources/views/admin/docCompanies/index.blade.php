@@ -69,7 +69,7 @@
                                             {{ $docCompany->nipc ?? '' }}
                                         </td>
                                         <td>
-                                            {{ $docCompany->~license_number ?? '' }}
+                                            {{ $docCompany->license_number ?? '' }}
                                         </td>
                                         <td>
                                             {{ $docCompany->address ?? '' }}
