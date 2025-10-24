@@ -91,9 +91,5 @@
         </div>
     @endif
 
-
-    <div class="meta">
-        Documento gerado em {{ now()->format('d/m/Y H:i') }} — #{{ $generated->id }}
-    </div>
 </body>
 </html>
