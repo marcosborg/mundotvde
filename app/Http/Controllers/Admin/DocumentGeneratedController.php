@@ -141,15 +141,17 @@ class DocumentGeneratedController extends Controller
         // Prepara assinaturas (data URI) para o template — incluir sempre
         $signatureImages = [];
         foreach ($render['signatures'] as $sig) {
-            $media  = $sig->getFirstMedia('signature');      // pode ser null
-            $path   = $media ? $media->getPath() : null;     // path local
+            $media   = $sig->getFirstMedia('signature'); // coleção 'signature'
+            $path    = $media ? $media->getPath() : null;
             $dataUri = \App\Services\DocumentRenderService::imageToDataUri($path);
 
             $signatureImages[] = [
                 'title' => $sig->title ?? '',
-                'uri'   => $dataUri, // pode vir a null; o Blade já trata
+                'uri'   => $dataUri,                         // pode ser null
+                'extra' => trim((string)($sig->other_fields ?? '')), // texto adicional
             ];
         }
+
 
         $pdf = Pdf::loadView('admin.documentGenerateds.pdf', [
             'title'           => $render['title'],

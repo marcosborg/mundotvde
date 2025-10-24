@@ -4,20 +4,20 @@
     <meta charset="utf-8">
     <title>{{ $title }}</title>
     <style>
-        @page { margin: 15mm 18mm 15mm 18mm; }
+        @page { margin: 28mm 18mm; }
         body { font-family: DejaVu Sans, Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.5; color: #111; }
-        /* Título: maiúsculas, menor e centrado */
         h1   { font-size: 14px; margin: 0 0 10px; font-weight: 700; text-transform: uppercase; text-align: center; }
-        /* Corpo sem justificação */
-        .content { margin-top: 6px; text-align: left; }
-        /* Assinaturas */
-        .signatures { margin-top: 30px; }
-        .sig-grid { display: flex; flex-wrap: wrap; gap: 18px; }
-        .sig-cell { flex: 1 1 100%; text-align: center; }
-        .sig-grid.two-cols .sig-cell { flex: 0 0 calc(50% - 9px); }
-        .sig-img { height: 70px; margin-bottom: 8px; }
-        .sig-title { font-size: 12px; border-top: 1px solid #333; padding-top: 6px; display: inline-block; min-width: 70%; }
-        .meta { font-size: 10px; color: #666; margin-top: 18px; }
+        .content { margin-top: 6px; text-align: left; } /* sem justificação */
+
+        /* Assinaturas usando tabela para dompdf */
+        .signatures { margin-top: 28px; }
+        .sig-table { width: 100%; border-collapse: collapse; }
+        .sig-table td { width: 50%; text-align: center; vertical-align: top; padding: 0 10px 0 10px; }
+        .sig-img { height: 70px; margin-bottom: 6px; }
+        .sig-line { border-top: 1px solid #333; height: 1px; margin: 6px auto 4px; width: 80%; }
+        .sig-title { font-size: 12px; }
+        .sig-extra { font-size: 10px; color: #444; margin-top: 4px; }
+        .meta { font-size: 10px; color: $666; margin-top: 18px; }
     </style>
 </head>
 <body>
@@ -25,21 +25,38 @@
 
     <div class="content">{!! $body_html !!}</div>
 
-    @php $sigCount = count($signatureImages ?? []); @endphp
-    @if($sigCount)
+    @php
+        $sigs = $signatureImages ?? [];
+        $rows = array_chunk($sigs, 2); // 2 por linha
+    @endphp
+
+    @if(count($sigs))
         <div class="signatures">
-            <div class="sig-grid {{ $sigCount >= 2 ? 'two-cols' : '' }}">
-                @foreach($signatureImages as $sig)
-                    <div class="sig-cell">
-                        @if(!empty($sig['uri']))
-                            <img class="sig-img" src="{{ $sig['uri'] }}" alt="assinatura">
-                        @else
-                            <div style="height:70px;"></div>
+            <table class="sig-table">
+                @foreach($rows as $pair)
+                    <tr>
+                        @foreach($pair as $sig)
+                            <td>
+                                @if(!empty($sig['uri']))
+                                    <img class="sig-img" src="{{ $sig['uri'] }}" alt="assinatura">
+                                @else
+                                    <div style="height:70px;"></div>
+                                @endif
+
+                                <div class="sig-line"></div>
+                                <div class="sig-title">{{ $sig['title'] }}</div>
+
+                                @if(!empty($sig['extra']))
+                                    <div class="sig-extra">{{ $sig['extra'] }}</div>
+                                @endif
+                            </td>
+                        @endforeach
+                        @if(count($pair) === 1)
+                            <td></td> {{-- célula vazia para manter 2 colunas quando par for ímpar --}}
                         @endif
-                        <div class="sig-title">{{ $sig['title'] }}</div>
-                    </div>
+                    </tr>
                 @endforeach
-            </div>
+            </table>
         </div>
     @endif
 
