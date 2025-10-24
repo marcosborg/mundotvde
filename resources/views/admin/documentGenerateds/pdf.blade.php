@@ -25,12 +25,15 @@
             text-align: left;
         }
 
-        /* Assinaturas com tabela (compatível dompdf) */
+        /* Assinaturas com tabela (compatível com dompdf) */
         .signatures   { margin-top: 28px; }
-        .sig-table    { width: 100%; border-collapse: collapse; }
+        .sig-table    { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .sig-table td { width: 50%; text-align: center; vertical-align: top; padding: 0 10px; }
 
-        .sig-img   { height: 70px; margin-bottom: 6px; }
+        /* Bloco superior com altura fixa para alinhar a linha em ambas as colunas */
+        .sig-top   { height: 76px; } /* 70px de imagem + 6px de margem inferior visual */
+        .sig-img   { max-height: 70px; display: block; margin: 0 auto 6px auto; }
+
         .sig-line  { border-top: 1px solid #333; height: 1px; margin: 6px auto 4px; width: 80%; }
         .sig-title { font-size: 12px; }
         .sig-extra { font-size: 10px; color: #444; margin-top: 4px; }
@@ -41,12 +44,12 @@
 <body>
     <h1>{{ $title }}</h1>
 
-    {{-- Corpo já com substituições e quebras tratadas no serviço --}}
+    {{-- Corpo já com substituições realizadas pelo serviço --}}
     <div class="content">{!! $body_html !!}</div>
 
     @php
         $sigs = $signatureImages ?? [];
-        $rows = array_chunk($sigs, 2); // 2 por linha
+        $rows = array_chunk($sigs, 2); // 2 assinaturas por linha
     @endphp
 
     @if(count($sigs))
@@ -56,11 +59,11 @@
                     <tr>
                         @foreach($pair as $sig)
                             <td>
-                                @if(!empty($sig['uri']))
-                                    <img class="sig-img" src="{{ $sig['uri'] }}" alt="assinatura">
-                                @else
-                                    <div style="height:70px;"></div>
-                                @endif
+                                <div class="sig-top">
+                                    @if(!empty($sig['uri']))
+                                        <img class="sig-img" src="{{ $sig['uri'] }}" alt="assinatura">
+                                    @endif
+                                </div>
 
                                 <div class="sig-line"></div>
                                 <div class="sig-title">{{ $sig['title'] }}</div>
@@ -71,9 +74,13 @@
                             </td>
                         @endforeach
 
-                        {{-- Se vier 1 só na última linha, mantém grelha de 2 colunas --}}
+                        {{-- Se houver apenas 1 na última linha, mantém a grelha de 2 colunas --}}
                         @if(count($pair) === 1)
-                            <td></td>
+                            <td>
+                                <div class="sig-top"></div>
+                                <div class="sig-line"></div>
+                                <div class="sig-title">&nbsp;</div>
+                            </td>
                         @endif
                     </tr>
                 @endforeach
