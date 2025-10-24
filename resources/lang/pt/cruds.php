@@ -1025,6 +1025,8 @@ return [
             'vehicle_date_helper' => ' ',
             'birth_date' => 'Data de nascimento',
             'birth_date_helper' => ' ',
+            'driver_license_expiration_date' => 'Data de expiração da carta de condução',
+            'driver_license_expiration_date_helper' => ' ',
         ],
     ],
     'card' => [
@@ -2234,6 +2236,8 @@ return [
             'updated_at_helper'          => ' ',
             'deleted_at'                 => 'Deleted at',
             'deleted_at_helper'          => ' ',
+            'owner'                      => 'Owner',
+            'owner_helper'               => ' ',
         ],
     ],
 ];

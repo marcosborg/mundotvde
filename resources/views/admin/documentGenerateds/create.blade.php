@@ -35,6 +35,18 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.documentGenerated.fields.driver_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('owner') ? 'has-error' : '' }}">
+                            <label for="owner_id">{{ trans('cruds.documentGenerated.fields.owner') }}</label>
+                            <select class="form-control select2" name="owner_id" id="owner_id">
+                                @foreach($owners as $id => $entry)
+                                    <option value="{{ $id }}" {{ old('owner_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                                @endforeach
+                            </select>
+                            @if($errors->has('owner'))
+                                <span class="help-block" role="alert">{{ $errors->first('owner') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.documentGenerated.fields.owner_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('date') ? 'has-error' : '' }}">
                             <label for="date">{{ trans('cruds.documentGenerated.fields.date') }}</label>
                             <input class="form-control date" type="text" name="date" id="date" value="{{ old('date') }}">

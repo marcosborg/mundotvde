@@ -33,6 +33,9 @@
                                     {{ trans('cruds.documentGenerated.fields.driver') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.documentGenerated.fields.owner') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.documentGenerated.fields.date') }}
                                 </th>
                                 <th>
@@ -97,6 +100,7 @@
 { data: 'id', name: 'id' },
 { data: 'document_management_title', name: 'document_management.title' },
 { data: 'driver_name', name: 'driver.name' },
+{ data: 'owner_name', name: 'owner.name' },
 { data: 'date', name: 'date' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],

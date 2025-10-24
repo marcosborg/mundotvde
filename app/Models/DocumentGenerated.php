@@ -24,6 +24,7 @@ class DocumentGenerated extends Model
     protected $fillable = [
         'document_management_id',
         'driver_id',
+        'owner_id',
         'date',
         'created_at',
         'updated_at',
@@ -44,6 +45,12 @@ class DocumentGenerated extends Model
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
+
+    public function owner()
+    {
+        return $this->belongsTo(Driver::class, 'owner_id');
+    }
+
 
     public function getDateAttribute($value)
     {

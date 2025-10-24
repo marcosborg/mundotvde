@@ -52,41 +52,45 @@
         $rows = array_chunk($sigs, 2); // 2 assinaturas por linha
     @endphp
 
-    @if(count($sigs))
-        <div class="signatures">
-            <table class="sig-table">
-                @foreach($rows as $pair)
+    @if(!empty($signatureImages) && count($signatureImages) > 0)
+        <div class="signatures" style="margin-top: 30px;">
+            @if(count($signatureImages) === 1)
+                @php $sig = $signatureImages[0]; @endphp
+                <div style="text-align:center; display:inline-block; width:100%;">
+                    <div style="height:76px;">
+                        @if(!empty($sig['uri']))
+                            <img src="{{ $sig['uri'] }}" style="max-height:70px; margin-bottom:6px;" alt="assinatura">
+                        @endif
+                    </div>
+                    <div style="border-top:1px solid #333; width:40%; margin:6px auto 4px;"></div>
+                    <div style="font-size:12px;">{{ $sig['title'] ?? 'Assinatura' }}</div>
+                    @if(!empty($sig['extra_html']))
+                        <div style="font-size:10px; color:#444; margin-top:4px;">{!! $sig['extra_html'] !!}</div>
+                    @endif
+                </div>
+            @elseif(count($signatureImages) >= 2)
+                <table style="width:100%; border-collapse:collapse;">
                     <tr>
-                        @foreach($pair as $sig)
-                            <td>
-                                <div class="sig-top">
+                        @foreach($signatureImages as $sig)
+                            <td style="width:50%; text-align:center; vertical-align:top; padding:0 10px;">
+                                <div style="height:76px;">
                                     @if(!empty($sig['uri']))
-                                        <img class="sig-img" src="{{ $sig['uri'] }}" alt="assinatura">
+                                        <img src="{{ $sig['uri'] }}" style="max-height:70px; margin-bottom:6px;" alt="assinatura">
                                     @endif
                                 </div>
-
-                                <div class="sig-line"></div>
-                                <div class="sig-title">{{ $sig['title'] }}</div>
-
+                                <div style="border-top:1px solid #333; width:80%; margin:6px auto 4px;"></div>
+                                <div style="font-size:12px;">{{ $sig['title'] ?? 'Assinatura' }}</div>
                                 @if(!empty($sig['extra_html']))
-                                    <div class="sig-extra">{!! $sig['extra_html'] !!}</div>
+                                    <div style="font-size:10px; color:#444; margin-top:4px;">{!! $sig['extra_html'] !!}</div>
                                 @endif
                             </td>
                         @endforeach
-
-                        {{-- Se houver apenas 1 na última linha, mantém a grelha de 2 colunas --}}
-                        @if(count($pair) === 1)
-                            <td>
-                                <div class="sig-top"></div>
-                                <div class="sig-line"></div>
-                                <div class="sig-title">&nbsp;</div>
-                            </td>
-                        @endif
                     </tr>
-                @endforeach
-            </table>
+                </table>
+            @endif
         </div>
     @endif
+
 
     <div class="meta">
         Documento gerado em {{ now()->format('d/m/Y H:i') }} — #{{ $generated->id }}

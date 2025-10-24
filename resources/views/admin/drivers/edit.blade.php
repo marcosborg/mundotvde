@@ -232,6 +232,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.driver.fields.driver_license_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('driver_license_expiration_date') ? 'has-error' : '' }}">
+                            <label for="driver_license_expiration_date">{{ trans('cruds.driver.fields.driver_license_expiration_date') }}</label>
+                            <input class="form-control date" type="text" name="driver_license_expiration_date" id="driver_license_expiration_date" value="{{ old('driver_license_expiration_date', $driver->driver_license_expiration_date) }}">
+                            @if($errors->has('driver_license_expiration_date'))
+                                <span class="help-block" role="alert">{{ $errors->first('driver_license_expiration_date') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.driver.fields.driver_license_expiration_date_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('driver_vat') ? 'has-error' : '' }}">
                             <label for="driver_vat">{{ trans('cruds.driver.fields.driver_vat') }}</label>
                             <input class="form-control" type="text" name="driver_vat" id="driver_vat" value="{{ old('driver_vat', $driver->driver_vat) }}">

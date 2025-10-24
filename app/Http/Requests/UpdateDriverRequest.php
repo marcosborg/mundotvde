@@ -67,6 +67,10 @@ class UpdateDriverRequest extends FormRequest
                 'date_format:' . config('panel.date_format'),
                 'nullable',
             ],
+            'driver_license_expiration_date' => [
+                'date_format:' . config('panel.date_format'),
+                'nullable',
+            ],
             'iban' => [
                 'string',
                 'nullable',

@@ -55,7 +55,11 @@ class DocumentGeneratedController extends Controller
                 return $row->driver ? $row->driver->name : '';
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'document_management', 'driver']);
+            $table->addColumn('owner_name', function ($row) {
+                return $row->owner ? $row->owner->name : '';
+            });
+
+            $table->rawColumns(['actions', 'placeholder', 'document_management', 'driver', 'owner']);
 
             return $table->make(true);
         }
@@ -69,9 +73,9 @@ class DocumentGeneratedController extends Controller
 
         $document_managements = DocumentManagement::pluck('title', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $owners = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.documentGenerateds.create', compact('document_managements', 'drivers'));
+        return view('admin.documentGenerateds.create', compact('document_managements', 'drivers', 'owners'));
     }
 
     public function store(StoreDocumentGeneratedRequest $request)
@@ -89,9 +93,11 @@ class DocumentGeneratedController extends Controller
 
         $drivers = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $documentGenerated->load('document_management', 'driver');
+        $owners = Driver::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.documentGenerateds.edit', compact('documentGenerated', 'document_managements', 'drivers'));
+        $documentGenerated->load('document_management', 'driver', 'owner');
+
+        return view('admin.documentGenerateds.edit', compact('documentGenerated', 'document_managements', 'drivers', 'owners'));
     }
 
     public function update(UpdateDocumentGeneratedRequest $request, DocumentGenerated $documentGenerated)
@@ -137,10 +143,18 @@ class DocumentGeneratedController extends Controller
         $documentGenerated->load('document_management.doc_company', 'document_management.signatures.media', 'driver');
 
         $render = DocumentRenderService::renderBody($documentGenerated);
-        $repl   = $render['replacements']; // mapa de substituições
+        $repl   = $render['replacements'];
+
+        // Busca as assinaturas diretamente da relação e força ordem/índices sequenciais
+        $signatures = $documentGenerated->document_management
+            ->signatures()
+            ->with('media')
+            ->orderBy('title')
+            ->get()
+            ->values(); // <- importante para índices 0..n
 
         $signatureImages = [];
-        foreach ($render['signatures'] as $sig) {
+        foreach ($signatures as $sig) {
             $media   = $sig->getFirstMedia('signature');
             $path    = $media ? $media->getPath() : null;
             $dataUri = DocumentRenderService::imageToDataUri($path);
@@ -148,10 +162,16 @@ class DocumentGeneratedController extends Controller
             $extraRaw  = (string)($sig->other_fields ?? '');
             $extraHtml = $extraRaw !== '' ? DocumentRenderService::renderText($repl, $extraRaw, true) : '';
 
+            // título nunca vazio; se vier vazio por algum motivo, usa "Assinatura"
+            $title = trim((string) $sig->title);
+            if ($title === '') {
+                $title = 'Assinatura';
+            }
+
             $signatureImages[] = [
-                'title'      => $sig->title ?? '',
-                'uri'        => $dataUri,          // null se não houver imagem
-                'extra_html' => $extraHtml,        // HTML já renderizado (com tags substituídas)
+                'title'      => $title,
+                'uri'        => $dataUri,     // pode ser null (sem imagem)
+                'extra_html' => $extraHtml,   // HTML já com tags substituídas
             ];
         }
 
