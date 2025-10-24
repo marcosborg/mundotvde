@@ -597,6 +597,26 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // reorder
     Route::patch('crm-forms/{crm_form}/fields/reorder', [CrmFormsController::class, 'fieldsReorder'])
         ->name('crm-forms.fields.reorder');
+
+        // Doc Company
+    Route::delete('doc-companies/destroy', 'DocCompanyController@massDestroy')->name('doc-companies.massDestroy');
+    Route::resource('doc-companies', 'DocCompanyController');
+
+    // Document Management
+    Route::delete('document-managements/destroy', 'DocumentManagementController@massDestroy')->name('document-managements.massDestroy');
+    Route::post('document-managements/media', 'DocumentManagementController@storeMedia')->name('document-managements.storeMedia');
+    Route::post('document-managements/ckmedia', 'DocumentManagementController@storeCKEditorImages')->name('document-managements.storeCKEditorImages');
+    Route::resource('document-managements', 'DocumentManagementController');
+
+    // Signature
+    Route::delete('signatures/destroy', 'SignatureController@massDestroy')->name('signatures.massDestroy');
+    Route::post('signatures/media', 'SignatureController@storeMedia')->name('signatures.storeMedia');
+    Route::post('signatures/ckmedia', 'SignatureController@storeCKEditorImages')->name('signatures.storeCKEditorImages');
+    Route::resource('signatures', 'SignatureController');
+
+    // Document Generated
+    Route::delete('document-generateds/destroy', 'DocumentGeneratedController@massDestroy')->name('document-generateds.massDestroy');
+    Route::resource('document-generateds', 'DocumentGeneratedController');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

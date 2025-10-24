@@ -1463,6 +1463,63 @@
                 </a>
             </li>
             @endcan
+            @can('document_management_menu_access')
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa-fw fas fa-file-contract">
+
+                        </i>
+                        <span>{{ trans('cruds.documentManagementMenu.title') }}</span>
+                        <span class="pull-right-container"><i class="fa fa-fw fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('document_management_access')
+                            <li class="{{ request()->is("admin/document-managements") || request()->is("admin/document-managements/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.document-managements.index") }}">
+                                    <i class="fa-fw fas fa-file-contract">
+
+                                    </i>
+                                    <span>{{ trans('cruds.documentManagement.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('doc_company_access')
+                            <li class="{{ request()->is("admin/doc-companies") || request()->is("admin/doc-companies/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.doc-companies.index") }}">
+                                    <i class="fa-fw fas fa-building">
+
+                                    </i>
+                                    <span>{{ trans('cruds.docCompany.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('signature_access')
+                            <li class="{{ request()->is("admin/signatures") || request()->is("admin/signatures/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.signatures.index") }}">
+                                    <i class="fa-fw fas fa-signature">
+
+                                    </i>
+                                    <span>{{ trans('cruds.signature.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                        @can('document_generated_access')
+                            <li class="{{ request()->is("admin/document-generateds") || request()->is("admin/document-generateds/*") ? "active" : "" }}">
+                                <a href="{{ route("admin.document-generateds.index") }}">
+                                    <i class="fa-fw fas fa-file-pdf">
+
+                                    </i>
+                                    <span>{{ trans('cruds.documentGenerated.title') }}</span>
+
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan
             @php($unread = \App\Models\QaTopic::unreadCount())
             <li class="{{ request()->is("admin/messenger") || request()->is("admin/messenger/*") ? "active" : "" }}">
                 <a href="{{ route("admin.messenger.index") }}">
