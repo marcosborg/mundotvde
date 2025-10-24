@@ -617,6 +617,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Document Generated
     Route::delete('document-generateds/destroy', 'DocumentGeneratedController@massDestroy')->name('document-generateds.massDestroy');
     Route::resource('document-generateds', 'DocumentGeneratedController');
+    Route::get('document-generateds/{documentGenerated}/pdf', [\App\Http\Controllers\Admin\DocumentGeneratedController::class, 'pdf'])
+    ->name('document-generateds.pdf');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

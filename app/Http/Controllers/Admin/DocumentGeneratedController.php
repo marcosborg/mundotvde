@@ -13,6 +13,8 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use App\Services\DocumentRenderService;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DocumentGeneratedController extends Controller
 {
@@ -126,5 +128,40 @@ class DocumentGeneratedController extends Controller
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function pdf(DocumentGenerated $documentGenerated)
+    {
+        abort_if(Gate::denies('document_generated_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $documentGenerated->load('document_management.doc_company', 'document_management.signatures.media', 'driver');
+
+        $render = DocumentRenderService::renderBody($documentGenerated);
+
+        // Prepara assinaturas (data URI) para o template — incluir sempre
+        $signatureImages = [];
+        foreach ($render['signatures'] as $sig) {
+            $media  = $sig->getFirstMedia('signature');      // pode ser null
+            $path   = $media ? $media->getPath() : null;     // path local
+            $dataUri = \App\Services\DocumentRenderService::imageToDataUri($path);
+
+            $signatureImages[] = [
+                'title' => $sig->title ?? '',
+                'uri'   => $dataUri, // pode vir a null; o Blade já trata
+            ];
+        }
+
+        $pdf = Pdf::loadView('admin.documentGenerateds.pdf', [
+            'title'           => $render['title'],
+            'body_html'       => $render['body_html'],
+            'signatureImages' => $signatureImages,
+            'generated'       => $documentGenerated,
+        ])->setPaper('a4');
+
+        // Fonte Unicode para PT (acentos)
+        $pdf->setOption(['isRemoteEnabled' => true]);
+
+        $filename = 'documento-' . $documentGenerated->id . '.pdf';
+        return $pdf->download($filename);
     }
 }

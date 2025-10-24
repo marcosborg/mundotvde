@@ -15,3 +15,14 @@
         <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
     </form>
 @endcan
+{{-- ...botões padrão show/edit/delete... --}}
+
+@isset($crudRoutePart)
+    @if($crudRoutePart === 'document-generateds')
+        @can($viewGate)
+            <a class="btn btn-xs btn-secondary" href="{{ route('admin.document-generateds.pdf', $row->id) }}">
+                PDF
+            </a>
+        @endcan
+    @endif
+@endisset
