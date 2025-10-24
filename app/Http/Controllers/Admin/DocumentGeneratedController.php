@@ -137,33 +137,33 @@ class DocumentGeneratedController extends Controller
         $documentGenerated->load('document_management.doc_company', 'document_management.signatures.media', 'driver');
 
         $render = DocumentRenderService::renderBody($documentGenerated);
+        $repl   = $render['replacements']; // mapa de substituições
 
-        // Prepara assinaturas (data URI) para o template — incluir sempre
         $signatureImages = [];
         foreach ($render['signatures'] as $sig) {
-            $media   = $sig->getFirstMedia('signature'); // coleção 'signature'
+            $media   = $sig->getFirstMedia('signature');
             $path    = $media ? $media->getPath() : null;
-            $dataUri = \App\Services\DocumentRenderService::imageToDataUri($path);
+            $dataUri = DocumentRenderService::imageToDataUri($path);
+
+            $extraRaw  = (string)($sig->other_fields ?? '');
+            $extraHtml = $extraRaw !== '' ? DocumentRenderService::renderText($repl, $extraRaw, true) : '';
 
             $signatureImages[] = [
-                'title' => $sig->title ?? '',
-                'uri'   => $dataUri,                         // pode ser null
-                'extra' => trim((string)($sig->other_fields ?? '')), // texto adicional
+                'title'      => $sig->title ?? '',
+                'uri'        => $dataUri,          // null se não houver imagem
+                'extra_html' => $extraHtml,        // HTML já renderizado (com tags substituídas)
             ];
         }
 
-
-        $pdf = Pdf::loadView('admin.documentGenerateds.pdf', [
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.documentGenerateds.pdf', [
             'title'           => $render['title'],
             'body_html'       => $render['body_html'],
             'signatureImages' => $signatureImages,
             'generated'       => $documentGenerated,
         ])->setPaper('a4');
 
-        // Fonte Unicode para PT (acentos)
         $pdf->setOption(['isRemoteEnabled' => true]);
 
-        $filename = 'documento-' . $documentGenerated->id . '.pdf';
-        return $pdf->download($filename);
+        return $pdf->download('documento-' . $documentGenerated->id . '.pdf');
     }
 }
