@@ -28,6 +28,14 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.docCompany.fields.nipc_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('license_number') ? 'has-error' : '' }}">
+                            <label for="license_number">{{ trans('cruds.docCompany.fields.license_number') }}</label>
+                            <input class="form-control" type="text" name="license_number" id="license_number" value="{{ old('license_number', $docCompany->license_number) }}">
+                            @if($errors->has('license_number'))
+                                <span class="help-block" role="alert">{{ $errors->first('license_number') }}</span>
+                            @endif
+                            <span class="help-block">{{ trans('cruds.docCompany.fields.license_number_helper') }}</span>
+                        </div>
                         <div class="form-group {{ $errors->has('address') ? 'has-error' : '' }}">
                             <label for="address">{{ trans('cruds.docCompany.fields.address') }}</label>
                             <input class="form-control" type="text" name="address" id="address" value="{{ old('address', $docCompany->address) }}">

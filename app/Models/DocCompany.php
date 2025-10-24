@@ -22,6 +22,7 @@ class DocCompany extends Model
     protected $fillable = [
         'name',
         'nipc',
+        'license_number',
         'address',
         'location',
         'zip',

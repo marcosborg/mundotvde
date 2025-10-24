@@ -25,6 +25,10 @@ class StoreDocCompanyRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'license_number' => [
+                'string',
+                'nullable',
+            ],
             'address' => [
                 'string',
                 'nullable',

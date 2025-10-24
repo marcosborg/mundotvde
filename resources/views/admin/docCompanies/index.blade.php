@@ -34,6 +34,9 @@
                                         {{ trans('cruds.docCompany.fields.nipc') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.docCompany.fields.license_number') }}
+                                    </th>
+                                    <th>
                                         {{ trans('cruds.docCompany.fields.address') }}
                                     </th>
                                     <th>
@@ -64,6 +67,9 @@
                                         </td>
                                         <td>
                                             {{ $docCompany->nipc ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $docCompany->~license_number ?? '' }}
                                         </td>
                                         <td>
                                             {{ $docCompany->address ?? '' }}

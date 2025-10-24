@@ -2156,6 +2156,8 @@ return [
             'name_helper'       => ' ',
             'nipc'              => 'NIPC',
             'nipc_helper'       => ' ',
+            'license_number'    => 'License Number',
+            'license_number_helper'       => ' ',
             'address'           => 'Address',
             'address_helper'    => ' ',
             'location'          => 'Location',
