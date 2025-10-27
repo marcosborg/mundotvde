@@ -56,50 +56,77 @@ class DocumentRenderService
         // DRIVER
         if ($driver) {
             foreach ($driver->getAttributes() as $k => $v) {
-                $r['driver_' . Str::lower($k)] = self::formatValue($k, $v);
+                $norm = Str::lower($k); // ex.: driver_driver_certificate
+                // evita dupla prefixação
+                $key  = Str::startsWith($norm, 'driver_') ? $norm : 'driver_' . $norm;
+                $r[$key] = self::formatValue($k, $v);
+
+                // alias: driver_driver_* -> driver_*
+                if (Str::startsWith($key, 'driver_driver_')) {
+                    $alias = 'driver_' . Str::replaceFirst('driver_', '', $key); // remove um 'driver_'
+                    $r[$alias] = $r[$key];
+                }
             }
         }
 
-        // OWNER (também é um Driver)
+        // OWNER (também é Driver)
         if (method_exists($dg, 'owner') && $dg->owner) {
             $owner = $dg->owner;
             foreach ($owner->getAttributes() as $k => $v) {
-                $r['owner_' . Str::lower($k)] = self::formatValue($k, $v);
+                $norm = Str::lower($k); // ex.: owner_driver_certificate OU driver_driver_certificate
+                // se já vier com owner_, mantém; se vier com driver_ (porque reaproveitaram campos), prefixa com owner_
+                if (Str::startsWith($norm, 'owner_')) {
+                    $key = $norm;
+                } elseif (Str::startsWith($norm, 'driver_')) {
+                    $key = 'owner_' . Str::replaceFirst('driver_', '', $norm);
+                } else {
+                    $key = 'owner_' . $norm;
+                }
+                $r[$key] = self::formatValue($k, $v);
+
+                // alias: owner_driver_* -> owner_*
+                if (Str::startsWith($key, 'owner_driver_')) {
+                    $alias = 'owner_' . Str::replaceFirst('owner_driver_', '', $key);
+                    $r[$alias] = $r[$key];
+                }
             }
         }
 
         // COMPANY
         if ($company) {
             foreach ($company->getAttributes() as $k => $v) {
-                $r['company_' . Str::lower($k)] = self::formatValue($k, $v);
+                $norm = Str::lower($k);
+                $key  = Str::startsWith($norm, 'company_') ? $norm : 'company_' . $norm;
+                $r[$key] = self::formatValue($k, $v);
             }
         }
 
-        // DOCUMENT MANAGEMENT
+        // DOC MANAGEMENT
         if ($docMgmt) {
             foreach ($docMgmt->getAttributes() as $k => $v) {
-                $r['doc_' . Str::lower($k)] = self::formatValue($k, $v);
+                $norm = Str::lower($k);
+                $key  = Str::startsWith($norm, 'doc_') ? $norm : 'doc_' . $norm;
+                $r[$key] = self::formatValue($k, $v);
             }
         }
 
-        // [date] -> data do DocumentGenerated
+        // [date] -> data do DocumentGenerated (raw)
         try {
             $rawDate = $dg->getRawOriginal('date');
             $r['date'] = $rawDate
-                ? Carbon::parse($rawDate)->format(config('panel.date_format', 'd/m/Y'))
+                ? \Carbon\Carbon::parse($rawDate)->format(config('panel.date_format', 'd/m/Y'))
                 : '';
         } catch (\Throwable $e) {
             $r['date'] = '';
         }
 
-        // Extras úteis
+        // Extras
         $r['now']          = now()->format('d/m/Y H:i');
         $r['doc_id']       = (string)($docMgmt->id ?? '');
         $r['generated_id'] = (string)($dg->id ?? '');
 
         return $r;
     }
-
 
     /**
      * Substitui tags dentro de um texto.
