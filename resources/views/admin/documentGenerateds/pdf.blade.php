@@ -42,7 +42,6 @@
     </style>
 </head>
 <body>
-    <h1>{{ $title }}</h1>
 
     {{-- Corpo já com substituições realizadas pelo serviço --}}
     <div class="content">{!! $body_html !!}</div>
