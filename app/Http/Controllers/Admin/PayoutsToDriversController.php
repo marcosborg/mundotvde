@@ -7,11 +7,11 @@ use App\Models\ActivityLaunch;
 use App\Notifications\ActivityLaunchesSend;
 use App\Notifications\PaidReceipt;
 use App\Models\User;
-use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Driver;
+use Yajra\DataTables\Facades\DataTables;
 
 class PayoutsToDriversController extends Controller
 {
@@ -26,41 +26,89 @@ class PayoutsToDriversController extends Controller
     {
         abort_if(Gate::denies('payouts_to_driver_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $activityLaunches = ActivityLaunch::with([
+        $notSend = ActivityLaunch::with([
             'week',
             'driver',
-            'activityPerOperators.tvde_operator',
+            'activityPerOperators',
         ])
+            ->where('send', 0)
             ->get();
 
-        foreach ($activityLaunches as $activityLaunch) {
-            $sub = [
-                $activityLaunch->rent,
-                $activityLaunch->management,
-                $activityLaunch->insurance,
-                $activityLaunch->fuel,
-                $activityLaunch->garage,
-                $activityLaunch->management_fee,
-                $activityLaunch->tolls,
-                $activityLaunch->others,
-            ];
-            $sub = array_sum($sub);
-            $sum = [];
-            foreach ($activityLaunch->activityPerOperators as $activityPerOperator) {
-                $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
-            }
-            $sum = array_sum($sum);
-            $total = $sum - $sub + $activityLaunch->refund;
-            $activityLaunch->total = $total;
+        foreach ($notSend as $activityLaunch) {
+            $activityLaunch->total = $this->calculateTotal($activityLaunch);
         }
 
-        $send = $activityLaunches->where('send', 1);
-        $notSend = $activityLaunches->where('send', 0);
-
         return view('partials.paymentsToDrivers')->with([
-            'send' => $send,
             'notSend' => $notSend
         ]);
+    }
+
+    public function send(Request $request)
+    {
+        abort_if(Gate::denies('payouts_to_driver_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $query = ActivityLaunch::query()
+            ->where('activity_launches.send', 1)
+            ->leftJoin('tvde_weeks', 'activity_launches.week_id', '=', 'tvde_weeks.id')
+            ->leftJoin('drivers', 'activity_launches.driver_id', '=', 'drivers.id')
+            ->with(['activityPerOperators'])
+            ->select([
+                'activity_launches.*',
+                'tvde_weeks.start_date as week_start_date',
+                'tvde_weeks.end_date as week_end_date',
+                'tvde_weeks.number as week_number',
+                'drivers.name as driver_name',
+            ]);
+
+        $table = DataTables::of($query);
+
+        $table->editColumn('id', function ($row) {
+            return $row->id ?: '';
+        });
+
+        $table->editColumn('driver_name', function ($row) {
+            return $row->driver_name ?: '';
+        });
+
+        $table->editColumn('week_number', function ($row) {
+            return $row->week_number ?: '';
+        });
+
+        $table->editColumn('week_start_date', function ($row) {
+            return $row->week_start_date ?: '';
+        });
+
+        $table->editColumn('week_end_date', function ($row) {
+            return $row->week_end_date ?: '';
+        });
+
+        $table->addColumn('total', function ($row) {
+            return $this->calculateTotal($row);
+        });
+
+        if (Gate::allows('payouts_to_driver_edit')) {
+            $table->addColumn('pay_action', function ($row) {
+                if ($row->paid) {
+                    return '';
+                }
+
+                return '<button class="btn btn-success btn-sm" id="pay-' . $row->id . '" onclick="pay(' . $row->id . ')" type="button">Pagar</button>';
+            });
+        }
+
+        $table->addColumn('statement', function ($row) {
+            return '<a href="/admin/financial-statements/pdf/' . $row->id . '" class="btn btn-success btn-sm">Extrato</a>';
+        });
+
+        $rawColumns = ['statement'];
+
+        if (Gate::allows('payouts_to_driver_edit')) {
+            $rawColumns[] = 'pay_action';
+        }
+
+        $table->rawColumns($rawColumns);
+
+        return $table->make(true);
     }
 
     public function confirmSend(Request $request)
@@ -166,5 +214,29 @@ class PayoutsToDriversController extends Controller
 
         //SEND EMAIL
         $activityLaunch->driver->user->notify(new PaidReceipt());
+    }
+
+    private function calculateTotal(ActivityLaunch $activityLaunch): float
+    {
+        $sub = [
+            $activityLaunch->rent,
+            $activityLaunch->management,
+            $activityLaunch->insurance,
+            $activityLaunch->fuel,
+            $activityLaunch->garage,
+            $activityLaunch->management_fee,
+            $activityLaunch->tolls,
+            $activityLaunch->others,
+        ];
+
+        $sub = array_sum(array_map(function ($value) {
+            return $value ?: 0;
+        }, $sub));
+
+        $sum = $activityLaunch->activityPerOperators->sum(function ($activityPerOperator) {
+            return ($activityPerOperator->net ?: 0) - ($activityPerOperator->taxes ?: 0);
+        });
+
+        return $sum - $sub + ($activityLaunch->refund ?: 0);
     }
 }

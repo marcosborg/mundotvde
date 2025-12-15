@@ -326,6 +326,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::prefix('payouts-to-drivers')->group(
         function () {
             Route::get('ajax', 'PayoutsToDriversController@ajax');
+            Route::get('send', 'PayoutsToDriversController@send')->name('payouts-to-drivers.send');
             Route::get('/', 'PayoutsToDriversController@index')->name('payouts-to-drivers.index');
             Route::post('confirm-send', 'PayoutsToDriversController@confirmSend');
             Route::get('pay/{id}', 'PayoutsToDriversController@pay');

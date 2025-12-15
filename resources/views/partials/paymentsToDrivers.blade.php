@@ -13,7 +13,7 @@
             <button class="btn btn-primary btn-sm" style="margin-top: 20px;" onclick="selectAllToSend()">Selecionar tudo
                 para enviar</button>
             <div class="table-responsive" style="margin-top: 20px;">
-                <table class=" table table-bordered table-striped table-hover datatable">
+                <table class=" table table-bordered table-striped table-hover datatable datatable-payouts-not-send" id="datatable-payouts-not-send">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -54,7 +54,7 @@
         </div>
         <div role="tabpanel" class="tab-pane active" id="send">
             <div class="table-responsive" style="margin-top: 20px;">
-                <table class=" table table-bordered table-striped table-hover datatable">
+                <table class=" table table-bordered table-striped table-hover datatable datatable-payouts-send" id="datatable-payouts-send">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -69,36 +69,7 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach ($send as $item)
-                        <tr>
-                            <td>{{ $item->id }}</td>
-                            <td>{{ $item->driver->name }}</td>
-                            <td><span class="badge">{{ $item->week->number }}</span></td>
-                            <td>
-                                <small>{{ $item->week->start_date }}</small>
-                            </td>
-                            <td>
-                                <small>
-                                    {{$item->week->end_date}}
-                                </small>
-                            </td>
-                            <td>{{ $item->total }}</td>
-                            @can('payouts_to_driver_edit')
-                            <td>
-                                @if ($item->paid == 0)
-                                <button class="btn btn-success btn-sm" id="pay-{{ $item->id }}"
-                                    onclick="pay({{ $item->id }})" type="button">Pagar</button>
-                                @endif
-                            </td>
-                            @endcan
-                            <td>
-                                <a href="/admin/financial-statements/pdf/{{ $item->id }}"
-                                    class="btn btn-success btn-sm">Extrato</a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
