@@ -224,7 +224,10 @@
 
     ajax = () => {
         $.LoadingOverlay('show');
-        $.get('/admin/tvde-driver-managements/ajax').then((resp) => {
+        const params = new URLSearchParams(window.location.search);
+        const monthId = params.get('month_id');
+        const url = monthId ? `/admin/tvde-driver-managements/ajax?month_id=${monthId}` : '/admin/tvde-driver-managements/ajax';
+        $.get(url).then((resp) => {
             $.LoadingOverlay('hide');
             $('#tvdeDriverManagement').html(resp);
             $('.select2').select2();

@@ -8,6 +8,7 @@ use App\Models\ActivityPerOperator;
 use App\Models\Driver;
 use App\Models\TvdeYear;
 use App\Models\TvdeActivity;
+use App\Models\TvdeMonth;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,16 +22,41 @@ class TvdeDriverManagementController extends Controller
         return view('admin.tvdeDriverManagements.index');
     }
 
-    public function ajax()
+    public function ajax(Request $request)
     {
         $years = TvdeYear::with([
-            'months.weeks.activityLaunches.driver',
-            'months.weeks.activityLaunches.activityPerOperators.tvde_operator',
+            'months:id,name,year_id',
         ])
             ->orderBy('name')
             ->get();
 
-        return view('partials.tvdeDriverManagement', compact('years'));
+        $selectedMonthId = $request->query('month_id');
+
+        if ($selectedMonthId) {
+            $selectedMonth = TvdeMonth::find($selectedMonthId);
+        } else {
+            $selectedMonth = TvdeMonth::orderByDesc('id')->first();
+        }
+
+        if (!$selectedMonth) {
+            return view('partials.tvdeDriverManagement', [
+                'years' => $years,
+                'selectedMonth' => null,
+                'selectedMonthId' => null,
+            ]);
+        }
+
+        $selectedMonth = TvdeMonth::with([
+            'weeks.activityLaunches.driver.card',
+            'weeks.activityLaunches.driver.operation',
+            'weeks.activityLaunches.activityPerOperators.tvde_operator',
+        ])->find($selectedMonth->id);
+
+        return view('partials.tvdeDriverManagement', [
+            'years' => $years,
+            'selectedMonth' => $selectedMonth,
+            'selectedMonthId' => $selectedMonth->id,
+        ]);
     }
 
     public function drivers()
