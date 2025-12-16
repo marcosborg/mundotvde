@@ -36,7 +36,7 @@
                                             <input type="text" class="form-control" name="rent" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label>GestÇœo</label>
+                                            <label>Gest&atilde;o</label>
                                             <input type="text" class="form-control" name="management" value="25">
                                         </div>
                                         <div class="form-group">
@@ -44,7 +44,7 @@
                                             <input type="text" class="form-control" name="insurance" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label>Combustivel</label>
+                                            <label>Combust&iacute;vel</label>
                                             <input type="text" class="form-control" name="fuel" value="0">
                                         </div>
                                         <div class="form-group">
@@ -56,24 +56,24 @@
                                             <input type="text" class="form-control" name="garage" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label>CauÇõÇœo</label>
+                                            <label>Cau&ccedil;&atilde;o</label>
                                             <input type="text" class="form-control" name="management_fee" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label>DÇ¸bitos</label>
+                                            <label>D&eacute;bitos</label>
                                             <input type="text" class="form-control" name="others" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label>CrÇ¸ditos</label>
+                                            <label>Cr&eacute;ditos</label>
                                             <input type="text" class="form-control" name="refund" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label>QuilÇümetros iniciais</label>
+                                            <label>Quil&ocirc;metros iniciais</label>
                                             <input type="number" class="form-control" name="initial_kilometers"
                                                 value="">
                                         </div>
                                         <div class="form-group">
-                                            <label>QuilÇümetros finais</label>
+                                            <label>Quil&ocirc;metros finais</label>
                                             <input type="number" class="form-control" name="final_kilometers" value="">
                                         </div>
                                     </div>
@@ -111,7 +111,7 @@
                                         <input type="text" class="form-control" name="rent">
                                     </div>
                                     <div class="form-group">
-                                        <label>GestÇœo</label>
+                                        <label>Gest&atilde;o</label>
                                         <input type="text" class="form-control" name="management">
                                     </div>
                                     <div class="form-group">
@@ -119,7 +119,7 @@
                                         <input type="text" class="form-control" name="insurance">
                                     </div>
                                     <div class="form-group">
-                                        <label>Combustivel</label>
+                                        <label>Combust&iacute;vel</label>
                                         <input type="text" class="form-control" name="fuel">
                                     </div>
                                     <div class="form-group">
@@ -131,23 +131,23 @@
                                         <input type="text" class="form-control" name="garage">
                                     </div>
                                     <div class="form-group">
-                                        <label>CauÇõÇœo</label>
+                                        <label>Cau&ccedil;&atilde;o</label>
                                         <input type="text" class="form-control" name="management_fee">
                                     </div>
                                     <div class="form-group">
-                                        <label>DÇ¸bitos</label>
+                                        <label>D&eacute;bitos</label>
                                         <input type="text" class="form-control" name="others">
                                     </div>
                                     <div class="form-group">
-                                        <label>CrÇ¸ditos</label>
+                                        <label>Cr&eacute;ditos</label>
                                         <input type="text" class="form-control" name="refund">
                                     </div>
                                     <div class="form-group">
-                                        <label>QuilÇümetros iniciais</label>
+                                        <label>Quil&ocirc;metros iniciais</label>
                                         <input type="number" class="form-control" name="initial_kilometers" value="">
                                     </div>
                                     <div class="form-group">
-                                        <label>QuilÇümetros finais</label>
+                                        <label>Quil&ocirc;metros finais</label>
                                         <input type="number" class="form-control" name="final_kilometers" value="">
                                     </div>
                                 </div>
@@ -277,7 +277,7 @@
                             html += '<input type="text" name="create-' + tvde_operator.id + '-gross" class="form-control" value="' + earnings_one + '">';
                             html += '</div>';
                             html += '<div class="form-group">';
-                            html += '<label>LÇðquido</label>';
+                            html += '<label>L&iacute;quido</label>';
                             html += '<input type="text" name="create-' + tvde_operator.id + '-net" class="form-control" value="' + earnings_two + '">';
                             html += '</div>';
                             html += '<div class="form-group">';
@@ -340,7 +340,7 @@
                 html += '<input type="text" name="update-' + activityPerOperator.id + '-gross" class="form-control" value="' + activityPerOperator.gross + '">';
                 html += '</div>';
                 html += '<div class="form-group">';
-                html += '<label>LÇðquido</label>';
+                html += '<label>L&iacute;quido</label>';
                 html += '<input type="text" name="update-' + activityPerOperator.id + '-net" class="form-control" value="' + activityPerOperator.net + '">';
                 html += '</div>';
                 html += '<div class="form-group">';
@@ -358,7 +358,7 @@
     deleteActivityLaunch = (activity_louch_id) => {
         Swal.fire({
             title: 'Tem a certeza??',
-            text: "NÇœo poderÇ­ reverter esta aÇõÇœo!",
+            text: "N&atilde;o poder&aacute; reverter esta a&ccedil;&atilde;o!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sim, quero apagar!'
