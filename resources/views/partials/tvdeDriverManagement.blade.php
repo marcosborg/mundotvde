@@ -75,14 +75,14 @@
                                                 @endforeach
                                             </select>
                                             <span class="input-group-btn">
-                                            <button class="btn btn-success" type="submit">Lançar
+                                            <button class="btn btn-success" type="submit">LanÇõar
                                                 atividade</button>
                                             </span>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="col-md-4">
-                                    <a href="/admin/tvde-driver-managements/launch-all-activities/{{ $week->id }}" class="btn btn-primary">Lançar todas as atividades</a>
+                                    <a href="/admin/tvde-driver-managements/launch-all-activities/{{ $week->id }}" class="btn btn-primary">LanÇõar todas as atividades</a>
                                 </div>
                             </div>
                             <!-- Tab panes -->
@@ -101,19 +101,19 @@
                                         <thead>
                                             <tr>
                                                 <th>Condutor</td>
-                                                <th>Código</th>
-                                                <th>Cartão</th>
-                                                <th>Operação</th>
-                                                <th>Matrícula</th>
+                                                <th>CÇüdigo</th>
+                                                <th>CartÇœo</th>
+                                                <th>OperaÇõÇœo</th>
+                                                <th>MatrÇðcula</th>
                                                 <th>Aluguer</th>
-                                                <th>Gestão</th>
+                                                <th>GestÇœo</th>
                                                 <th>Seguro</th>
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
                                                 <th>Oficina</th>
-                                                <th>Caução</th>
-                                                <th>Débitos</th>
-                                                <th>Créditos</th>
+                                                <th>CauÇõÇœo</th>
+                                                <th>DÇ¸bitos</th>
+                                                <th>CrÇ¸ditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)
                                                 @if($key == 0)
                                                 @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
@@ -121,7 +121,7 @@
                                                     {{ $activityPerOperator->tvde_operator->name }} Bruto
                                                 </th>
                                                 <th>
-                                                    {{ $activityPerOperator->tvde_operator->name }} Líquido
+                                                    {{ $activityPerOperator->tvde_operator->name }} LÇðquido
                                                 </th>
                                                 <th>
                                                     {{ $activityPerOperator->tvde_operator->name }} Impostos
@@ -205,19 +205,19 @@
                                         <thead>
                                             <tr>
                                                 <th>Condutor</td>
-                                                <th>Código</th>
-                                                <th>Cartão</th>
-                                                <th>Operação</th>
-                                                <th>Matrícula</th>
+                                                <th>CÇüdigo</th>
+                                                <th>CartÇœo</th>
+                                                <th>OperaÇõÇœo</th>
+                                                <th>MatrÇðcula</th>
                                                 <th>Aluguer</td>
-                                                <th>Gestão</th>
+                                                <th>GestÇœo</th>
                                                 <th>Seguro</th>
                                                 <th>Combustivel</th>
                                                 <th>Portagens</th>
                                                 <th>Oficina</th>
-                                                <th>Caução</th>
-                                                <th>Débitos</th>
-                                                <th>Créditos</th>
+                                                <th>CauÇõÇœo</th>
+                                                <th>DÇ¸bitos</th>
+                                                <th>CrÇ¸ditos</th>
                                                 @foreach ($week->activityLaunches as $key => $activityLaunch)
                                                 @if($key == 0)
                                                 @foreach ($activityLaunch->activityPerOperators as $activityPerOperator)
@@ -225,7 +225,7 @@
                                                     {{ $activityPerOperator->tvde_operator->name }} Bruto
                                                 </th>
                                                 <th>
-                                                    {{ $activityPerOperator->tvde_operator->name }} Líquido
+                                                    {{ $activityPerOperator->tvde_operator->name }} LÇðquido
                                                 </th>
                                                 <th>
                                                     {{ $activityPerOperator->tvde_operator->name }} Impostos

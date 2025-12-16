@@ -7,6 +7,15 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Sincronização da base de dados
+
+- Defina as credenciais externas no `.env`: `DB_SANDBOX_*` e `DB_PRODUCTION_*` (host, port, database, username, password). Use `DB_SYNC_SOURCE` para escolher o perfil por omissão (`sandbox` ou `production`) e `DB_SYNC_TARGET_CONNECTION` se a ligação interna não for `mysql`.
+- Para a aplicação em runtime, escolha a origem definindo `DB_CONNECTION` como `mysql_sandbox` (local) ou `mysql_production` (cloud). Ambas as ligações usam as mesmas credenciais definidas acima.
+- O comando elimina todas as tabelas/views do destino e importa o dump externo via `mysqldump`/`mysql` (clientes MySQL precisam de estar no PATH).
+- Sandbox: `php artisan db:sync-external sandbox` (ou sem argumento para usar `DB_SYNC_SOURCE`).
+- Produção: `php artisan db:sync-external production --force` para evitar a confirmação interactiva em pipelines.
+- Sem `--force` o comando pede confirmação antes de substituir a base interna.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

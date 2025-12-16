@@ -63,6 +63,46 @@ return [
             ]) : [],
         ],
 
+        'mysql_sandbox' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_SANDBOX_HOST', '127.0.0.1'),
+            'port' => env('DB_SANDBOX_PORT', '3306'),
+            'database' => env('DB_SANDBOX_DATABASE', 'forge'),
+            'username' => env('DB_SANDBOX_USERNAME', 'forge'),
+            'password' => env('DB_SANDBOX_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'mysql_production' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_PRODUCTION_HOST', '127.0.0.1'),
+            'port' => env('DB_PRODUCTION_PORT', '3306'),
+            'database' => env('DB_PRODUCTION_DATABASE', 'forge'),
+            'username' => env('DB_PRODUCTION_USERNAME', 'forge'),
+            'password' => env('DB_PRODUCTION_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
