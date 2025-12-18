@@ -6,17 +6,17 @@
         $total = $years->count();
         @endphp
         @foreach ($years as $year)
-        <li role="presentation" class="{{ ($selectedMonth && $selectedMonth->tvde_year_id === $year->id) ? 'active' : '' }}"><a href="#year-{{ $year->id }}"
+        <li role="presentation" class="{{ ($selectedMonth && (int) $selectedMonth->year_id === (int) $year->id) ? 'active' : '' }}"><a href="#year-{{ $year->id }}"
                 aria-controls="year-{{ $year->id }}" role="tab" data-toggle="tab">{{ $year->name }}</a></li>
         @endforeach
     </ul>
 
     @php
-        $activeYearId = $selectedMonth ? $selectedMonth->year_id : null;
+        $activeYearId = $selectedMonth ? (int) $selectedMonth->year_id : null;
     @endphp
     <div class="tab-content" style="margin-top: 20px;">
         @foreach ($years as $year)
-        <div role="tabpanel" class="tab-pane {{ $activeYearId === $year->id ? 'active' : '' }}" id="year-{{ $year->id }}">
+        <div role="tabpanel" class="tab-pane {{ $activeYearId === (int) $year->id ? 'active' : '' }}" id="year-{{ $year->id }}">
             <div>
                 <ul class="nav nav-tabs" role="tablist">
                     @foreach ($year->months as $month)
@@ -28,7 +28,7 @@
                     @endforeach
                 </ul>
 
-                @if($selectedMonth && $selectedMonth->year_id === $year->id)
+                @if($selectedMonth && (int) $selectedMonth->year_id === (int) $year->id)
                 <div style="margin-top: 20px;">
                     <ul class="nav nav-tabs" role="tablist">
                         @php
