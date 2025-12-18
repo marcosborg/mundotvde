@@ -38,6 +38,16 @@ class TvdeDriverManagementController extends Controller
             $selectedMonth = TvdeMonth::orderByDesc('id')->first();
         }
 
+        // Temporary log to diagnose month loading in production (remove after use)
+        \Log::info('tvde-driver-managements ajax', [
+            'conn'      => config('database.default'),
+            'db'        => config('database.connections.' . config('database.default') . '.database'),
+            'month_id'  => $selectedMonthId,
+            'found'     => (bool) $selectedMonth,
+            'year_id'   => optional($selectedMonth)->year_id,
+            'weeks'     => $selectedMonth ? $selectedMonth->weeks()->count() : 0,
+        ]);
+
         if (!$selectedMonth) {
             return view('partials.tvdeDriverManagement', [
                 'years' => $years,
