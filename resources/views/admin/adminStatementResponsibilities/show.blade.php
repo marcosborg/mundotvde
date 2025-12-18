@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Contrato de Presta√ß√£o de Servi√ßos</title>
+    <title>Contrato de Presta«ı«úo de Servi«ıos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <style>
@@ -45,56 +45,56 @@
 </head>
 
 <body>
-    <h4 class="text-center">DECLARA√á√ÉO DE UTILIZA√á√ÉO E TERMO DE RESPONSABILIDADE DE<br>UTILIZA√á√ÉO DE VIATURA</h4>
+    <h4 class="text-center">DECLARA«Œ«üO DE UTILIZA«Œ«üO E TERMO DE RESPONSABILIDADE DE<br>UTILIZA«Œ«üO DE VIATURA</h4>
     <br>
     <br>
-    <p class="text-center"><strong>(Contrato de Presta√ß√£o de Servi√ßos n.¬∫ {{
-            $adminStatementResponsibility->contract_number }}/ {{
-            \Carbon\Carbon::parse($adminStatementResponsibility->driver->start_date)->year }})</strong></p>
+    @php
+        $driver = $adminStatementResponsibility->driver ?? null;
+        $contractNumber = $adminStatementResponsibility->contract_number ?? 'ó';
+        $startYear = $driver && $driver->start_date ? \Carbon\Carbon::parse($driver->start_date)->year : 'ó';
+    @endphp
+    <p class="text-center"><strong>(Contrato de Presta«ı«úo de Servi«ıos n.∂ß {{ $contractNumber }} / {{ $startYear }})</strong></p>
     <br>
-    <p>Opini√£o e Consenso Unipessoal Lda, com sede Largo do Rossio, n¬∫16 Loja A, 3515-138 Viseu, NIF: 515544930, neste
+    <p>Opini«úo e Consenso Unipessoal Lda, com sede Largo do Rossio, n∂ß16 Loja A, 3515-138 Viseu, NIF: 515544930, neste
         ato representada pelo seu Gerente com poderes para o ato, Sr. Orlando Rodrigo Castro Saraiva, declara para os
-        devidos efeitos que autoriza, {{ $adminStatementResponsibility->driver->name }},
-        com morada em {{ $adminStatementResponsibility->driver->address }}, {{
-        $adminStatementResponsibility->driver->zip }},
-        {{ $adminStatementResponsibility->driver->city }}, Portugal, com NIF {{
-        $adminStatementResponsibility->driver->driver_vat }}, a conduzir e utilizar a viatura
-        {{ $adminStatementResponsibility->driver->brand }}, {{
-        $adminStatementResponsibility->driver->model }}, {{
-        $adminStatementResponsibility->driver->license_plate }}, no √¢mbito do contrato de presta√ß√£o de
-        servi√ßos n.¬∫ {{ $adminStatementResponsibility->driver->admin_contract->number }}/ 2023, assinado entre as
+        devidos efeitos que autoriza, {{ $driver->name ?? 'ó' }},
+        com morada em {{ $driver->address ?? 'ó' }}, {{ $driver->zip ?? 'ó' }},
+        {{ $driver->city ?? 'ó' }}, Portugal, com NIF {{ $driver->driver_vat ?? 'ó' }}, a conduzir e utilizar a viatura
+        {{ $driver->brand ?? 'ó' }}, {{ $driver->model ?? 'ó' }}, {{
+        $driver->license_plate ?? 'ó' }}, no «Ωmbito do contrato de presta«ı«úo de
+        servi«ıos n.∂ß {{ optional($driver->admin_contract)->number ?? 'ó' }}/ 2023, assinado entre as
         partes.</p>
     <br>
-    <p class="text-center"><strong>Clausula 1.¬™</strong></p>
+    <p class="text-center"><strong>Clausula 1.∂¶</strong></p>
     <br>
-    <p>A utiliza√ß√£o do ve√≠culo acima referido, destina-se √∫nica e exclusivamente para fins da atividade de TVDE no
-        √¢mbito da Lei 45/2018 de 10/08 e Declara√ß√£o de Retifica√ß√£o de 10/08, transferes e passeios tur√≠sticos em
-        autom√≥vel conforme contrato de presta√ß√£o de servi√ßos n.{{
-        $adminStatementResponsibility->driver->admin_contract->number }}/ 2023, assinado entre as partes bem como para
-        seu uso pessoal quando n√£o estiver a ser utilizado no √¢mbito da atividade profissional.</p>
+    <p>A utiliza«ı«úo do ve«culo acima referido, destina-se «ßnica e exclusivamente para fins da atividade de TVDE no
+        «Ωmbito da Lei 45/2018 de 10/08 e Declara«ı«úo de Retifica«ı«úo de 10/08, transferes e passeios tur«sticos em
+        autom«¸vel conforme contrato de presta«ı«úo de servi«ıos n.{{
+        optional($driver->admin_contract)->number ?? 'ó' }}/ 2023, assinado entre as partes bem como para
+        seu uso pessoal quando n«úo estiver a ser utilizado no «Ωmbito da atividade profissional.</p>
     <br>
-    <p class="text-center"><strong>Clausula 2.¬™</strong></p>
+    <p class="text-center"><strong>Clausula 2.∂¶</strong></p>
     <br>
     <p>O condutor em cima identificada assume a total responsabilidade da viatura no que respeita a:</p>
     <ol>
-        <li>Preju√≠zos que a referida viatura possa eventualmente sofrer ou provocar a terceiros durante a utiliza√ß√£o por
+        <li>Preju«zos que a referida viatura possa eventualmente sofrer ou provocar a terceiros durante a utiliza«ı«úo por
             esta.</li>
-        <li>Pelas multas ou coimas que possam vir a ser aplicadas, na sequ√™ncia da utiliza√ß√£o do ve√≠culo, por infra√ß√£o
-            √†s disposi√ß√µes do C√≥digo de Estrada ou √† atividade.</li>
-        <li>Cumprimento integral de todas as leis inerentes h√° atividade TVDE (EX: autocolantes TVDE, d√≠stico de n√£o
+        <li>Pelas multas ou coimas que possam vir a ser aplicadas, na sequ«¶ncia da utiliza«ı«úo do ve«culo, por infra«ı«úo
+            «ˇs disposi«ı«Êes do C«¸digo de Estrada ou «ˇ atividade.</li>
+        <li>Cumprimento integral de todas as leis inerentes h«≠ atividade TVDE (EX: autocolantes TVDE, d«stico de n«úo
             fumador).</li>
     </ol>
     <br>
-    <p class="text-center"><strong>Clausula 3.¬™</strong></p>
+    <p class="text-center"><strong>Clausula 3.∂¶</strong></p>
     <br>
-    <p>Por ser da responsabilidade do condutor todos os custos associados √† utiliza√ß√£o e manuten√ß√£o do ve√≠culo, o mesmo
-        n√£o integrar√° contrapartida financeira.</p>
+    <p>Por ser da responsabilidade do condutor todos os custos associados «ˇ utiliza«ı«úo e manuten«ı«úo do ve«culo, o mesmo
+        n«úo integrar«≠ contrapartida financeira.</p>
     <br><br>
     @if ($adminStatementResponsibility->signed_at)
-    <p>Assinado eletronicamente em, {{ $adminStatementResponsibility->driver->city }}, {{
-        \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->day }} de {{
-        \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->formatLocalized('%B') }} de {{
-        \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->year }}</p>
+    <p>Assinado eletronicamente em, {{ $driver->city ?? 'ó' }}, {{
+        $adminStatementResponsibility->signed_at ? \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->day : 'ó' }} de {{
+        $adminStatementResponsibility->signed_at ? \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->formatLocalized('%B') : 'ó' }} de {{
+        $adminStatementResponsibility->signed_at ? \Carbon\Carbon::parse($adminStatementResponsibility->signed_at)->year : 'ó' }}</p>
     <br>
     <table style="width: 100%">
         <thead>
@@ -107,23 +107,23 @@
             <tr>
                 <td class="text-center">
                     <strong>Nome:</strong> Orlando Saraiva<br>
-                    <strong>T√≠tulo: </strong> Gerente<br>
+                    <strong>T«tulo: </strong> Gerente<br>
                     <strong><small><small>(Assinado eletronicamente)</small></small></strong>
                 </td>
                 <td class="text-center">
-                    <strong>Nome:</strong> {{ $adminStatementResponsibility->driver->name }}<br>
-                    <strong>T√≠tulo: </strong> Condutor<br>
+                    <strong>Nome:</strong> {{ $driver->name ?? 'ó' }}<br>
+                    <strong>T«tulo: </strong> Condutor<br>
                     <strong><small><small>(Assinado eletronicamente)</small></small></strong>
                 </td>
             </tr>
         </tbody>
     </table>
     @else
-    <p style="text-align: left; font-size: 11px;"><strong>A DECLARA√á√ÉO AINDA N√ÉO FOI ASSINADA. O CONDUTOR DEVE ASSINAR
-            EM "CONTRATOS/DECLARA√á√ÉO DE RESPONSABILIDADE".</strong></p>
+    <p style="text-align: left; font-size: 11px;"><strong>A DECLARA«Œ«üO AINDA N«üO FOI ASSINADA. O CONDUTOR DEVE ASSINAR
+            EM "CONTRATOS/DECLARA«Œ«üO DE RESPONSABILIDADE".</strong></p>
     @endif
     <footer>
-        Mundo TVDE ¬©
+        Mundo TVDE ∂∏
         <?php echo date("Y");?>
     </footer>
 </body>
