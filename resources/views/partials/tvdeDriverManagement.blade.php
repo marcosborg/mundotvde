@@ -32,11 +32,12 @@
                 <div style="margin-top: 20px;">
                     <ul class="nav nav-tabs" role="tablist">
                         @php
-                            $weekCount = 1;
-                            $weekTotal = $selectedMonth->weeks->count();
+                            $weeks = $selectedMonth->weeks->sortBy('number')->values();
+                            $activeWeek = $weeks->last();
+                            $activeWeekId = optional($activeWeek)->id;
                         @endphp
-                        @foreach ($selectedMonth->weeks as $week)
-                        <li role="presentation" class="{{ $weekCount++ == $weekTotal ? 'active' : '' }}"><a
+                        @foreach ($weeks as $week)
+                        <li role="presentation" class="{{ $week->id === $activeWeekId ? 'active' : '' }}"><a
                                 href="#week-{{ $week->id }}" aria-controls="week-{{ $week->id }}" role="tab"
                                 data-toggle="tab"><span class="badge">Semana {{ $week->number }}</span> de {{ \Carbon\Carbon::parse($week->start_date)->format('d') }} a
                                 {{ \Carbon\Carbon::parse($week->end_date)->format('d') }}</a></li>
@@ -45,17 +46,16 @@
                     
                     <div class="row" style="margin-top: 20px;">
                         <div class="col-md-4">
-                            @php $firstWeek = $selectedMonth->weeks->first(); @endphp
-                            @if($firstWeek)
+                            @if($activeWeek)
                             <form action="/admin/tvde-driver-managements/driver" method="post" class="driver_form">
                                 @csrf
-                                <input type="hidden" name="week_id" value="{{ $firstWeek->id }}">
+                                <input type="hidden" name="week_id" value="{{ $activeWeek->id }}">
                                 <div class="input-group">
                                     <select class="form-control select2" name="driver_id" required>
                                         <option selected disabled>Selecionar condutor</option>
                                         @php
-                                            $drivers = \App\Models\Driver::whereDoesntHave('activity_launches', function($query) use ($firstWeek){
-                                                $query->where('week_id', $firstWeek->id);
+                                            $drivers = \App\Models\Driver::whereDoesntHave('activity_launches', function($query) use ($activeWeek){
+                                                $query->where('week_id', $activeWeek->id);
                                             })
                                             ->get()->load('card');
                                         @endphp
@@ -72,19 +72,15 @@
                             @endif
                         </div>
                         <div class="col-md-4">
-                            @if($firstWeek)
-                            <a href="/admin/tvde-driver-managements/launch-all-activities/{{ $firstWeek->id }}" class="btn btn-primary">Lan&ccedil;ar todas as atividades</a>
+                            @if($activeWeek)
+                            <a href="/admin/tvde-driver-managements/launch-all-activities/{{ $activeWeek->id }}" class="btn btn-primary">Lan&ccedil;ar todas as atividades</a>
                             @endif
                         </div>
                     </div>
                     
                     <div class="tab-content" style="margin-top: 20px;">
-                        @php
-                        $weekCount = 1;
-                        $weekTotal = $selectedMonth->weeks->count();
-                        @endphp
-                        @foreach ($selectedMonth->weeks as $week)
-                        <div role="tabpanel" class="tab-pane {{ $weekCount++ == $weekTotal ? 'active' : '' }}"
+                        @foreach ($weeks as $week)
+                        <div role="tabpanel" class="tab-pane {{ $week->id === $activeWeekId ? 'active' : '' }}"
                             id="week-{{ $week->id }}">
                             <button class="btn btn-default" onclick="exportCsv('week_{{ $week->id }}')" style="margin-bottom: 20px;">Exportar CSV</button>
                             <div style="overflow-x: auto; width: 100%;">
