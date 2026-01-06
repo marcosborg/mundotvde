@@ -75,6 +75,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('user-alerts/read', 'UserAlertsController@read');
     Route::resource('user-alerts', 'UserAlertsController', ['except' => ['edit', 'update']]);
 
+    // Table Preferences
+    Route::get('table-preferences/{tableKey}', 'UserTablePreferencesController@show')->name('table-preferences.show');
+    Route::post('table-preferences/{tableKey}', 'UserTablePreferencesController@store')->name('table-preferences.store');
+
     // Faq Category
     Route::delete('faq-categories/destroy', 'FaqCategoryController@massDestroy')->name('faq-categories.massDestroy');
     Route::post('faq-categories/parse-csv-import', 'FaqCategoryController@parseCsvImport')->name('faq-categories.parseCsvImport');

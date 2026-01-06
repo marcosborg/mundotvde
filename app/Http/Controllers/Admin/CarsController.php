@@ -71,8 +71,17 @@ class CarsController extends Controller
             $table->editColumn('position', function ($row) {
                 return $row->position ? $row->position : '';
             });
+            $table->editColumn('is_active', function ($row) {
+                if ($row->is_active === null) {
+                    return '';
+                }
 
-            $table->rawColumns(['actions', 'placeholder', 'photo']);
+                return $row->is_active
+                    ? '<span class="label label-success">Sim</span>'
+                    : '<span class="label label-default">Nao</span>';
+            });
+
+            $table->rawColumns(['actions', 'placeholder', 'photo', 'is_active']);
 
             return $table->make(true);
         }

@@ -21,6 +21,10 @@
                     {{ trans('cruds.driver.title_singular') }} {{ trans('global.list') }}
                 </div>
                 <div class="panel-body">
+                    <div class="datatable-columns-panel" data-table-key="drivers" data-table-selector=".datatable-Driver" style="margin-bottom: 10px;">
+                        <button type="button" class="btn btn-default btn-xs" data-toggle="datatable-columns">Colunas visiveis</button>
+                        <div class="datatable-columns-menu" style="display: none; margin-top: 10px;"></div>
+                    </div>
                     <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Driver">
                         <thead>
                             <tr>
@@ -221,6 +225,7 @@
     pageLength: 100,
   };
   let table = $('.datatable-Driver').DataTable(dtOverrideGlobals);
+  initDataTableColumnPreferences(table, $('.datatable-columns-panel'));
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();

@@ -25,6 +25,10 @@ class StoreCarRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'is_active' => [
+                'boolean',
+                'nullable',
+            ],
         ];
     }
 }

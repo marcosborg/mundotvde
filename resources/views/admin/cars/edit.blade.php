@@ -61,6 +61,16 @@
                             @endif
                             <span class="help-block">{{ trans('cruds.car.fields.position_helper') }}</span>
                         </div>
+                        <div class="form-group {{ $errors->has('is_active') ? 'has-error' : '' }}">
+                            <div>
+                                <input type="hidden" name="is_active" value="0">
+                                <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $car->is_active) ? 'checked' : '' }}>
+                                <label for="is_active" style="font-weight: 400">Anuncio ativo</label>
+                            </div>
+                            @if($errors->has('is_active'))
+                                <span class="help-block" role="alert">{{ $errors->first('is_active') }}</span>
+                            @endif
+                        </div>
                         <div class="form-group">
                             <button class="btn btn-danger" type="submit">
                                 {{ trans('global.save') }}

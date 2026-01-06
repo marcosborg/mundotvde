@@ -25,6 +25,10 @@ class UpdateCarRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'is_active' => [
+                'boolean',
+                'nullable',
+            ],
         ];
     }
 }

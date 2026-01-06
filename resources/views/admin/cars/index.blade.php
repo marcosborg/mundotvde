@@ -46,6 +46,9 @@
                                     {{ trans('cruds.car.fields.position') }}
                                 </th>
                                 <th>
+                                    Ativo
+                                </th>
+                                <th>
                                     &nbsp;
                                 </th>
                             </tr>
@@ -110,6 +113,7 @@
 { data: 'price', name: 'price' },
 { data: 'photo', name: 'photo', sortable: false, searchable: false },
 { data: 'position', name: 'position' },
+{ data: 'is_active', name: 'is_active', searchable: false },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

@@ -34,12 +34,12 @@ class PublicController extends Controller
 
     public function cars()
     {
-        return Car::orderBy('position', 'asc')->get();
+        return Car::where('is_active', 1)->orderBy('position', 'asc')->get();
     }
 
     public function car($car_id)
     {
-        return Car::find($car_id);
+        return Car::where('is_active', 1)->find($car_id);
     }
 
     public function standCars()

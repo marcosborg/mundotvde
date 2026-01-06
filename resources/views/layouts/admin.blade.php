@@ -254,7 +254,11 @@
         className: 'btn-default',
         text: copyButtonTrans,
         exportOptions: {
-          columns: ':visible'
+          columns: ':visible',
+          modifier: {
+            search: 'applied',
+            order: 'applied'
+          }
         }
       },
       {
@@ -262,7 +266,11 @@
         className: 'btn-default',
         text: csvButtonTrans,
         exportOptions: {
-          columns: ':visible'
+          columns: ':visible',
+          modifier: {
+            search: 'applied',
+            order: 'applied'
+          }
         }
       },
       {
@@ -270,7 +278,11 @@
         className: 'btn-default',
         text: excelButtonTrans,
         exportOptions: {
-          columns: ':visible'
+          columns: ':visible',
+          modifier: {
+            search: 'applied',
+            order: 'applied'
+          }
         }
       },
       {
@@ -278,7 +290,11 @@
         className: 'btn-default',
         text: pdfButtonTrans,
         exportOptions: {
-          columns: ':visible'
+          columns: ':visible',
+          modifier: {
+            search: 'applied',
+            order: 'applied'
+          }
         }
       },
       {
@@ -286,7 +302,11 @@
         className: 'btn-default',
         text: printButtonTrans,
         exportOptions: {
-          columns: ':visible'
+          columns: ':visible',
+          modifier: {
+            search: 'applied',
+            order: 'applied'
+          }
         }
       },
       {
@@ -302,6 +322,104 @@
 
   $.fn.dataTable.ext.classes.sPageButton = '';
 });
+
+    </script>
+    <script>
+        function initDataTableColumnPreferences(table, panel) {
+    if (!table || !panel || !panel.length) {
+        return;
+    }
+
+    var tableKey = panel.data('table-key');
+    var menu = panel.find('.datatable-columns-menu');
+    var toggleButton = panel.find('[data-toggle="datatable-columns"]');
+    var columnCount = table.columns().count();
+    var excludeIndexes = [0, columnCount - 1];
+
+    function buildMenu() {
+        menu.empty();
+        table.columns().every(function (index) {
+            var headerText = $(this.header()).text().trim();
+            if (!headerText || excludeIndexes.indexOf(index) !== -1) {
+                return;
+            }
+
+            var checkboxId = 'colvis-' + tableKey + '-' + index;
+            var isVisible = this.visible();
+            var item = $('<div class="checkbox" style="margin: 0 0 6px 0;"></div>');
+            var label = $('<label></label>').attr('for', checkboxId).text(' ' + headerText);
+            var checkbox = $('<input type="checkbox">')
+                .attr('id', checkboxId)
+                .attr('data-column-index', index)
+                .prop('checked', isVisible);
+
+            label.prepend(checkbox);
+            item.append(label);
+            menu.append(item);
+        });
+    }
+
+    function savePreferences() {
+        var visible = [];
+        table.columns().every(function (index) {
+            if (excludeIndexes.indexOf(index) !== -1) {
+                return;
+            }
+            if (this.visible()) {
+                visible.push(index);
+            }
+        });
+
+        $.ajax({
+            headers: { 'x-csrf-token': _token },
+            method: 'POST',
+            url: '/admin/table-preferences/' + tableKey,
+            data: { visible: visible }
+        });
+    }
+
+    toggleButton.on('click', function () {
+        menu.toggle();
+    });
+
+    menu.on('change', 'input[type="checkbox"]', function () {
+        var columnIndex = parseInt($(this).data('column-index'), 10);
+        var isVisible = $(this).is(':checked');
+        table.column(columnIndex).visible(isVisible, false);
+        table.columns.adjust().draw(false);
+        savePreferences();
+    });
+
+    table.on('column-visibility.dt', function () {
+        buildMenu();
+        savePreferences();
+    });
+
+    buildMenu();
+
+    if (tableKey) {
+        $.get('/admin/table-preferences/' + tableKey, function (response) {
+            if (!response || !response.visible) {
+                return;
+            }
+
+            var visibleIndexes = response.visible.map(function (value) {
+                return parseInt(value, 10);
+            });
+
+            table.columns().every(function (index) {
+                if (excludeIndexes.indexOf(index) !== -1) {
+                    return;
+                }
+                var shouldShow = visibleIndexes.indexOf(index) !== -1;
+                this.visible(shouldShow, false);
+            });
+
+            table.columns.adjust().draw(false);
+            buildMenu();
+        });
+    }
+}
 
     </script>
     <script>

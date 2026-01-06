@@ -11,7 +11,7 @@ class CarsController extends Controller
     public function index()
     {
 
-        $cars = Car::orderBy('position', 'asc')->get();
+        $cars = Car::where('is_active', 1)->orderBy('position', 'asc')->get();
 
         return view('website.cars')->with('cars', $cars);
     }

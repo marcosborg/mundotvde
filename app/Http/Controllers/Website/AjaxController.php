@@ -11,7 +11,7 @@ class AjaxController extends Controller
 {
     public function car(Request $request)
     {
-        return Car::find($request->car_id);
+        return Car::where('is_active', 1)->find($request->car_id);
     }
 
     public function standCars(Request $request)
