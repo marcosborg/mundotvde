@@ -253,6 +253,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('drivers/destroy', 'DriverController@massDestroy')->name('drivers.massDestroy');
     Route::post('drivers/parse-csv-import', 'DriverController@parseCsvImport')->name('drivers.parseCsvImport');
     Route::post('drivers/process-csv-import', 'DriverController@processCsvImport')->name('drivers.processCsvImport');
+    Route::post('drivers/datatable', 'DriverController@index')->name('drivers.datatable');
     Route::resource('drivers', 'DriverController');
 
     // Card

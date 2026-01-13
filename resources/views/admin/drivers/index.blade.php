@@ -201,7 +201,11 @@
     serverSide: true,
     retrieve: true,
     aaSorting: [],
-    ajax: "{{ route('admin.drivers.index') }}",
+    ajax: {
+      url: "{{ route('admin.drivers.datatable') }}",
+      type: 'POST',
+      headers: {'x-csrf-token': _token},
+    },
     columns: [
       { data: 'placeholder', name: 'placeholder' },
 { data: 'id', name: 'id' },
