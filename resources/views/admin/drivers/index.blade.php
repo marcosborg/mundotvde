@@ -65,6 +65,9 @@
                                     {{ trans('cruds.driver.fields.end_date') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.reason') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.driver.fields.phone') }}
                                 </th>
                                 <th>
@@ -107,6 +110,9 @@
                                     {{ trans('cruds.driver.fields.driver_license') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.driver_license_expiration_date') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.driver.fields.driver_vat') }}
                                 </th>
                                 <th>
@@ -119,6 +125,9 @@
                                     {{ trans('cruds.driver.fields.license_plate') }}
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.vehicle_date') }}
+                                </th>
+                                <th>
                                     {{ trans('cruds.driver.fields.brand') }}
                                 </th>
                                 <th>
@@ -126,6 +135,15 @@
                                 </th>
                                 <th>
                                     {{ trans('cruds.driver.fields.notes') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.driver.fields.created_at') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.driver.fields.updated_at') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.driver.fields.deleted_at') }}
                                 </th>
                                 <th>
                                     &nbsp;
@@ -197,6 +215,7 @@
 { data: 'local_name', name: 'local.name' },
 { data: 'start_date', name: 'start_date' },
 { data: 'end_date', name: 'end_date' },
+{ data: 'reason', name: 'reason' },
 { data: 'phone', name: 'phone' },
 { data: 'payment_vat', name: 'payment_vat' },
 { data: 'citizen_card', name: 'citizen_card' },
@@ -211,13 +230,18 @@
 { data: 'city', name: 'city' },
 { data: 'state_name', name: 'state.name' },
 { data: 'driver_license', name: 'driver_license' },
+{ data: 'driver_license_expiration_date', name: 'driver_license_expiration_date' },
 { data: 'driver_vat', name: 'driver_vat' },
 { data: 'uber_uuid', name: 'uber_uuid' },
 { data: 'bolt_name', name: 'bolt_name' },
 { data: 'license_plate', name: 'license_plate' },
+{ data: 'vehicle_date', name: 'vehicle_date' },
 { data: 'brand', name: 'brand' },
 { data: 'model', name: 'model' },
 { data: 'notes', name: 'notes' },
+{ data: 'created_at', name: 'created_at' },
+{ data: 'updated_at', name: 'updated_at' },
+{ data: 'deleted_at', name: 'deleted_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

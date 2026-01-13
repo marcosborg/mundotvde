@@ -133,6 +133,11 @@ class DriverController extends Controller
             $table->editColumn('driver_license', function ($row) {
                 return $row->driver_license ? $row->driver_license : '';
             });
+            $table->editColumn('driver_license_expiration_date', function ($row) {
+                return $row->driver_license_expiration_date
+                    ? Carbon::parse($row->driver_license_expiration_date)->format('Y-m-d')
+                    : '';
+            });
             $table->editColumn('driver_vat', function ($row) {
                 return $row->driver_vat ? $row->driver_vat : '';
             });
@@ -145,11 +150,25 @@ class DriverController extends Controller
             $table->editColumn('license_plate', function ($row) {
                 return $row->license_plate ? $row->license_plate : '';
             });
+            $table->editColumn('vehicle_date', function ($row) {
+                return $row->vehicle_date
+                    ? Carbon::parse($row->vehicle_date)->format('Y-m-d')
+                    : '';
+            });
             $table->editColumn('brand', function ($row) {
                 return $row->brand ? $row->brand : '';
             });
             $table->editColumn('model', function ($row) {
                 return $row->model ? $row->model : '';
+            });
+            $table->editColumn('created_at', function ($row) {
+                return $row->created_at ? $row->created_at : '';
+            });
+            $table->editColumn('updated_at', function ($row) {
+                return $row->updated_at ? $row->updated_at : '';
+            });
+            $table->editColumn('deleted_at', function ($row) {
+                return $row->deleted_at ? $row->deleted_at : '';
             });
             $table->editColumn('birth_date', function ($row) {
                 return $row->birth_date
