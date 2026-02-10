@@ -25,25 +25,16 @@
 
                                     </th>
                                     <th>
-                                        {{ trans('cruds.recommendation.fields.id') }}
-                                    </th>
-                                    <th>
                                         {{ trans('cruds.recommendation.fields.driver') }}
-                                    </th>
-                                    <th>
-                                        {{ trans('cruds.recommendation.fields.recommendation_status') }}
                                     </th>
                                     <th>
                                         {{ trans('cruds.recommendation.fields.name') }}
                                     </th>
                                     <th>
-                                        {{ trans('cruds.recommendation.fields.email') }}
+                                        Data
                                     </th>
-                                    <th>
-                                        {{ trans('cruds.recommendation.fields.phone') }}
-                                    </th>
-                                    <th>
-                                        {{ trans('cruds.recommendation.fields.city') }}
+                                    <th style="min-width: 280px;">
+                                        Observações
                                     </th>
                                     <th>
                                         &nbsp;
@@ -57,33 +48,18 @@
 
                                         </td>
                                         <td>
-                                            {{ $recommendation->id ?? '' }}
-                                        </td>
-                                        <td>
                                             {{ $recommendation->driver->name ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $recommendation->recommendation_status->name ?? '' }}
                                         </td>
                                         <td>
                                             {{ $recommendation->name ?? '' }}
                                         </td>
-                                        <td>
-                                            {{ $recommendation->email ?? '' }}
+                                        <td data-order="{{ optional($recommendation->created_at)->timestamp ?? 0 }}">
+                                            {{ optional($recommendation->created_at)->format('d/m/Y') }}
+                                        </td>
+                                        <td style="max-width: 420px; white-space: normal; word-break: break-word;">
+                                            {!! nl2br(e(strip_tags($recommendation->comments ?? ''))) !!}
                                         </td>
                                         <td>
-                                            {{ $recommendation->phone ?? '' }}
-                                        </td>
-                                        <td>
-                                            {{ $recommendation->city ?? '' }}
-                                        </td>
-                                        <td>
-                                            @can('recommendation_show')
-                                                <a class="btn btn-xs btn-primary" href="{{ route('admin.recommendations.show', $recommendation->id) }}">
-                                                    {{ trans('global.view') }}
-                                                </a>
-                                            @endcan
-
                                             @can('recommendation_edit')
                                                 <a class="btn btn-xs btn-info" href="{{ route('admin.recommendations.edit', $recommendation->id) }}">
                                                     {{ trans('global.edit') }}
@@ -151,7 +127,7 @@
 
   $.extend(true, $.fn.dataTable.defaults, {
     orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
+    order: [[ 3, 'desc' ]],
     pageLength: 100,
   });
   let table = $('.datatable-Recommendation:not(.ajaxTable)').DataTable({ buttons: dtButtons })
