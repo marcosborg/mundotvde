@@ -18,6 +18,10 @@
                         <tr>
                             <th>ID</th>
                             <th>Condutor</th>
+                            <th>Código</th>
+                            <th>Operação</th>
+                            <th>Matrícula</th>
+                            <th>Email</th>
                             <th>Semana</th>
                             <th>Valor</th>
                             <th></th>
@@ -29,12 +33,16 @@
                         <tr>
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->driver->name }}</td>
+                            <td>{{ $item->driver->code ?? '' }}</td>
+                            <td>{{ $item->driver->operation->name ?? '' }}</td>
+                            <td>{{ $item->driver->license_plate ?? '' }}</td>
+                            <td>{{ $item->driver->email ?? '' }}</td>
                             <td><span class="badge">{{ $item->week->number }}</span> <small>de {{
                                     \Carbon\Carbon::parse($item->week->start_date)->format('d-m-Y')
                                     }} a {{
                                     \Carbon\Carbon::parse($item->week->end_date)->format('d-m-Y')
                                     }}</small></td>
-                            <td>{{ $item->total }}</td>
+                            <td>{{ number_format($item->total, 2, ',', '.') }}</td>
                             <td><a href="/admin/financial-statements/pdf/{{ $item->id }}/stream"
                                     class="btn btn-success btn-sm">Extrato</a></td>
                             <td>
@@ -59,6 +67,10 @@
                         <tr>
                             <th>ID</th>
                             <th>Condutor</th>
+                            <th>Código</th>
+                            <th>Operação</th>
+                            <th>Matrícula</th>
+                            <th>Email</th>
                             <th>Semana</th>
                             <th>De</th>
                             <th>Até</th>

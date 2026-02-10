@@ -62,7 +62,7 @@
                 visible: false
             }],
             order: [
-                [3, 'desc']
+                [7, 'desc']
             ],
             select: false
         });
@@ -88,6 +88,26 @@
             {
                 data: 'driver_name',
                 name: 'drivers.name',
+                orderable: false
+            },
+            {
+                data: 'driver_code',
+                name: 'drivers.code',
+                orderable: false
+            },
+            {
+                data: 'driver_operation',
+                name: 'operations.name',
+                orderable: false
+            },
+            {
+                data: 'driver_license_plate',
+                name: 'drivers.license_plate',
+                orderable: false
+            },
+            {
+                data: 'driver_email',
+                name: 'drivers.email',
                 orderable: false
             },
             {
@@ -133,7 +153,7 @@
             ajax: payoutsSendUrl,
             columns: columns,
             order: [
-                [3, 'desc']
+                [7, 'desc']
             ],
             select: false,
             columnDefs: [{

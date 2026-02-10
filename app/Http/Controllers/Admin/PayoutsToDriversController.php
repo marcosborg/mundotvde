@@ -28,7 +28,7 @@ class PayoutsToDriversController extends Controller
 
         $notSend = ActivityLaunch::with([
             'week',
-            'driver',
+            'driver.operation',
             'activityPerOperators',
         ])
             ->where('send', 0)
@@ -51,6 +51,7 @@ class PayoutsToDriversController extends Controller
             ->where('activity_launches.send', 1)
             ->leftJoin('tvde_weeks', 'activity_launches.week_id', '=', 'tvde_weeks.id')
             ->leftJoin('drivers', 'activity_launches.driver_id', '=', 'drivers.id')
+            ->leftJoin('operations', 'drivers.operation_id', '=', 'operations.id')
             ->with(['activityPerOperators'])
             ->select([
                 'activity_launches.*',
@@ -58,6 +59,10 @@ class PayoutsToDriversController extends Controller
                 'tvde_weeks.end_date as week_end_date',
                 'tvde_weeks.number as week_number',
                 'drivers.name as driver_name',
+                'drivers.code as driver_code',
+                'operations.name as driver_operation',
+                'drivers.license_plate as driver_license_plate',
+                'drivers.email as driver_email',
             ]);
 
         $table = DataTables::of($query);
@@ -68,6 +73,22 @@ class PayoutsToDriversController extends Controller
 
         $table->editColumn('driver_name', function ($row) {
             return $row->driver_name ?: '';
+        });
+
+        $table->editColumn('driver_code', function ($row) {
+            return $row->driver_code ?: '';
+        });
+
+        $table->editColumn('driver_operation', function ($row) {
+            return $row->driver_operation ?: '';
+        });
+
+        $table->editColumn('driver_license_plate', function ($row) {
+            return $row->driver_license_plate ?: '';
+        });
+
+        $table->editColumn('driver_email', function ($row) {
+            return $row->driver_email ?: '';
         });
 
         $table->editColumn('week_number', function ($row) {
@@ -83,7 +104,7 @@ class PayoutsToDriversController extends Controller
         });
 
         $table->addColumn('total', function ($row) {
-            return $this->calculateTotal($row);
+            return number_format($this->calculateTotal($row), 2, ',', '.');
         });
 
         if (Gate::allows('payouts_to_driver_edit')) {
