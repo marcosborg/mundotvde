@@ -20,7 +20,7 @@
 </script>
 <script>
     const payoutsSendUrl = "{{ route('admin.payouts-to-drivers.send') }}";
-    const canEditPayouts = {{ Gate::allows('payouts_to_driver_edit') ? 'true' : 'false' }};
+    const canPayPayouts = {{ Gate::allows('pay_payout_access') ? 'true' : 'false' }};
     let sendDataTable = null;
 
     $(() => {
@@ -131,7 +131,7 @@
             },
         ];
 
-        if (canEditPayouts) {
+        if (canPayPayouts) {
             columns.push({
                 data: 'pay_action',
                 name: 'pay_action',

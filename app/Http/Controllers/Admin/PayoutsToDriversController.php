@@ -107,7 +107,7 @@ class PayoutsToDriversController extends Controller
             return number_format($this->calculateTotal($row), 2, ',', '.');
         });
 
-        if (Gate::allows('payouts_to_driver_edit')) {
+        if (Gate::allows('pay_payout_access')) {
             $table->addColumn('pay_action', function ($row) {
                 if ($row->paid) {
                     return '';
@@ -123,7 +123,7 @@ class PayoutsToDriversController extends Controller
 
         $rawColumns = ['statement'];
 
-        if (Gate::allows('payouts_to_driver_edit')) {
+        if (Gate::allows('pay_payout_access')) {
             $rawColumns[] = 'pay_action';
         }
 
@@ -227,6 +227,8 @@ class PayoutsToDriversController extends Controller
 
     public function pay(Request $request)
     {
+        abort_if(Gate::denies('pay_payout_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $activityLaunch = ActivityLaunch::with([
             'driver.user'
         ])->where('id', $request->id)->first();

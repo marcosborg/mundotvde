@@ -17,6 +17,15 @@
                                     Condutor
                                 </th>
                                 <th>
+                                    {{ trans('cruds.driver.fields.code') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.driver.fields.operation') }}
+                                </th>
+                                <th>
+                                    {{ trans('cruds.driver.fields.license_plate') }}
+                                </th>
+                                <th>
                                     Iban
                                 </th>
                                 <th>
@@ -32,6 +41,9 @@
                             <tr>
                                 <td style="display: none"></td>
                                 <td>{{ $driver->name }}</td>
+                                <td>{{ $driver->code ?? '' }}</td>
+                                <td>{{ $driver->operation->name ?? '' }}</td>
+                                <td>{{ $driver->license_plate ?? '' }}</td>
                                 <td>{{ $driver->iban }}</td>
                                 <td>{{ $driver->email }}</td>
                                 <td>{{ $driver->balance }}</td>

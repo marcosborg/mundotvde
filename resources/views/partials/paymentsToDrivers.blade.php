@@ -75,7 +75,7 @@
                             <th>De</th>
                             <th>Até</th>
                             <th>Valor</th>
-                            @can('payouts_to_driver_edit')
+                            @can('pay_payout_access')
                             <th></th>
                             @endcan
                             <th></th>

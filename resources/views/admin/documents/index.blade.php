@@ -31,6 +31,15 @@
                                         {{ trans('cruds.document.fields.driver') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.driver.fields.code') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('cruds.driver.fields.operation') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('cruds.driver.fields.license_plate') }}
+                                    </th>
+                                    <th>
                                         {{ trans('cruds.driver.fields.email') }}
                                     </th>
                                     <th>
@@ -85,6 +94,15 @@
                                         </td>
                                         <td>
                                             {{ $document->driver->name ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $document->driver->code ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $document->driver->operation->name ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $document->driver->license_plate ?? '' }}
                                         </td>
                                         <td>
                                             {{ $document->driver->email ?? '' }}

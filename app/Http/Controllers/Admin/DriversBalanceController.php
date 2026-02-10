@@ -15,6 +15,7 @@ class DriversBalanceController extends Controller
         abort_if(Gate::denies('drivers_balance_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $drivers = Driver::with([
+            'operation',
             'activity_launches.activityPerOperators'
         ])
             ->whereHas('activity_launches', function ($query) {

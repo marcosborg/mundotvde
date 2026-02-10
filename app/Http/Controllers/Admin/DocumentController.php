@@ -24,7 +24,7 @@ class DocumentController extends Controller
     {
         abort_if(Gate::denies('document_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $documents = Document::with(['driver', 'media'])->get();
+        $documents = Document::with(['driver.operation', 'media'])->get();
 
         return view('admin.documents.index', compact('documents'));
     }
