@@ -149,7 +149,9 @@ class InspectionController extends Controller
         $this->ensureAdmin();
 
         $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicle_items,id',
+            'vehicle_id' => 'nullable|exists:vehicle_items,id',
+            'vehicle_ids' => 'nullable|array',
+            'vehicle_ids.*' => 'integer|exists:vehicle_items,id',
             'template_id' => 'required|exists:inspection_templates,id',
             'frequency_days' => 'required|integer|min:1|max:365',
             'due_time' => 'required|date_format:H:i',
@@ -157,6 +159,16 @@ class InspectionController extends Controller
             'is_active' => 'nullable|boolean',
             'reminder_policy_json' => 'nullable|string',
         ]);
+
+        $vehicleIds = collect($data['vehicle_ids'] ?? [])
+            ->push($data['vehicle_id'] ?? null)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($vehicleIds->isEmpty()) {
+            return back()->withErrors(['vehicle_ids' => 'Selecione pelo menos uma viatura.'])->withInput();
+        }
 
         $policy = null;
         if (!empty($data['reminder_policy_json'])) {
@@ -166,17 +178,21 @@ class InspectionController extends Controller
             }
         }
 
-        InspectionSchedule::create([
-            'vehicle_id' => $data['vehicle_id'],
-            'template_id' => $data['template_id'],
-            'frequency_days' => $data['frequency_days'],
-            'due_time' => $data['due_time'],
-            'grace_hours' => $data['grace_hours'],
-            'is_active' => (bool) ($data['is_active'] ?? true),
-            'reminder_policy_json' => $policy,
-        ]);
+        $created = 0;
+        foreach ($vehicleIds as $vehicleId) {
+            InspectionSchedule::create([
+                'vehicle_id' => $vehicleId,
+                'template_id' => $data['template_id'],
+                'frequency_days' => $data['frequency_days'],
+                'due_time' => $data['due_time'],
+                'grace_hours' => $data['grace_hours'],
+                'is_active' => (bool) ($data['is_active'] ?? true),
+                'reminder_policy_json' => $policy,
+            ]);
+            $created++;
+        }
 
-        return redirect()->route('admin.inspections.schedules')->with('message', 'Plano criado com sucesso.');
+        return redirect()->route('admin.inspections.schedules')->with('message', "Plano criado com sucesso para {$created} viatura(s).");
     }
 
     public function scheduleUpdate(Request $request, InspectionSchedule $schedule)

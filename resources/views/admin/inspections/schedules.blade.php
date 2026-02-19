@@ -15,13 +15,13 @@
                 @csrf
                 <div class="row">
                     <div class="col-md-3 form-group">
-                        <label>Viatura</label>
-                        <select name="vehicle_id" class="form-control" required>
-                            <option value="">Selecionar</option>
+                        <label>Viaturas (1 ou várias)</label>
+                        <select name="vehicle_ids[]" class="form-control" multiple size="8" required>
                             @foreach($vehicles as $vehicle)
                                 <option value="{{ $vehicle->id }}">{{ $vehicle->license_plate }} - {{ $vehicle->driver->name ?? 'Sem motorista' }}</option>
                             @endforeach
                         </select>
+                        <small class="text-muted">Use CTRL/CMD para selecionar múltiplas viaturas.</small>
                     </div>
                     <div class="col-md-3 form-group">
                         <label>Template</label>

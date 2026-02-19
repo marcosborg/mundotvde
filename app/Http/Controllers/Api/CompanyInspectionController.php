@@ -104,7 +104,9 @@ class CompanyInspectionController extends Controller
         $this->ensureCompanyAccess($request);
 
         $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicle_items,id',
+            'vehicle_id' => 'nullable|exists:vehicle_items,id',
+            'vehicle_ids' => 'nullable|array',
+            'vehicle_ids.*' => 'integer|exists:vehicle_items,id',
             'template_id' => 'required|exists:inspection_templates,id',
             'frequency_days' => 'required|integer|min:1|max:365',
             'due_time' => 'required|date_format:H:i',
@@ -113,12 +115,36 @@ class CompanyInspectionController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        $schedule = InspectionSchedule::create([
-            ...$data,
-            'is_active' => (bool) ($data['is_active'] ?? true),
-        ]);
+        $vehicleIds = collect($data['vehicle_ids'] ?? [])
+            ->push($data['vehicle_id'] ?? null)
+            ->filter()
+            ->unique()
+            ->values();
 
-        return response()->json(['data' => $schedule], Response::HTTP_CREATED);
+        if ($vehicleIds->isEmpty()) {
+            return response()->json([
+                'message' => 'Selecione pelo menos uma viatura.',
+                'code' => 'inspection_vehicle_required',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $schedules = [];
+        foreach ($vehicleIds as $vehicleId) {
+            $schedules[] = InspectionSchedule::create([
+                'vehicle_id' => $vehicleId,
+                'template_id' => $data['template_id'],
+                'frequency_days' => $data['frequency_days'],
+                'due_time' => $data['due_time'],
+                'grace_hours' => $data['grace_hours'],
+                'reminder_policy_json' => $data['reminder_policy_json'] ?? null,
+                'is_active' => (bool) ($data['is_active'] ?? true),
+            ]);
+        }
+
+        return response()->json([
+            'data' => $schedules,
+            'meta' => ['created' => count($schedules)],
+        ], Response::HTTP_CREATED);
     }
 
     public function schedulesUpdate(Request $request, InspectionSchedule $schedule)
