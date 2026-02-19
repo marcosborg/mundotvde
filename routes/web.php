@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CrmFormsController;
+use App\Http\Controllers\Admin\InspectionController;
 use App\Http\Controllers\Website\PublicFormsController;
 
 Route::get('/', 'Website\HomePageController@index');
@@ -625,6 +626,28 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('document-generateds', 'DocumentGeneratedController');
     Route::get('document-generateds/{documentGenerated}/pdf', [\App\Http\Controllers\Admin\DocumentGeneratedController::class, 'pdf'])
     ->name('document-generateds.pdf');
+
+    // Inspections
+    Route::prefix('inspections')->name('inspections.')->group(function () {
+        Route::get('/', [InspectionController::class, 'index'])->name('index');
+        Route::get('templates', [InspectionController::class, 'templates'])->name('templates');
+        Route::post('templates', [InspectionController::class, 'templateStore'])->name('templates.store');
+        Route::post('templates/{template}', [InspectionController::class, 'templateUpdate'])->name('templates.update');
+        Route::delete('templates/{template}', [InspectionController::class, 'templateDestroy'])->name('templates.destroy');
+
+        Route::get('schedules', [InspectionController::class, 'schedules'])->name('schedules');
+        Route::post('schedules', [InspectionController::class, 'scheduleStore'])->name('schedules.store');
+        Route::post('schedules/{schedule}', [InspectionController::class, 'scheduleUpdate'])->name('schedules.update');
+        Route::delete('schedules/{schedule}', [InspectionController::class, 'scheduleDestroy'])->name('schedules.destroy');
+
+        Route::get('assignments', [InspectionController::class, 'assignments'])->name('assignments');
+        Route::post('assignments', [InspectionController::class, 'assignmentStore'])->name('assignments.store');
+        Route::get('assignments/{assignment}', [InspectionController::class, 'assignmentShow'])->name('show');
+        Route::post('assignments/{assignment}/review', [InspectionController::class, 'review'])->name('review');
+        Route::get('assignments/{assignment}/evidence-zip', [InspectionController::class, 'evidenceZip'])->name('evidence.zip');
+        Route::get('photos/{photo}/download', [InspectionController::class, 'photoDownload'])->name('photo.download');
+        Route::post('defects/{defect}', [InspectionController::class, 'defectUpdate'])->name('defects.update');
+    });
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

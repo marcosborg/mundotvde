@@ -9,6 +9,14 @@
                     {{ trans('global.dashboard') }}
                 </a>
             </li>
+            @if(auth()->check() && auth()->user()->is_admin)
+            <li class="{{ request()->is('admin/inspections') || request()->is('admin/inspections/*') ? 'active' : '' }}">
+                <a href="{{ route('admin.inspections.index') }}">
+                    <i class="fa-fw fas fa-camera"></i>
+                    <span>Inspeções</span>
+                </a>
+            </li>
+            @endif
             @can('user_management_access')
             <li class="treeview">
                 <a href="#">
