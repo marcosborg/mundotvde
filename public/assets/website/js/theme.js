@@ -333,11 +333,13 @@ $(function () {
             });
         }, 500);
     };
-    $('.dropdown').hover(function () {
-        $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeIn(200);
-    }, function () {
-        $(this).find('.dropdown-menu').stop(true, true).delay(100).fadeOut(200);
-    });
+    if (window.matchMedia('(min-width: 992px)').matches) {
+        $('.dropdown').hover(function () {
+            $(this).find('.dropdown-menu').stop(true, true).delay(80).fadeIn(180);
+        }, function () {
+            $(this).find('.dropdown-menu').stop(true, true).delay(80).fadeOut(160);
+        });
+    }
 
 });
 

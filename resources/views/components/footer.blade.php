@@ -1,106 +1,66 @@
-<footer class="page-footer dark">
+<footer class="site-footer pt-5 pb-0">
     <div class="container">
-        <div class="row">
-            <div class="col-sm-3">
+        <div class="row g-4">
+            <div class="col-6 col-lg-3">
                 <h5>Área de utilizador</h5>
                 <ul>
                     <li><a href="/login">Login</a></li>
                     <li><a href="/register">Registo</a></li>
                 </ul>
             </div>
-            <div class="col-sm-3">
+            <div class="col-6 col-lg-3">
                 <h5>Mundo TVDE</h5>
                 <ul>
                     @foreach (App\Models\Page::all() as $page)
-                    <li><a href="/pagina/{{ $page->id }}/{{ Illuminate\Support\Str::slug($page->title, '-') }}">{{
-                            $page->title }}</a></li>
+                        <li>
+                            <a href="/pagina/{{ $page->id }}/{{ Illuminate\Support\Str::slug($page->title, '-') }}">{{ $page->title }}</a>
+                        </li>
                     @endforeach
                 </ul>
             </div>
-            <div class="col-sm-3">
+            <div class="col-6 col-lg-3">
                 <h5>Apoio</h5>
                 <ul>
                     <li><a href="/faqs">FAQ</a></li>
+                    <li><a href="https://api.whatsapp.com/send?phone=351962366777" target="_blank" rel="noopener noreferrer">WhatsApp Equipa</a></li>
+                    <li><a href="https://api.whatsapp.com/send?phone=351926978477" target="_blank" rel="noopener noreferrer">WhatsApp Assistente</a></li>
                 </ul>
             </div>
-            <div class="col-sm-3">
+            <div class="col-6 col-lg-3">
                 <h5>Legal</h5>
                 <ul>
                     @foreach (\App\Models\Legal::all() as $legal)
-                    <li><a href="/legal/{{ $legal->id }}/{{ Illuminate\Support\Str::slug($legal->title, '-') }}">{{
-                            $legal->title }}</a></li>
+                        <li>
+                            <a href="/legal/{{ $legal->id }}/{{ Illuminate\Support\Str::slug($legal->title, '-') }}">{{ $legal->title }}</a>
+                        </li>
                     @endforeach
                 </ul>
             </div>
         </div>
     </div>
-    <div class="footer-copyright">
-        <p>© {{ date('Y') }} Copyright Mundo TVDE</p>
+
+    <div class="footer-bottom mt-4 py-3">
+        <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>© {{ date('Y') }} Mundo TVDE</span>
+            <span>Mobilidade e soluções profissionais TVDE</span>
+        </div>
     </div>
 </footer>
 
-<div class="whatsapp-ai-button">
-    <a href="https://api.whatsapp.com/send?phone=351926978477" target="_blank">
-        <img src="/assets/website/img/whatsapp-ai.png" width="200">
+<div class="floating-actions" aria-label="Ações rápidas">
+    <a class="wa-ai" href="https://api.whatsapp.com/send?phone=351926978477" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Assistente">
+        <i class="bi bi-stars"></i><span class="label">Assistente</span>
     </a>
-</div>
-<div class="whatsapp-button">
-    <a href="https://api.whatsapp.com/send?phone=351962366777" target="_blank">
-        <img src="/assets/website/img/whatsapp.png" width="200">
+    <a class="wa-main" href="https://api.whatsapp.com/send?phone=351962366777" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Equipa">
+        <i class="bi bi-whatsapp"></i><span class="label">WhatsApp</span>
     </a>
-</div>
-<div id="social-floating-button">
-    <a target="_blank" href="https://www.facebook.com/mundotvde">
-        <i class="fa-brands fa-facebook-f"></i>
-    </a>
-    <a target="_blank" href="https://www.instagram.com/mundotvde/">
-        <i class="fa-brands fa-instagram"></i>
-    </a>
+    <div class="social-row">
+        <a class="social" target="_blank" href="https://www.facebook.com/mundotvde" rel="noopener noreferrer" aria-label="Facebook Mundo TVDE">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a class="social" target="_blank" href="https://www.instagram.com/mundotvde/" rel="noopener noreferrer" aria-label="Instagram Mundo TVDE">
+            <i class="fa-brands fa-instagram"></i>
+        </a>
+    </div>
 </div>
 
-<style>
-    .whatsapp-button {
-        position: fixed;
-        bottom: 100px;
-        right: 40px;
-        display: flex;
-        z-index: 1000;
-    }
-
-    .whatsapp-ai-button {
-        position: fixed;
-        bottom: 170px;
-        right: 40px;
-        display: flex;
-        z-index: 1000;
-    }
-
-    #social-floating-button {
-        position: fixed;
-        bottom: 40px;
-        right: 40px;
-        display: flex;
-        z-index: 1000;
-    }
-
-    #social-floating-button a {
-        background-color: #333;
-        color: #fff;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: 10px;
-        text-decoration: none;
-    }
-
-    #social-floating-button a:hover {
-        background-color: #1DA1F2;
-    }
-
-    #social-floating-button i {
-        font-size: 18px;
-    }
-</style>

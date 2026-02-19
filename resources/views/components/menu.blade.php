@@ -1,83 +1,108 @@
-<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
-    <div class="container"><a class="navbar-brand logo" href="/"><img src="{{ asset('assets/website/img/logo-r.svg') }}"
-                style="height: 44px;width: 200px;"></a><button data-bs-toggle="collapse" class="navbar-toggler"
-            data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span
-                class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navcol-1">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item dropdown"><a class="nav-link {{ request()->is('tvde/aluguer-de-viaturas') || 
-                        request()->is('tvde/consultadoria') || 
-                        request()->is('tvde/formacao') ? 'active' : '' }}" aria-expanded="false"
-                        data-bs-toggle="dropdown" href="#">TVDE <i class="fas fa-caret-down"></i></a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/tvde/aluguer-de-viaturas">Aluguer de
-                            viaturas</a>
-                        <a class="dropdown-item" href="/tvde/formacao">Formação</a>
-                        <a class="dropdown-item" href="/tvde/consultadoria">Consultadoria</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('pagina/7/seguros') ? 'active' : '' }}"
-                        href="/pagina/7/seguros">Seguros</a>
-                </li>
-                <li class="nav-item dropdown"><a
-                        class="nav-link {{ request()->is('tvde/estafetas') || request()->is('tvde/estafetas/1') || request()->is('tvde/estafetas/2') ? 'active' : '' }}"
-                        aria-expanded="false" data-bs-toggle="dropdown" href="#">Bolsa TVDE <i
-                            class="fas fa-caret-down"></i></a>
-                    <div class="dropdown-menu">
-                        @foreach (\App\Models\Courier::all() as $item)
-                        <a class="dropdown-item" href="/tvde/estafetas/{{ $item->id }}">{{ $item->title }}</a>
-                        @endforeach
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('tvde/transfers-tours') ? 'active' : '' }}"
-                        href="/tvde/transfers-tours">Transfer´s e
-                        Tours</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/tvde/stand" class="nav-link {{ request()->is('tvde/stand') ? 'active' : '' }}">Stand</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/tvde/trabalhar-com-viatura-propria"
-                        class="nav-link {{ request()->is('tvde/trabalhar-com-viatura-propria') ? 'active' : '' }}">Trabalhar
-                        com viatura
-                        própria</a>
-                </li>
-                <!--
-                        <li class="nav-item"><a class="nav-link {{ request()->is('loja/acessorios') ? 'active' : '' }}"
-                        href="/loja/acessorios">Acessórios</a></li>
-                        -->
+<nav class="navbar navbar-expand-lg fixed-top site-navbar">
+    <div class="container py-1">
+        <a class="navbar-brand" href="/">
+            <img src="{{ asset('assets/website/img/logo_white.png') }}" alt="Mundo TVDE">
+        </a>
+
+        <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list fs-2"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto gap-lg-1 align-items-lg-center">
                 <li class="nav-item dropdown">
-                    <a href="#"
-                        class="nav-link {{ request()->is('pagina/1/sobre-nos') || request()->is('pagina/2/parceiros') || request()->is('pagina/3/contactos') ? 'active' : '' }}"
-                        aria-expanded="false" data-bs-toggle="dropdown">A empresa <i class="fas fa-caret-down"></i></a>
-                    <div class="dropdown-menu">
-                        @foreach (App\Models\Page::get() as $page)
-                        <a class="dropdown-item"
-                            href="/pagina/{{ $page->id }}/{{ Illuminate\Support\Str::slug($page->title, '-') }}">{{
-                            $page->title }}</a>
+                    <a class="nav-link {{ request()->is('tvde/aluguer-de-viaturas') || request()->is('tvde/consultadoria') || request()->is('tvde/formacao') ? 'active' : '' }}"
+                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        TVDE <i class="bi bi-chevron-down ms-1"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/tvde/aluguer-de-viaturas">Aluguer de viaturas</a></li>
+                        <li><a class="dropdown-item" href="/tvde/formacao">Formação</a></li>
+                        <li><a class="dropdown-item" href="/tvde/consultadoria">Consultadoria</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('pagina/7/seguros') ? 'active' : '' }}" href="/pagina/7/seguros">Seguros</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link {{ request()->is('tvde/estafetas') || request()->is('tvde/estafetas/*') ? 'active' : '' }}"
+                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Bolsa TVDE <i class="bi bi-chevron-down ms-1"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        @foreach (\App\Models\Courier::all() as $item)
+                            <li><a class="dropdown-item" href="/tvde/estafetas/{{ $item->id }}">{{ $item->title }}</a></li>
                         @endforeach
-                    </div>
+                    </ul>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('tvde/transfers-tours') ? 'active' : '' }}" href="/tvde/transfers-tours">Transfers e Tours</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('tvde/stand') || request()->is('tvde/stand/*') ? 'active' : '' }}" href="/tvde/stand">Stand</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('tvde/trabalhar-com-viatura-propria') ? 'active' : '' }}" href="/tvde/trabalhar-com-viatura-propria">
+                        Viatura própria
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link {{ request()->is('pagina/*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        A empresa <i class="bi bi-chevron-down ms-1"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        @foreach (App\Models\Page::get() as $page)
+                            <li>
+                                <a class="dropdown-item" href="/pagina/{{ $page->id }}/{{ Illuminate\Support\Str::slug($page->title, '-') }}">
+                                    {{ $page->title }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+
                 @auth
-                <li class="nav-item dropdown"><a class="nav-link" aria-expanded="false" data-bs-toggle="dropdown"
-                        href="#"><i class="fas fa-lock"></i> <i class="fas fa-caret-down"></i></a>
-                    <div class="dropdown-menu"><a class="dropdown-item" href="#"
-                            onclick="event.preventDefault(); document.getElementById('logoutform').submit();">Logout</a><a
-                            class="dropdown-item" href="/admin">Área reservada</a></div>
-                </li>
+                    <li class="nav-item dropdown ms-lg-2">
+                        <a class="btn btn-light btn-sm fw-semibold dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Área reservada
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/admin">Painel</a></li>
+                            <li>
+                                <a class="dropdown-item" href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 @else
-                <li class="nav-item dropdown"><a class="nav-link" aria-expanded="false" data-bs-toggle="dropdown"
-                        href="#"><i class="fas fa-lock-open"></i> <i class="fas fa-caret-down"></i></a>
-                    <div class="dropdown-menu"><a class="dropdown-item" href="/login">Login</a><a class="dropdown-item"
-                            href="/register">Criar conta</a></div>
-                </li>
+                    <li class="nav-item dropdown ms-lg-2">
+                        <a class="btn btn-light btn-sm fw-semibold dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Entrar
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/login">Login</a></li>
+                            <li><a class="dropdown-item" href="/register">Criar conta</a></li>
+                        </ul>
+                    </li>
                 @endauth
             </ul>
         </div>
     </div>
 </nav>
+
 <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
     {{ csrf_field() }}
 </form>
+
