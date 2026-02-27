@@ -11,10 +11,6 @@ use App\Models\StandTvdePub;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VirtualAssistantController;
-use App\Http\Controllers\Api\DriverInspectionController;
-use App\Http\Controllers\Api\CompanyInspectionController;
-use App\Http\Controllers\Api\InspectionCommonController;
-use App\Http\Controllers\Api\InspectionAdminController;
 
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {});
 
@@ -138,42 +134,6 @@ Route::middleware('auth:sanctum')->get('motorista-messages', function (Request $
     $message = \App\Models\AppMessage::where('user_id', $user->id)->first();
     return $message ? json_decode($message->messages, true) : [];
 });
-
-Route::middleware('auth:sanctum')->prefix('driver/inspections')->group(function () {
-    Route::get('next', [DriverInspectionController::class, 'next']);
-    Route::post('{assignment}/start', [DriverInspectionController::class, 'start']);
-    Route::post('{assignment}/photo', [DriverInspectionController::class, 'photo'])
-        ->middleware('throttle:' . (int) env('INSPECTION_UPLOAD_RATE_LIMIT', 120) . ',1');
-    Route::delete('{assignment}/photo/{photo}', [DriverInspectionController::class, 'deletePhoto']);
-    Route::post('{assignment}/submit', [DriverInspectionController::class, 'submit']);
-});
-
-Route::middleware('auth:sanctum')->prefix('company/inspections')->group(function () {
-    Route::get('dashboard', [InspectionAdminController::class, 'dashboard']);
-    Route::post('settings', [InspectionAdminController::class, 'updateSettings']);
-    Route::get('vehicles', [InspectionAdminController::class, 'vehicles']);
-    Route::get('templates/select', [InspectionAdminController::class, 'templatesForSelect']);
-
-    Route::get('templates', [CompanyInspectionController::class, 'templatesIndex']);
-    Route::post('templates', [CompanyInspectionController::class, 'templatesStore']);
-    Route::post('templates/{template}', [CompanyInspectionController::class, 'templatesUpdate']);
-    Route::delete('templates/{template}', [CompanyInspectionController::class, 'templatesDestroy']);
-
-    Route::get('schedules', [CompanyInspectionController::class, 'schedulesIndex']);
-    Route::post('schedules', [CompanyInspectionController::class, 'schedulesStore']);
-    Route::post('schedules/{schedule}', [CompanyInspectionController::class, 'schedulesUpdate']);
-    Route::delete('schedules/{schedule}', [CompanyInspectionController::class, 'schedulesDestroy']);
-    Route::get('vehicle/{vehicle}/schedules', [InspectionAdminController::class, 'schedulesForVehicle']);
-
-    Route::get('assignments', [CompanyInspectionController::class, 'assignmentsIndex']);
-    Route::post('{assignment}/review', [CompanyInspectionController::class, 'review']);
-});
-
-Route::middleware('auth:sanctum')->post('device-tokens/register', [InspectionCommonController::class, 'registerDeviceToken']);
-Route::middleware('auth:sanctum')->get('notifications', [InspectionCommonController::class, 'notifications']);
-Route::middleware('auth:sanctum')->get('inspections/photos/{photo}/signed-url', [InspectionCommonController::class, 'photoSignedUrl']);
-Route::middleware(['auth:sanctum', 'signed'])->get('inspections/photos/{photo}/download', [InspectionCommonController::class, 'photoDownload'])
-    ->name('api.inspections.photos.download');
 
 use App\Http\Controllers\Api\PublicCrmFormsController;
 

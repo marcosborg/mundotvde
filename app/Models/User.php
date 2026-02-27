@@ -133,16 +133,6 @@ class User extends Authenticatable
         return $this->hasOne(Driver::class, 'user_id');
     }
 
-    public function inspectionAssignments()
-    {
-        return $this->hasMany(InspectionAssignment::class, 'assigned_user_id');
-    }
-
-    public function deviceTokens()
-    {
-        return $this->hasMany(DeviceToken::class, 'user_id');
-    }
-
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
