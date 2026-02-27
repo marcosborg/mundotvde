@@ -72,4 +72,9 @@ class VehicleItem extends Model implements HasMedia
     {
         return $this->getMedia('documents');
     }
+
+    public function inspections()
+    {
+        return $this->hasMany(Inspection::class, 'vehicle_id', 'id');
+    }
 }

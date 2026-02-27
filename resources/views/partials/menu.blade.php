@@ -414,6 +414,14 @@
                         </a>
                     </li>
                     @endcan
+                    @can('inspection_access')
+                    <li class="{{ request()->is("admin/inspections") || request()->is("admin/inspections/*") ? "active" : "" }}">
+                        <a href="{{ route("admin.inspections.index") }}">
+                            <i class="fa-fw fas fa-clipboard-check"></i>
+                            <span>Inspeções de Viaturas</span>
+                        </a>
+                    </li>
+                    @endcan
                     <li class="{{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ?
                         "active"
                         : "" }}">

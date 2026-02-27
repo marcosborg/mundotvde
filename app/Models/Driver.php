@@ -149,4 +149,9 @@ class Driver extends Model
     {
         return $this->hasMany(\App\Models\Receipt::class);
     }
+
+    public function inspections()
+    {
+        return $this->hasMany(Inspection::class, 'driver_id', 'id');
+    }
 }

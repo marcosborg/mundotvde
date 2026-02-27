@@ -437,6 +437,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('vehicle-items/ckmedia', 'VehicleItemController@storeCKEditorImages')->name('vehicle-items.storeCKEditorImages');
     Route::resource('vehicle-items', 'VehicleItemController');
 
+    // Inspections
+    Route::delete('inspections/destroy', 'InspectionController@massDestroy')->name('inspections.massDestroy');
+    Route::post('inspections/{inspection}/step', 'InspectionController@updateStep')->name('inspections.update-step');
+    Route::post('inspections/{inspection}/back-step', 'InspectionController@backStep')->name('inspections.back-step');
+    Route::post('inspections/{inspection}/damages/{damage}/resolve', 'InspectionController@resolveDamage')->name('inspections.resolve-damage');
+    Route::post('inspections/{inspection}/close', 'InspectionController@close')->name('inspections.close');
+    Route::resource('inspections', 'InspectionController');
+
     // Tvde Activity
     Route::delete('tvde-activities/destroy', 'TvdeActivityController@massDestroy')->name('tvde-activities.massDestroy');
     Route::post('tvde-activities/parse-csv-import', 'TvdeActivityController@parseCsvImport')->name('tvde-activities.parseCsvImport');

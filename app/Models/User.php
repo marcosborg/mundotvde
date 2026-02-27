@@ -133,6 +133,11 @@ class User extends Authenticatable
         return $this->hasOne(Driver::class, 'user_id');
     }
 
+    public function inspectionsCreated()
+    {
+        return $this->hasMany(Inspection::class, 'created_by_user_id', 'id');
+    }
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
