@@ -444,6 +444,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('inspections/{inspection}/damages/{damage}/resolve', 'InspectionController@resolveDamage')->name('inspections.resolve-damage');
     Route::post('inspections/{inspection}/close', 'InspectionController@close')->name('inspections.close');
     Route::resource('inspections', 'InspectionController');
+    Route::delete('inspection-schedules/destroy', 'InspectionScheduleController@massDestroy')->name('inspection-schedules.massDestroy');
+    Route::post('inspection-schedules/{inspectionSchedule}/run-now', 'InspectionScheduleController@runNow')->name('inspection-schedules.run-now');
+    Route::resource('inspection-schedules', 'InspectionScheduleController');
 
     // Tvde Activity
     Route::delete('tvde-activities/destroy', 'TvdeActivityController@massDestroy')->name('tvde-activities.massDestroy');

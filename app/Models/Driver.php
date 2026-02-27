@@ -154,4 +154,9 @@ class Driver extends Model
     {
         return $this->hasMany(Inspection::class, 'driver_id', 'id');
     }
+
+    public function inspectionSchedules()
+    {
+        return $this->hasMany(InspectionSchedule::class, 'driver_id', 'id');
+    }
 }

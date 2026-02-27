@@ -421,6 +421,12 @@
                             <span>Inspeções de Viaturas</span>
                         </a>
                     </li>
+                    <li class="{{ request()->is("admin/inspection-schedules") || request()->is("admin/inspection-schedules/*") ? "active" : "" }}">
+                        <a href="{{ route("admin.inspection-schedules.index") }}">
+                            <i class="fa-fw fas fa-calendar-check"></i>
+                            <span>Programação de Rotinas</span>
+                        </a>
+                    </li>
                     @endcan
                     <li class="{{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ?
                         "active"

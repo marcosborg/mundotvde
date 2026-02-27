@@ -22,25 +22,41 @@ class InspectionSequenceService
     {
         $previous = $this->resolvePreviousInspection($vehicleId);
 
+        // Novo ciclo so abre com Initial e apenas depois de uma Entrega.
         if ($type === 'initial') {
+            if ($previous && $previous->type !== 'handover') {
+                throw ValidationException::withMessages([
+                    'type' => 'Ja existe um ciclo ativo. A Inspecao Inicial so pode abrir novo ciclo apos uma Entrega.',
+                ]);
+            }
+
             return $previous;
         }
 
         if (!$previous) {
             throw ValidationException::withMessages([
-                'vehicle_id' => 'Esta viatura precisa de Inspeção Inicial antes deste tipo.',
+                'vehicle_id' => 'Esta viatura precisa de Inspecao Inicial antes deste tipo.',
             ]);
         }
 
-        if ($type === 'handover' && !in_array($previous->type, ['initial', 'return'], true)) {
+        // Entrega fecha o ciclo atual.
+        if ($type === 'handover' && !in_array($previous->type, ['initial', 'routine', 'return'], true)) {
             throw ValidationException::withMessages([
-                'type' => 'Para criar Entrega, a inspeção anterior tem de ser Inicial ou Recolha.',
+                'type' => 'Para criar Entrega, a inspecao anterior tem de ser Inicial, Rotina ou Recolha.',
             ]);
         }
 
-        if (in_array($type, ['routine', 'return'], true) && $previous->type !== 'handover') {
+        // Rotina/Recolha so existem entre Initial e Entrega.
+        if (in_array($type, ['routine', 'return'], true) && !in_array($previous->type, ['initial', 'routine', 'return'], true)) {
             throw ValidationException::withMessages([
-                'type' => 'Rotina/Recolha só podem ser criadas após uma inspeção de Entrega.',
+                'type' => 'Rotina/Recolha so podem existir entre a Inicial e a Entrega.',
+            ]);
+        }
+
+        // Depois de Entrega, nao pode criar mais itens do ciclo sem nova Initial.
+        if ($previous->type === 'handover' && in_array($type, ['routine', 'return', 'handover'], true)) {
+            throw ValidationException::withMessages([
+                'type' => 'Apos Entrega, precisa de nova Inspecao Inicial para abrir novo ciclo.',
             ]);
         }
 
