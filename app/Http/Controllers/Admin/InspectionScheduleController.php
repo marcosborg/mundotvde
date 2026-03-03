@@ -16,13 +16,48 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InspectionScheduleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         abort_if(Gate::denies('inspection_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $schedules = InspectionSchedule::with(['vehicle', 'driver', 'creator'])->orderByDesc('id')->paginate(25);
+        $query = InspectionSchedule::query()->with(['vehicle', 'driver', 'creator']);
 
-        return view('admin.inspectionSchedules.index', compact('schedules'));
+        if ($request->filled('vehicle_id')) {
+            $query->where('vehicle_id', $request->integer('vehicle_id'));
+        }
+
+        if ($request->filled('driver_id')) {
+            $query->where('driver_id', $request->integer('driver_id'));
+        }
+
+        if ($request->filled('is_active')) {
+            $query->where('is_active', $request->boolean('is_active'));
+        }
+
+        if ($request->filled('next_run_from')) {
+            $query->whereDate('next_run_at', '>=', $request->input('next_run_from'));
+        }
+
+        if ($request->filled('next_run_to')) {
+            $query->whereDate('next_run_at', '<=', $request->input('next_run_to'));
+        }
+
+        $schedules = $query->orderByDesc('id')->paginate(25)->withQueryString();
+
+        $vehicles = VehicleItem::orderBy('license_plate')->get(['id', 'license_plate']);
+        $drivers = Driver::orderBy('name')->get(['id', 'name']);
+        $summary = [
+            'total' => InspectionSchedule::count(),
+            'active' => InspectionSchedule::where('is_active', true)->count(),
+            'due_now' => InspectionSchedule::where('is_active', true)
+                ->where(function ($q) {
+                    $q->whereNull('next_run_at')->orWhere('next_run_at', '<=', now());
+                })
+                ->count(),
+            'inactive' => InspectionSchedule::where('is_active', false)->count(),
+        ];
+
+        return view('admin.inspectionSchedules.index', compact('schedules', 'vehicles', 'drivers', 'summary'));
     }
 
     public function create()

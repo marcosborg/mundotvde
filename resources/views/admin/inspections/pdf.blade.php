@@ -13,7 +13,7 @@
 <body>
     <h1>Relatório de Inspeção #{{ $inspection->id }}</h1>
     <div class="section">
-        <strong>Tipo:</strong> {{ ucfirst($inspection->type) }}<br>
+        <strong>Tipo:</strong> {{ config('inspections.type_labels.' . $inspection->type, $inspection->type) }}<br>
         <strong>Data/Hora:</strong> {{ optional($inspection->completed_at)->format('Y-m-d H:i:s') ?? now()->format('Y-m-d H:i:s') }}<br>
         <strong>Viatura:</strong> {{ $inspection->vehicle->license_plate ?? '-' }} - {{ $inspection->vehicle->vehicle_brand->name ?? '' }} {{ $inspection->vehicle->vehicle_model->name ?? '' }}<br>
         <strong>Condutor:</strong> {{ $inspection->driver->name ?? '-' }}<br>

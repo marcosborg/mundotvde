@@ -15,26 +15,35 @@ class UpdateInspectionStepRequest extends FormRequest
     public function rules()
     {
         return [
-            'step' => ['required', 'integer', 'min:1', 'max:10'],
+            'step' => ['required', 'integer', 'min:1', 'max:12'],
             'action' => ['nullable', 'in:save,complete'],
             'driver_id' => ['nullable', 'integer', 'exists:drivers,id'],
 
             'checklist' => ['nullable', 'array'],
             'checklist.*' => ['nullable', 'array'],
+            'checklist.cleanliness.external' => ['nullable', 'integer', 'between:0,10'],
+            'checklist.cleanliness.interior' => ['nullable', 'integer', 'between:0,10'],
+            'checklist.fuel_energy.level' => ['nullable', 'integer', 'between:0,10'],
+            'checklist.tire_condition.level' => ['nullable', 'integer', 'between:0,10'],
+            'checklist.mileage.odometer_km' => ['nullable', 'integer', 'min:0', 'max:2000000'],
             'checklist_photos' => ['nullable', 'array'],
-            'checklist_photos.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'checklist_photos.*' => ['nullable', 'array'],
+            'checklist_photos.*.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
 
             'exterior_photos' => ['nullable', 'array'],
-            'exterior_photos.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'exterior_photos.*' => ['nullable', 'array'],
+            'exterior_photos.*.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
             'interior_photos' => ['nullable', 'array'],
-            'interior_photos.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'interior_photos.*' => ['nullable', 'array'],
+            'interior_photos.*.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
 
             'location' => ['nullable', 'string', 'max:30'],
             'part' => ['nullable', 'string', 'max:120'],
             'part_section' => ['nullable', 'string', 'max:120'],
             'damage_type' => ['nullable', 'string', 'max:40'],
             'damage_notes' => ['nullable', 'string'],
-            'damage_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'damage_photo' => ['nullable', 'array'],
+            'damage_photo.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
 
             'extra_observations' => ['nullable', 'string'],
             'extra_photos' => ['nullable', 'array'],

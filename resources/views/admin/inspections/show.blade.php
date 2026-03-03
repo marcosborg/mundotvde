@@ -6,10 +6,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Detalhe inspeção #{{ $inspection->id }}</div>
                 <div class="panel-body">
-                    <p><strong>Tipo:</strong> {{ ucfirst($inspection->type) }}</p>
+                    <p><strong>Tipo:</strong> {{ config('inspections.type_labels.' . $inspection->type, $inspection->type) }}</p>
                     <p><strong>Viatura:</strong> {{ $inspection->vehicle->license_plate ?? '-' }}</p>
                     <p><strong>Condutor:</strong> {{ $inspection->driver->name ?? '-' }}</p>
-                    <p><strong>Estado:</strong> {{ $inspection->status }}</p>
+                    <p><strong>Estado:</strong> {{ config('inspections.status_labels.' . $inspection->status, $inspection->status) }}</p>
                     <p><strong>Local:</strong> {{ $inspection->location_text }} ({{ $inspection->location_lat }}, {{ $inspection->location_lng }})</p>
 
                     @if($inspection->report)

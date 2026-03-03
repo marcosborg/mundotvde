@@ -14,8 +14,8 @@ use App\Models\User;
 use App\Models\VehicleItem;
 use App\Services\Inspections\InspectionWorkflowService;
 use Gate;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -159,15 +159,20 @@ class InspectionController extends Controller
 
         $checklist = [];
         foreach ($inspection->checkItems as $item) {
-            $checklist[$item->group_key][$item->item_key] = $item->value_bool;
+            $checklist[$item->group_key][$item->item_key] = $item->value_int !== null
+                ? (int) $item->value_int
+                : (bool) $item->value_bool;
         }
 
         $checklistPhotoBySlot = [];
-        foreach (['dua', 'insurance', 'inspection_periodic', 'tvde_stickers', 'no_smoking_sticker'] as $slot) {
+        foreach (['dua', 'insurance', 'inspection_periodic', 'tvde_stickers', 'no_smoking_sticker', 'fuel_energy', 'tires', 'panel_warning'] as $slot) {
             $checklistPhotoBySlot[$slot] = $inspection->photos->first(function ($photo) use ($slot) {
                 return $photo->category === 'document' && $photo->slot === 'doc_' . $slot;
             });
         }
+        $odometerPhoto = $inspection->photos->first(function ($photo) {
+            return $photo->category === 'document' && $photo->slot === 'doc_odometer';
+        });
 
         $drivers = Driver::orderBy('name')->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $missingItems = $this->buildMissingItems($inspection);
@@ -188,6 +193,7 @@ class InspectionController extends Controller
             'damageTypes' => config('inspections.damage_types'),
             'checklist' => $checklist,
             'checklistPhotoBySlot' => $checklistPhotoBySlot,
+            'odometerPhoto' => $odometerPhoto,
             'drivers' => $drivers,
             'missingItems' => $missingItems,
             'signatureNames' => $signatureNames,
@@ -202,7 +208,7 @@ class InspectionController extends Controller
         $step = (int) $validated['step'];
         $action = $validated['action'] ?? 'save';
 
-        if ($step < 1 || $step > 10) {
+        if ($step < 1 || $step > 12) {
             throw ValidationException::withMessages(['step' => 'Etapa inválida.']);
         }
 
@@ -214,36 +220,59 @@ class InspectionController extends Controller
             $inspection->update(['driver_id' => $validated['driver_id']]);
         }
 
-        if ($step === 3) {
-            $this->storeChecklist($inspection, $request->input('checklist', []));
-            $this->storeChecklistPhotos($inspection, (array) $request->file('checklist_photos', []));
+        if (in_array($step, [3, 4], true)) {
+            $checklistInput = (array) $request->input('checklist', []);
+            $checklistPhotos = (array) $request->file('checklist_photos', []);
+
+            $this->storeChecklist($inspection, $checklistInput);
+            $this->storeChecklistPhotos($inspection, $checklistPhotos);
+            $this->enforcePanelWarningEvidence($inspection, $checklistInput, $checklistPhotos);
         }
 
-        if ($step === 4) {
+        if ($step === 6) {
             $this->storeSlotPhotos($inspection, (array) $request->file('exterior_photos', []), 'exterior');
         }
 
-        if ($step === 5) {
+        if ($step === 7) {
             $this->storeSlotPhotos($inspection, (array) $request->file('interior_photos', []), 'interior');
         }
 
-        if (in_array($step, [6, 7], true) && !empty($validated['location']) && !empty($validated['part']) && !empty($validated['damage_type'])) {
-            if (!$request->hasFile('damage_photo')) {
-                throw ValidationException::withMessages(['damage_photo' => 'Cada dano deve ter pelo menos 1 foto.']);
-            }
+        if (in_array($step, [8, 9], true)) {
+            $hasDamageInput = !empty($validated['location'])
+                || !empty($validated['part'])
+                || !empty($validated['part_section'])
+                || !empty($validated['damage_type'])
+                || !empty($validated['damage_notes'])
+                || $request->hasFile('damage_photo');
 
-            $this->workflow->addDamage($inspection, [
-                'scope' => $step === 6 ? 'exterior' : 'interior',
-                'location' => $validated['location'],
-                'part' => $validated['part'],
-                'part_section' => $validated['part_section'] ?? null,
-                'damage_type' => $validated['damage_type'],
-                'notes' => $validated['damage_notes'] ?? null,
-                'damage_photo' => $request->file('damage_photo'),
-            ]);
+            if ($hasDamageInput) {
+                if (empty($validated['location']) || empty($validated['part']) || empty($validated['damage_type'])) {
+                    throw ValidationException::withMessages([
+                        'damage' => 'Para guardar um dano, preencha Local, Peca e Tipo.',
+                    ]);
+                }
+
+                if (!$request->hasFile('damage_photo')) {
+                    throw ValidationException::withMessages(['damage_photo' => 'Cada dano deve ter pelo menos 1 foto.']);
+                }
+
+                $this->workflow->addDamage($inspection, [
+                    'scope' => $step === 8 ? 'exterior' : 'interior',
+                    'location' => $validated['location'],
+                    'part' => $validated['part'],
+                    'part_section' => $validated['part_section'] ?? null,
+                    'damage_type' => $validated['damage_type'],
+                    'notes' => $validated['damage_notes'] ?? null,
+                    'damage_photos' => (array) $request->file('damage_photo', []),
+                ]);
+            } elseif ($action === 'save') {
+                throw ValidationException::withMessages([
+                    'damage' => 'Nenhum dano foi submetido. Preencha os campos e anexe uma foto.',
+                ]);
+            }
         }
 
-        if ($step === 8) {
+        if ($step === 10) {
             $inspection->update(['extra_observations' => $validated['extra_observations'] ?? null]);
             if ($request->hasFile('extra_photos')) {
                 foreach ((array) $request->file('extra_photos') as $extraPhoto) {
@@ -254,7 +283,7 @@ class InspectionController extends Controller
             }
         }
 
-        if ($step === 9) {
+        if ($step === 11) {
             if (!empty($validated['inspector_name'])) {
                 $this->workflow->sign($inspection, 'responsible', $validated['inspector_name']);
             }
@@ -263,7 +292,7 @@ class InspectionController extends Controller
             }
         }
 
-        if ($action === 'complete' && $step < 10) {
+        if ($action === 'complete' && $step < 12) {
             $this->workflow->completeStep($inspection, $step, [
                 'extra_observations' => $validated['extra_observations'] ?? null,
             ]);
@@ -349,11 +378,13 @@ class InspectionController extends Controller
             }
 
             foreach ($items as $itemKey => $value) {
+                $isNumericValue = in_array($groupKey, ['cleanliness', 'mileage', 'fuel_energy', 'tire_condition'], true) && is_numeric($value);
                 $rows[] = [
                     'inspection_id' => $inspection->id,
                     'group_key' => (string) $groupKey,
                     'item_key' => (string) $itemKey,
-                    'value_bool' => (bool) $value,
+                    'value_bool' => $isNumericValue ? null : (bool) $value,
+                    'value_int' => $isNumericValue ? (int) $value : null,
                     'updated_at' => now(),
                     'created_at' => now(),
                 ];
@@ -361,52 +392,75 @@ class InspectionController extends Controller
         }
 
         if (!empty($rows)) {
-            InspectionCheckItem::upsert($rows, ['inspection_id', 'group_key', 'item_key'], ['value_bool', 'updated_at']);
+            InspectionCheckItem::upsert($rows, ['inspection_id', 'group_key', 'item_key'], ['value_bool', 'value_int', 'updated_at']);
         }
     }
 
     private function storeSlotPhotos(Inspection $inspection, array $filesBySlot, string $category): void
     {
-        foreach ($filesBySlot as $slot => $file) {
-            if (!$file) {
-                continue;
+        foreach ($filesBySlot as $slot => $slotFiles) {
+            foreach ($this->normalizeFiles($slotFiles) as $file) {
+                $this->workflow->uploadPhoto($inspection, $file, $category, (string) $slot);
             }
-
-            $existing = $inspection->photos()
-                ->where('category', $category)
-                ->where('slot', (string) $slot)
-                ->latest('id')
-                ->first();
-
-            if ($existing) {
-                Storage::disk('public')->delete($existing->path);
-                $existing->delete();
-            }
-
-            $this->workflow->uploadPhoto($inspection, $file, $category, (string) $slot);
         }
     }
 
     private function storeChecklistPhotos(Inspection $inspection, array $filesByKey): void
     {
-        foreach ($filesByKey as $key => $file) {
-            if (!$file) {
-                continue;
-            }
-
+        foreach ($filesByKey as $key => $keyFiles) {
             $slot = 'doc_' . (string) $key;
-            $existing = $inspection->photos()
-                ->where('category', 'document')
-                ->where('slot', $slot)
-                ->latest('id')
-                ->first();
-
-            if ($existing) {
-                Storage::disk('public')->delete($existing->path);
-                $existing->delete();
+            foreach ($this->normalizeFiles($keyFiles) as $file) {
+                $this->workflow->uploadPhoto($inspection, $file, 'document', $slot);
             }
+        }
+    }
 
-            $this->workflow->uploadPhoto($inspection, $file, 'document', $slot);
+    /**
+     * @param mixed $files
+     * @return UploadedFile[]
+     */
+    private function normalizeFiles($files): array
+    {
+        if ($files instanceof UploadedFile) {
+            return [$files];
+        }
+
+        if (!is_array($files)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($files as $file) {
+            if ($file instanceof UploadedFile) {
+                $normalized[] = $file;
+            }
+        }
+
+        return $normalized;
+    }
+
+    private function enforcePanelWarningEvidence(Inspection $inspection, array $checklist, array $checklistPhotos): void
+    {
+        $warnings = (array) ($checklist['panel_warnings'] ?? []);
+
+        if (empty($warnings['panel_warning'])) {
+            return;
+        }
+
+        $newPhotos = $this->normalizeFiles($checklistPhotos['panel_warning'] ?? []);
+        if (!empty($newPhotos)) {
+            return;
+        }
+
+        $hasExisting = $inspection->photos()
+            ->where('category', 'document')
+            ->where('slot', 'doc_panel_warning')
+            ->exists();
+
+        if (!$hasExisting) {
+            throw ValidationException::withMessages([
+                'checklist_photos.panel_warning' => 'Se assinalar avisos no painel, anexe pelo menos uma foto.',
+            ]);
         }
     }
 
@@ -454,7 +508,7 @@ class InspectionController extends Controller
                 return $photo->category === 'exterior' && $photo->slot === $slot;
             });
             if (!$has) {
-                $missing[] = ['group' => 'Etapa 4', 'item' => 'Foto exterior em falta: ' . ($extLabels[$slot] ?? $slot)];
+                $missing[] = ['group' => 'Etapa 6', 'item' => 'Foto exterior em falta: ' . ($extLabels[$slot] ?? $slot)];
             }
         }
 
@@ -464,16 +518,16 @@ class InspectionController extends Controller
                 return $photo->category === 'interior' && $photo->slot === $slot;
             });
             if (!$has) {
-                $missing[] = ['group' => 'Etapa 5', 'item' => 'Foto interior em falta: ' . ($intLabels[$slot] ?? $slot)];
+                $missing[] = ['group' => 'Etapa 7', 'item' => 'Foto interior em falta: ' . ($intLabels[$slot] ?? $slot)];
             }
         }
 
         $roles = $inspection->signatures->pluck('role')->toArray();
         if (!in_array('driver', $roles, true)) {
-            $missing[] = ['group' => 'Etapa 9', 'item' => 'Assinatura do condutor em falta'];
+            $missing[] = ['group' => 'Etapa 11', 'item' => 'Assinatura do condutor em falta'];
         }
-        if (in_array($inspection->type, ['initial', 'handover', 'return'], true) && !in_array('responsible', $roles, true)) {
-            $missing[] = ['group' => 'Etapa 9', 'item' => 'Assinatura do responsavel em falta'];
+        if (in_array($inspection->type, ['initial', 'handover', 'return', 'fleet_exit'], true) && !in_array('responsible', $roles, true)) {
+            $missing[] = ['group' => 'Etapa 11', 'item' => 'Assinatura do responsavel em falta'];
         }
 
         return $missing;

@@ -15,8 +15,8 @@
                             <div class="col-md-4 form-group">
                                 <label class="required">Tipo</label>
                                 <select name="type" class="form-control" required>
-                                    @foreach(config('inspections.types') as $type)
-                                        <option value="{{ $type }}" {{ old('type') === $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                                    @foreach(config('inspections.type_labels', []) as $typeKey => $typeLabel)
+                                        <option value="{{ $typeKey }}" {{ old('type') === $typeKey ? 'selected' : '' }}>{{ $typeLabel }}</option>
                                     @endforeach
                                 </select>
                             </div>

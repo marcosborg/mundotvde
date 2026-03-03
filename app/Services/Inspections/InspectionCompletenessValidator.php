@@ -70,7 +70,7 @@ class InspectionCompletenessValidator
             $missing[] = 'Assinatura do condutor em falta';
         }
 
-        if (in_array($inspection->type, ['initial', 'handover', 'return'], true) && !in_array('responsible', $roles, true)) {
+        if (in_array($inspection->type, ['initial', 'handover', 'return', 'fleet_exit'], true) && !in_array('responsible', $roles, true)) {
             $missing[] = 'Assinatura do responsavel em falta';
         }
 

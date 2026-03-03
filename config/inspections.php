@@ -6,6 +6,15 @@ return [
         'handover' => 'handover',
         'routine' => 'routine',
         'return' => 'return',
+        'fleet_exit' => 'fleet_exit',
+    ],
+
+    'type_labels' => [
+        'initial' => 'Inicial',
+        'handover' => 'Entrega',
+        'routine' => 'Rotina',
+        'return' => 'Recolha do motorista',
+        'fleet_exit' => 'Saida da frota',
     ],
 
     'statuses' => [
@@ -16,17 +25,27 @@ return [
         'closed' => 'closed',
     ],
 
+    'status_labels' => [
+        'draft' => 'Rascunho',
+        'in_progress' => 'Em progresso',
+        'ready_to_sign' => 'Pronta para assinar',
+        'signed' => 'Assinada',
+        'closed' => 'Fechada',
+    ],
+
     'step_labels' => [
-        1 => 'Identificação da viatura',
-        2 => 'Identificação do condutor',
-        3 => 'Documentação e estado operacional',
-        4 => 'Fotografias exteriores',
-        5 => 'Fotografias interiores',
-        6 => 'Danos exteriores',
-        7 => 'Danos interiores',
-        8 => 'Extras e observações',
-        9 => 'Assinaturas',
-        10 => 'Fecho e PDF',
+        1 => 'Identificacao da viatura',
+        2 => 'Identificacao do condutor',
+        3 => 'Documentacao',
+        4 => 'Estado operacional',
+        5 => 'Acessorios e extras',
+        6 => 'Fotografias exteriores',
+        7 => 'Fotografias interiores',
+        8 => 'Danos exteriores',
+        9 => 'Danos interiores',
+        10 => 'Extras e observacoes',
+        11 => 'Assinaturas',
+        12 => 'Fecho e PDF',
     ],
 
     'required_slots' => [
@@ -72,7 +91,7 @@ return [
     ],
 
     'damage_locations' => [
-        'body' => 'Carroçaria',
+        'body' => 'Carrocaria',
         'interior' => 'Interior',
         'tires_rims' => 'Pneus/Jantes',
         'glass' => 'Vidros',
@@ -85,7 +104,7 @@ return [
         'crack' => 'Racha',
         'broken' => 'Partido',
         'stain' => 'Mancha',
-        'tear' => 'Rasgão',
+        'tear' => 'Rasgao',
         'missing' => 'Em falta',
         'other' => 'Outro',
     ],

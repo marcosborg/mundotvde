@@ -15,15 +15,15 @@ class InspectionPermissionsService
         $isManager = in_array('gestor', $roles, true) || in_array('admin', $roles, true);
         $isDriver = in_array('motorista', $roles, true);
 
-        if (in_array($type, ['initial', 'handover', 'return'], true) && !$isManager) {
+        if (in_array($type, ['initial', 'handover', 'return', 'fleet_exit'], true) && !$isManager) {
             throw ValidationException::withMessages([
-                'type' => 'Apenas Gestor/Admin pode criar inspeções Inicial, Entrega ou Recolha.',
+                'type' => 'Apenas Gestor/Admin pode criar inspecoes Inicial, Entrega, Recolha ou Saida da frota.',
             ]);
         }
 
         if ($type === 'routine' && !($isManager || $isDriver)) {
             throw ValidationException::withMessages([
-                'type' => 'Apenas Gestor/Admin ou Motorista pode criar inspeções de Rotina.',
+                'type' => 'Apenas Gestor/Admin ou Motorista pode criar inspecoes de Rotina.',
             ]);
         }
     }
@@ -32,7 +32,7 @@ class InspectionPermissionsService
     {
         if ($inspection->locked_at) {
             throw ValidationException::withMessages([
-                'inspection' => 'Inspeção bloqueada após assinatura/fecho. Edição não permitida.',
+                'inspection' => 'Inspecao bloqueada apos assinatura/fecho. Edicao nao permitida.',
             ]);
         }
     }

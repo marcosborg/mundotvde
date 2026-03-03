@@ -45,7 +45,7 @@ class InspectionReportService
             'status' => 'closed',
             'completed_at' => now(),
             'locked_at' => now(),
-            'current_step' => 10,
+            'current_step' => 12,
         ]);
 
         return $report;

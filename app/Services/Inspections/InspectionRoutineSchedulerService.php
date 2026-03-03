@@ -57,7 +57,7 @@ class InspectionRoutineSchedulerService
                         'started_at' => now(),
                     ]);
 
-                    for ($step = 1; $step <= 10; $step++) {
+                    for ($step = 1; $step <= 12; $step++) {
                         InspectionStepState::create([
                             'inspection_id' => $inspection->id,
                             'step' => $step,

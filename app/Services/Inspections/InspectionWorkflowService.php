@@ -59,7 +59,7 @@ class InspectionWorkflowService
                 'started_at' => now(),
             ]);
 
-            for ($step = 1; $step <= 10; $step++) {
+            for ($step = 1; $step <= 12; $step++) {
                 InspectionStepState::create([
                     'inspection_id' => $inspection->id,
                     'step' => $step,
@@ -77,7 +77,7 @@ class InspectionWorkflowService
     {
         $this->permissions->ensureCanEdit($inspection);
 
-        if ($step < 1 || $step > 10) {
+        if ($step < 1 || $step > 12) {
             throw ValidationException::withMessages(['step' => 'Etapa inválida.']);
         }
 
@@ -93,11 +93,11 @@ class InspectionWorkflowService
                 'completed_by_user_id' => auth()->id(),
             ]);
 
-        $nextStep = min(10, $step + 1);
+        $nextStep = min(12, $step + 1);
 
         $inspection->update([
             'current_step' => $nextStep,
-            'status' => $nextStep >= 9 ? 'ready_to_sign' : 'in_progress',
+            'status' => $nextStep >= 11 ? 'ready_to_sign' : 'in_progress',
             'extra_observations' => $data['extra_observations'] ?? $inspection->extra_observations,
         ]);
 
@@ -143,13 +143,25 @@ class InspectionWorkflowService
             'notes' => $data['notes'] ?? null,
         ]);
 
-        if (!empty($data['damage_photo']) && $data['damage_photo'] instanceof UploadedFile) {
-            $photoPath = $data['damage_photo']->store('inspections/damages', 'public');
+        $damagePhotos = $data['damage_photos'] ?? [];
+        if ($damagePhotos instanceof UploadedFile) {
+            $damagePhotos = [$damagePhotos];
+        }
+        if (!is_array($damagePhotos)) {
+            $damagePhotos = [];
+        }
+
+        foreach ($damagePhotos as $damagePhoto) {
+            if (!$damagePhoto instanceof UploadedFile) {
+                continue;
+            }
+
+            $photoPath = $damagePhoto->store('inspections/damages', 'public');
             $damage->photos()->create([
                 'path' => $photoPath,
-                'original_name' => $data['damage_photo']->getClientOriginalName(),
-                'mime' => $data['damage_photo']->getMimeType(),
-                'size' => $data['damage_photo']->getSize(),
+                'original_name' => $damagePhoto->getClientOriginalName(),
+                'mime' => $damagePhoto->getMimeType(),
+                'size' => $damagePhoto->getSize(),
                 'taken_at' => now(),
                 'uploaded_by_user_id' => auth()->id(),
             ]);

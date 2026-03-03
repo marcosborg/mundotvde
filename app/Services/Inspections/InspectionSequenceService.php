@@ -22,41 +22,33 @@ class InspectionSequenceService
     {
         $previous = $this->resolvePreviousInspection($vehicleId);
 
-        // Novo ciclo so abre com Initial e apenas depois de uma Entrega.
-        if ($type === 'initial') {
-            if ($previous && $previous->type !== 'handover') {
+        if (!$previous) {
+            if ($type !== 'initial') {
                 throw ValidationException::withMessages([
-                    'type' => 'Ja existe um ciclo ativo. A Inspecao Inicial so pode abrir novo ciclo apos uma Entrega.',
+                    'type' => 'Sem historico para esta viatura. O primeiro tipo permitido e Inicial.',
                 ]);
             }
 
-            return $previous;
+            return null;
         }
 
-        if (!$previous) {
-            throw ValidationException::withMessages([
-                'vehicle_id' => 'Esta viatura precisa de Inspecao Inicial antes deste tipo.',
-            ]);
-        }
+        $allowedByPreviousType = [
+            'initial' => ['handover'],
+            'handover' => ['routine'],
+            'routine' => ['routine', 'return'],
+            'return' => ['fleet_exit'],
+            'fleet_exit' => ['initial'],
+        ];
 
-        // Entrega fecha o ciclo atual.
-        if ($type === 'handover' && !in_array($previous->type, ['initial', 'routine', 'return'], true)) {
-            throw ValidationException::withMessages([
-                'type' => 'Para criar Entrega, a inspecao anterior tem de ser Inicial, Rotina ou Recolha.',
-            ]);
-        }
+        $previousType = (string) $previous->type;
+        $allowed = $allowedByPreviousType[$previousType] ?? [];
 
-        // Rotina/Recolha so existem entre Initial e Entrega.
-        if (in_array($type, ['routine', 'return'], true) && !in_array($previous->type, ['initial', 'routine', 'return'], true)) {
-            throw ValidationException::withMessages([
-                'type' => 'Rotina/Recolha so podem existir entre a Inicial e a Entrega.',
-            ]);
-        }
+        if (!in_array($type, $allowed, true)) {
+            $previousLabel = $this->label($previousType);
+            $allowedLabels = implode(', ', array_map(fn (string $value) => $this->label($value), $allowed));
 
-        // Depois de Entrega, nao pode criar mais itens do ciclo sem nova Initial.
-        if ($previous->type === 'handover' && in_array($type, ['routine', 'return', 'handover'], true)) {
             throw ValidationException::withMessages([
-                'type' => 'Apos Entrega, precisa de nova Inspecao Inicial para abrir novo ciclo.',
+                'type' => "Circuito invalido. Apos {$previousLabel} apenas permite: {$allowedLabels}.",
             ]);
         }
 
@@ -87,5 +79,10 @@ class InspectionSequenceService
                 'is_resolved' => false,
             ]);
         }
+    }
+
+    private function label(string $type): string
+    {
+        return (string) config('inspections.type_labels.' . $type, $type);
     }
 }

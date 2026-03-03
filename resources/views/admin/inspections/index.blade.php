@@ -24,8 +24,8 @@
                             <label>Tipo</label>
                             <select name="type" class="form-control">
                                 <option value="">Todos</option>
-                                @foreach(config('inspections.types') as $type)
-                                    <option value="{{ $type }}" {{ request('type') === $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                                @foreach(config('inspections.type_labels', []) as $typeKey => $typeLabel)
+                                    <option value="{{ $typeKey }}" {{ request('type') === $typeKey ? 'selected' : '' }}>{{ $typeLabel }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -33,8 +33,8 @@
                             <label>Estado</label>
                             <select name="status" class="form-control">
                                 <option value="">Todos</option>
-                                @foreach(config('inspections.statuses') as $status)
-                                    <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ',$status)) }}</option>
+                                @foreach(config('inspections.status_labels', []) as $statusKey => $statusLabel)
+                                    <option value="{{ $statusKey }}" {{ request('status') === $statusKey ? 'selected' : '' }}>{{ $statusLabel }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -101,16 +101,25 @@
                             @forelse($inspections as $inspection)
                                 <tr>
                                     <td>{{ $inspection->id }}</td>
-                                    <td>{{ ucfirst($inspection->type) }}</td>
+                                    <td>{{ config('inspections.type_labels.' . $inspection->type, $inspection->type) }}</td>
                                     <td>{{ $inspection->vehicle->license_plate ?? '-' }}</td>
                                     <td>{{ $inspection->driver->name ?? '-' }}</td>
-                                    <td><span class="label label-info">{{ $inspection->status }}</span></td>
+                                    <td><span class="label label-info">{{ config('inspections.status_labels.' . $inspection->status, $inspection->status) }}</span></td>
                                     <td>{{ $inspection->current_step }}</td>
                                     <td>{{ $inspection->createdBy->name ?? '-' }}</td>
                                     <td>{{ $inspection->created_at }}</td>
                                     <td>
                                         @can('inspection_show')<a class="btn btn-xs btn-primary" href="{{ route('admin.inspections.show', $inspection->id) }}">Ver</a>@endcan
                                         @can('inspection_edit')<a class="btn btn-xs btn-info" href="{{ route('admin.inspections.edit', $inspection->id) }}">Wizard</a>@endcan
+                                        @can('inspection_delete')
+                                            @if(!$inspection->locked_at)
+                                                <form action="{{ route('admin.inspections.destroy', $inspection->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Eliminar esta inspeção aberta?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-xs btn-danger" type="submit">Eliminar</button>
+                                                </form>
+                                            @endif
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

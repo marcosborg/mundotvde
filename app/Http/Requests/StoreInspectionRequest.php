@@ -15,7 +15,7 @@ class StoreInspectionRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => ['required', 'in:initial,handover,routine,return'],
+            'type' => ['required', 'in:initial,handover,routine,return,fleet_exit'],
             'vehicle_id' => ['required', 'integer', 'exists:vehicle_items,id'],
             'driver_id' => ['nullable', 'integer', 'exists:drivers,id'],
             'location_lat' => ['nullable', 'numeric'],
