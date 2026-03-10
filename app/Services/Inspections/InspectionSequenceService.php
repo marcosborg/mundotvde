@@ -36,7 +36,7 @@ class InspectionSequenceService
             'initial' => ['handover'],
             'handover' => ['routine'],
             'routine' => ['routine', 'return'],
-            'return' => ['fleet_exit'],
+            'return' => ['handover', 'fleet_exit'],
             'fleet_exit' => ['initial'],
         ];
 

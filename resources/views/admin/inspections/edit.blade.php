@@ -225,11 +225,63 @@
             <div class="panel-heading">Etapa 5. Acessorios e extras</div>
             <div class="panel-body">
               <div class="alert alert-info" style="margin-bottom:12px;">
-                Esta secao sera definida no proximo passo.
+                Marque cada item como presente/ausente e, quando aplicavel, o estado. Se estiver presente, anexe foto.
               </div>
-              <form method="POST" action="{{ route('admin.inspections.update-step', $inspection->id) }}">
+              <form method="POST" action="{{ route('admin.inspections.update-step', $inspection->id) }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="step" value="5">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-condensed">
+                    <thead>
+                      <tr>
+                        <th style="width:35%;">Item</th>
+                        <th style="width:15%;">Presenca</th>
+                        <th style="width:15%;">Estado</th>
+                        <th style="width:35%;">Foto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($accessoryItems as $key => $label)
+                        @php($presenceValue = (string) ($checklist['accessories'][$key . '_present'] ?? ''))
+                        @php($stateValue = (string) ($checklist['accessories'][$key . '_state'] ?? ''))
+                        <tr>
+                          <td><strong>{{ $label }}</strong></td>
+                          <td>
+                            <select class="form-control" name="checklist[accessories][{{ $key }}_present]">
+                              <option value="">Selecione</option>
+                              <option value="1" {{ $presenceValue === '1' ? 'selected' : '' }}>Presente</option>
+                              <option value="0" {{ $presenceValue === '0' ? 'selected' : '' }}>Ausente</option>
+                            </select>
+                          </td>
+                          <td>
+                            <select class="form-control" name="checklist[accessories][{{ $key }}_state]">
+                              <option value="">Nao aplicavel</option>
+                              @foreach($accessoryStateOptions as $stateKey => $stateLabel)
+                                <option value="{{ $stateKey }}" {{ $stateValue === $stateKey ? 'selected' : '' }}>{{ $stateLabel }}</option>
+                              @endforeach
+                            </select>
+                          </td>
+                          <td>
+                            <div class="drop-upload">
+                              <div class="drop-upload__hint">Arraste ficheiros aqui ou clique para selecionar.</div>
+                              <input type="file" class="form-control" name="checklist_photos[{{ $key }}][]" multiple>
+                            </div>
+                            @if(!empty($checklistPhotoBySlot[$key]))
+                              <small class="text-success">Foto atual: <a target="_blank" href="{{ asset('storage/' . $checklistPhotoBySlot[$key]->path) }}">ver</a></small>
+                            @else
+                              <small class="text-danger">Sem foto</small>
+                            @endif
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="form-group">
+                  <label>Outros acessorios (campo livre)</label>
+                  <textarea class="form-control" rows="3" name="checklist[accessories][other_notes]" placeholder="Ex.: Suporte de telemovel, cabos extra, etc.">{{ (string) ($checklist['accessories']['other_notes'] ?? '') }}</textarea>
+                </div>
                 <button class="btn btn-default" type="submit" name="action" value="save">Guardar</button>
                 <button class="btn btn-primary" type="submit" name="action" value="complete">Concluir etapa 5</button>
               </form>

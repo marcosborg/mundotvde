@@ -21,6 +21,23 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InspectionController extends Controller
 {
+    private const ACCESSORY_ITEMS = [
+        'via_verde' => 'Via Verde / identificador eletronico',
+        'charging_cable' => 'Cabo(s) de carregamento (viaturas eletricas)',
+        'charging_adapter' => 'Adaptadores de carregamento',
+        'spare_tire' => 'Pneu suplente',
+        'anti_puncture_kit' => 'Kit anti-furos',
+        'jack_wrench' => 'Macaco e chave de rodas',
+        'warning_triangle' => 'Triangulo de sinalizacao',
+        'reflective_vest' => 'Colete refletor',
+    ];
+
+    private const ACCESSORY_STATE_OPTIONS = [
+        'good' => 'Bom',
+        'fair' => 'Razoavel',
+        'poor' => 'Mau',
+    ];
+
     private InspectionWorkflowService $workflow;
 
     public function __construct(InspectionWorkflowService $workflow)
@@ -159,13 +176,24 @@ class InspectionController extends Controller
 
         $checklist = [];
         foreach ($inspection->checkItems as $item) {
-            $checklist[$item->group_key][$item->item_key] = $item->value_int !== null
-                ? (int) $item->value_int
-                : (bool) $item->value_bool;
+            if ($item->value_int !== null) {
+                $checklist[$item->group_key][$item->item_key] = (int) $item->value_int;
+                continue;
+            }
+
+            if ($item->value_text !== null) {
+                $checklist[$item->group_key][$item->item_key] = (string) $item->value_text;
+                continue;
+            }
+
+            $checklist[$item->group_key][$item->item_key] = (bool) $item->value_bool;
         }
 
         $checklistPhotoBySlot = [];
-        foreach (['dua', 'insurance', 'inspection_periodic', 'tvde_stickers', 'no_smoking_sticker', 'fuel_energy', 'tires', 'panel_warning'] as $slot) {
+        foreach (array_merge(
+            ['dua', 'insurance', 'inspection_periodic', 'tvde_stickers', 'no_smoking_sticker', 'fuel_energy', 'tires', 'panel_warning'],
+            array_keys(self::ACCESSORY_ITEMS)
+        ) as $slot) {
             $checklistPhotoBySlot[$slot] = $inspection->photos->first(function ($photo) use ($slot) {
                 return $photo->category === 'document' && $photo->slot === 'doc_' . $slot;
             });
@@ -197,6 +225,8 @@ class InspectionController extends Controller
             'drivers' => $drivers,
             'missingItems' => $missingItems,
             'signatureNames' => $signatureNames,
+            'accessoryItems' => self::ACCESSORY_ITEMS,
+            'accessoryStateOptions' => self::ACCESSORY_STATE_OPTIONS,
         ]);
     }
 
@@ -220,13 +250,17 @@ class InspectionController extends Controller
             $inspection->update(['driver_id' => $validated['driver_id']]);
         }
 
-        if (in_array($step, [3, 4], true)) {
+        if (in_array($step, [3, 4, 5], true)) {
             $checklistInput = (array) $request->input('checklist', []);
             $checklistPhotos = (array) $request->file('checklist_photos', []);
 
             $this->storeChecklist($inspection, $checklistInput);
             $this->storeChecklistPhotos($inspection, $checklistPhotos);
             $this->enforcePanelWarningEvidence($inspection, $checklistInput, $checklistPhotos);
+
+            if ($step === 5 && $action === 'complete') {
+                $this->enforceAccessoryEvidence($inspection, $checklistInput, $checklistPhotos);
+            }
         }
 
         if ($step === 6) {
@@ -379,12 +413,14 @@ class InspectionController extends Controller
 
             foreach ($items as $itemKey => $value) {
                 $isNumericValue = in_array($groupKey, ['cleanliness', 'mileage', 'fuel_energy', 'tire_condition'], true) && is_numeric($value);
+                $isTextValue = is_string($value) && !is_numeric($value);
                 $rows[] = [
                     'inspection_id' => $inspection->id,
                     'group_key' => (string) $groupKey,
                     'item_key' => (string) $itemKey,
-                    'value_bool' => $isNumericValue ? null : (bool) $value,
+                    'value_bool' => ($isNumericValue || $isTextValue) ? null : (bool) $value,
                     'value_int' => $isNumericValue ? (int) $value : null,
+                    'value_text' => $isTextValue ? trim($value) : null,
                     'updated_at' => now(),
                     'created_at' => now(),
                 ];
@@ -392,7 +428,7 @@ class InspectionController extends Controller
         }
 
         if (!empty($rows)) {
-            InspectionCheckItem::upsert($rows, ['inspection_id', 'group_key', 'item_key'], ['value_bool', 'value_int', 'updated_at']);
+            InspectionCheckItem::upsert($rows, ['inspection_id', 'group_key', 'item_key'], ['value_bool', 'value_int', 'value_text', 'updated_at']);
         }
     }
 
@@ -460,6 +496,39 @@ class InspectionController extends Controller
         if (!$hasExisting) {
             throw ValidationException::withMessages([
                 'checklist_photos.panel_warning' => 'Se assinalar avisos no painel, anexe pelo menos uma foto.',
+            ]);
+        }
+    }
+
+    private function enforceAccessoryEvidence(Inspection $inspection, array $checklist, array $checklistPhotos): void
+    {
+        $accessories = (array) ($checklist['accessories'] ?? []);
+        $missingPhotos = [];
+
+        foreach (array_keys(self::ACCESSORY_ITEMS) as $key) {
+            $presence = isset($accessories[$key . '_present']) ? (int) $accessories[$key . '_present'] : 0;
+            if ($presence !== 1) {
+                continue;
+            }
+
+            $newPhotos = $this->normalizeFiles($checklistPhotos[$key] ?? []);
+            if (!empty($newPhotos)) {
+                continue;
+            }
+
+            $hasExisting = $inspection->photos()
+                ->where('category', 'document')
+                ->where('slot', 'doc_' . $key)
+                ->exists();
+
+            if (!$hasExisting) {
+                $missingPhotos[] = self::ACCESSORY_ITEMS[$key];
+            }
+        }
+
+        if (!empty($missingPhotos)) {
+            throw ValidationException::withMessages([
+                'checklist_photos.accessories' => 'Falta foto para os acessorios presentes: ' . implode(', ', $missingPhotos) . '.',
             ]);
         }
     }
