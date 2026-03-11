@@ -98,6 +98,14 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
         Route::get('get-time-logs', 'Api\\AppController@getTimeLogs');
     });
     Route::get('contracts', 'Api\\AppController@contracts');
+    Route::prefix('inspections')->group(function () {
+        Route::get('/', 'Api\\AppInspectionController@index');
+        Route::get('{inspection}', 'Api\\AppInspectionController@show');
+        Route::post('{inspection}/step', 'Api\\AppInspectionController@updateStep');
+        Route::post('{inspection}/back-step', 'Api\\AppInspectionController@backStep');
+        Route::post('{inspection}/damages/{damage}/resolve', 'Api\\AppInspectionController@resolveDamage');
+        Route::post('{inspection}/close', 'Api\\AppInspectionController@close');
+    });
 });
 
 Route::get('app/reports/pdf/{activity_launch_id}', 'Api\\AppController@pdf');

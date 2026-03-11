@@ -14,11 +14,19 @@
   <div class="panel panel-default">
     <div class="panel-heading">Agendamentos de Rotina</div>
     <div class="panel-body">
+      <div class="alert alert-info" style="margin-bottom:16px;">
+        <strong>Regras de execucao das rotinas programadas</strong><br>
+        1) Na app do motorista so aparecem inspecoes de <strong>Rotina</strong> geradas por agendamento.<br>
+        2) A rotina programada so arranca na janela operacional <strong>Entrega -> Rotina -> Recolha</strong>.<br>
+        3) Fora desta janela, o sistema ignora o agendamento (skip) e nao cria inspeÃ§Ã£o.<br>
+        4) Se a rotina nao estiver programada, nao deve ser executada na app.
+      </div>
+
       <p>
         @can('inspection_edit')
         <a class="btn btn-success" href="{{ route('admin.inspection-schedules.create') }}">Novo agendamento</a>
         @endcan
-        <a class="btn btn-default" href="{{ route('admin.inspections.index') }}">Ir para inspeções</a>
+        <a class="btn btn-default" href="{{ route('admin.inspections.index') }}">Ir para inspeÃ§Ãµes</a>
       </p>
 
       <form method="GET" class="row" style="margin-bottom:16px;">
@@ -49,11 +57,11 @@
           </select>
         </div>
         <div class="col-md-2">
-          <label>Próxima execução de</label>
+          <label>PrÃ³xima execuÃ§Ã£o de</label>
           <input type="date" name="next_run_from" class="form-control" value="{{ request('next_run_from') }}">
         </div>
         <div class="col-md-2">
-          <label>até</label>
+          <label>atÃ©</label>
           <input type="date" name="next_run_to" class="form-control" value="{{ request('next_run_to') }}">
         </div>
         <div class="col-md-12" style="margin-top:10px;">
@@ -68,8 +76,8 @@
             <th>ID</th>
             <th>Viatura</th>
             <th>Motorista</th>
-            <th>Frequência (dias)</th>
-            <th>Próxima execução</th>
+            <th>FrequÃªncia (dias)</th>
+            <th>PrÃ³xima execuÃ§Ã£o</th>
             <th>Ativo</th>
             <th>&nbsp;</th>
           </tr>
@@ -82,12 +90,12 @@
             <td>{{ $s->driver->name ?? '-' }}</td>
             <td>{{ $s->frequency_days }}</td>
             <td>{{ optional($s->next_run_at)->format('Y-m-d H:i') ?? '-' }}</td>
-            <td>{!! $s->is_active ? '<span class="label label-success">Sim</span>' : '<span class="label label-default">Não</span>' !!}</td>
+            <td>{!! $s->is_active ? '<span class="label label-success">Sim</span>' : '<span class="label label-default">NÃ£o</span>' !!}</td>
             <td>
               <a class="btn btn-xs btn-primary" href="{{ route('admin.inspection-schedules.show', $s->id) }}">Ver</a>
               <a class="btn btn-xs btn-info" href="{{ route('admin.inspection-schedules.edit', $s->id) }}">Editar</a>
               @if($s->is_active)
-              <form method="POST" action="{{ route('admin.inspection-schedules.run-now', $s->id) }}" style="display:inline">@csrf<button class="btn btn-xs btn-warning" type="submit" onclick="return confirm('Gerar inspeção de rotina agora?');">Gerar agora</button></form>
+              <form method="POST" action="{{ route('admin.inspection-schedules.run-now', $s->id) }}" style="display:inline">@csrf<button class="btn btn-xs btn-warning" type="submit" onclick="return confirm('Gerar inspeÃ§Ã£o de rotina agora?');">Gerar agora</button></form>
               @endif
             </td>
           </tr>

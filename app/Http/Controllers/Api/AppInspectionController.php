@@ -1,0 +1,551 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Driver;
+use App\Models\Inspection;
+use App\Models\InspectionCheckItem;
+use App\Models\InspectionDamage;
+use App\Services\Inspections\InspectionWorkflowService;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
+
+class AppInspectionController extends Controller
+{
+    private const SCHEDULE_AUDIT_ACTION = 'routine_generated_from_schedule';
+    private const ACCESSORY_ITEMS = [
+        'via_verde' => 'Via Verde / identificador eletronico',
+        'charging_cable' => 'Cabo(s) de carregamento (viaturas eletricas)',
+        'charging_adapter' => 'Adaptadores de carregamento',
+        'spare_tire' => 'Pneu suplente',
+        'anti_puncture_kit' => 'Kit anti-furos',
+        'jack_wrench' => 'Macaco e chave de rodas',
+        'warning_triangle' => 'Triangulo de sinalizacao',
+        'reflective_vest' => 'Colete refletor',
+    ];
+
+    public function __construct(private InspectionWorkflowService $workflow)
+    {
+    }
+
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        $driver = Driver::query()->where('user_id', $user->id)->first();
+        $roles = $user->roles->pluck('title')->map(fn ($v) => mb_strtolower((string) $v))->toArray();
+        $isManager = in_array('admin', $roles, true) || in_array('gestor', $roles, true);
+
+        $query = Inspection::query()
+            ->with(['vehicle:id,license_plate', 'driver:id,name'])
+            ->where('type', 'routine')
+            ->whereHas('audits', function ($auditQuery) {
+                $auditQuery->where('action', self::SCHEDULE_AUDIT_ACTION);
+            })
+            ->orderByDesc('id');
+
+        $statusFilter = (string) $request->input('status', '');
+
+        if ($statusFilter !== '' && $statusFilter !== 'all') {
+            $query->where('status', $request->string('status'));
+        } elseif ($statusFilter !== 'all') {
+            $query->whereIn('status', ['draft', 'in_progress', 'ready_to_sign', 'signed']);
+        }
+
+        if (!$isManager) {
+            if (!$driver) {
+                return response()->json(['data' => []]);
+            }
+
+            $query->where(function ($q) use ($driver, $user) {
+                $q->where('driver_id', $driver->id)
+                    ->orWhereHas('vehicle', function ($vehicleQuery) use ($driver) {
+                        $vehicleQuery->where('driver_id', $driver->id);
+                    })
+                    ->orWhere('created_by_user_id', $user->id)
+                    ->orWhere('responsible_user_id', $user->id);
+            });
+        }
+
+        $inspections = $query->paginate((int) $request->integer('per_page', 20));
+
+        return response()->json([
+            'data' => $inspections->getCollection()->map(function (Inspection $inspection) {
+                return [
+                    'id' => $inspection->id,
+                    'type' => $inspection->type,
+                    'type_label' => (string) config('inspections.type_labels.' . $inspection->type, $inspection->type),
+                    'status' => $inspection->status,
+                    'status_label' => (string) config('inspections.status_labels.' . $inspection->status, $inspection->status),
+                    'current_step' => (int) $inspection->current_step,
+                    'vehicle' => [
+                        'id' => $inspection->vehicle_id,
+                        'license_plate' => $inspection->vehicle->license_plate ?? null,
+                    ],
+                    'driver' => [
+                        'id' => $inspection->driver_id,
+                        'name' => $inspection->driver->name ?? null,
+                    ],
+                    'started_at' => optional($inspection->started_at)->toDateTimeString(),
+                    'locked_at' => optional($inspection->locked_at)->toDateTimeString(),
+                ];
+            })->values(),
+            'meta' => [
+                'current_page' => $inspections->currentPage(),
+                'last_page' => $inspections->lastPage(),
+                'per_page' => $inspections->perPage(),
+                'total' => $inspections->total(),
+            ],
+        ]);
+    }
+
+    public function show(Request $request, Inspection $inspection)
+    {
+        $this->ensureUserCanAccessInspection($request, $inspection);
+        $this->ensureInspectionIsScheduledRoutine($inspection);
+
+        $inspection->load([
+            'vehicle.vehicle_brand',
+            'vehicle.vehicle_model',
+            'driver',
+            'photos',
+            'damages.photos',
+            'signatures',
+            'stepStates',
+            'checkItems',
+            'report',
+        ]);
+
+        $checklist = [];
+        foreach ($inspection->checkItems as $item) {
+            if ($item->value_int !== null) {
+                $checklist[$item->group_key][$item->item_key] = (int) $item->value_int;
+                continue;
+            }
+            if ($item->value_text !== null) {
+                $checklist[$item->group_key][$item->item_key] = (string) $item->value_text;
+                continue;
+            }
+            $checklist[$item->group_key][$item->item_key] = $item->value_bool === null ? null : (bool) $item->value_bool;
+        }
+
+        $damages = $inspection->damages->map(function ($damage) {
+            return [
+                'id' => $damage->id,
+                'scope' => $damage->scope,
+                'location' => $damage->location,
+                'part' => $damage->part,
+                'part_section' => $damage->part_section,
+                'damage_type' => $damage->damage_type,
+                'notes' => $damage->notes,
+                'is_resolved' => (bool) $damage->is_resolved,
+                'photos' => $damage->photos->map(function ($photo) {
+                    return [
+                        'id' => $photo->id,
+                        'url' => asset('storage/' . $photo->path),
+                        'original_name' => $photo->original_name,
+                    ];
+                })->values(),
+            ];
+        })->values();
+
+        return response()->json([
+            'inspection' => [
+                'id' => $inspection->id,
+                'type' => $inspection->type,
+                'type_label' => (string) config('inspections.type_labels.' . $inspection->type, $inspection->type),
+                'status' => $inspection->status,
+                'status_label' => (string) config('inspections.status_labels.' . $inspection->status, $inspection->status),
+                'current_step' => (int) $inspection->current_step,
+                'extra_observations' => $inspection->extra_observations,
+                'location' => [
+                    'text' => $inspection->location_text,
+                    'lat' => $inspection->location_lat,
+                    'lng' => $inspection->location_lng,
+                ],
+                'vehicle' => [
+                    'id' => $inspection->vehicle_id,
+                    'license_plate' => $inspection->vehicle->license_plate ?? null,
+                    'brand' => $inspection->vehicle->vehicle_brand->name ?? null,
+                    'model' => $inspection->vehicle->vehicle_model->name ?? null,
+                    'year' => $inspection->vehicle->year ?? null,
+                ],
+                'driver' => [
+                    'id' => $inspection->driver_id,
+                    'name' => $inspection->driver->name ?? null,
+                ],
+                'report_pdf_url' => $inspection->report ? asset('storage/' . $inspection->report->pdf_path) : null,
+            ],
+            'driver_options' => Driver::query()->orderBy('name')->get(['id', 'name']),
+            'steps' => config('inspections.step_labels'),
+            'required_slots' => config('inspections.required_slots'),
+            'slot_labels' => config('inspections.slot_labels'),
+            'damage_locations' => config('inspections.damage_locations'),
+            'damage_types' => config('inspections.damage_types'),
+            'checklist' => $checklist,
+            'photos' => $inspection->photos->map(function ($photo) {
+                return [
+                    'id' => $photo->id,
+                    'category' => $photo->category,
+                    'slot' => $photo->slot,
+                    'url' => asset('storage/' . $photo->path),
+                    'original_name' => $photo->original_name,
+                ];
+            })->values(),
+            'damages' => $damages,
+            'signatures' => [
+                'responsible' => optional($inspection->signatures->firstWhere('role', 'responsible'))->signed_by_name,
+                'driver' => optional($inspection->signatures->firstWhere('role', 'driver'))->signed_by_name,
+            ],
+        ]);
+    }
+
+    public function updateStep(Request $request, Inspection $inspection)
+    {
+        $this->ensureUserCanAccessInspection($request, $inspection);
+        $this->ensureInspectionIsScheduledRoutine($inspection);
+
+        $validator = Validator::make($request->all(), [
+            'step' => ['required', 'integer', 'min:1', 'max:12'],
+            'action' => ['nullable', 'in:save,complete'],
+            'driver_id' => ['nullable', 'integer', 'exists:drivers,id'],
+            'location' => ['nullable', 'string', 'max:30'],
+            'part' => ['nullable', 'string', 'max:120'],
+            'part_section' => ['nullable', 'string', 'max:120'],
+            'damage_type' => ['nullable', 'string', 'max:40'],
+            'damage_notes' => ['nullable', 'string'],
+            'damage_photo' => ['nullable', 'array'],
+            'damage_photo.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'inspector_name' => ['nullable', 'string', 'max:255'],
+            'driver_signature_name' => ['nullable', 'string', 'max:255'],
+            'extra_observations' => ['nullable', 'string'],
+            'extra_photos' => ['nullable', 'array'],
+            'extra_photos.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+        ]);
+        $validated = $validator->validate();
+
+        $step = (int) $validated['step'];
+        $action = $validated['action'] ?? 'save';
+
+        if ($step > (int) $inspection->current_step) {
+            throw ValidationException::withMessages(['step' => 'Nao pode avancar sem concluir etapas anteriores.']);
+        }
+
+        if ($step === 2 && !empty($validated['driver_id'])) {
+            $inspection->update(['driver_id' => $validated['driver_id']]);
+        }
+
+        if (in_array($step, [3, 4, 5], true)) {
+            $checklistInput = (array) $request->input('checklist', []);
+            $checklistPhotos = (array) $request->file('checklist_photos', []);
+
+            $this->storeChecklist($inspection, $checklistInput);
+            $this->storeChecklistPhotos($inspection, $checklistPhotos);
+            $this->enforcePanelWarningEvidence($inspection, $checklistInput, $checklistPhotos);
+            if ($step === 5 && $action === 'complete') {
+                $this->enforceAccessoryEvidence($inspection, $checklistInput, $checklistPhotos);
+            }
+        }
+
+        if ($step === 6) {
+            $this->storeSlotPhotos($inspection, (array) $request->file('exterior_photos', []), 'exterior');
+        }
+
+        if ($step === 7) {
+            $this->storeSlotPhotos($inspection, (array) $request->file('interior_photos', []), 'interior');
+        }
+
+        if (in_array($step, [8, 9], true)) {
+            $hasDamageInput = !empty($validated['location'])
+                || !empty($validated['part'])
+                || !empty($validated['part_section'])
+                || !empty($validated['damage_type'])
+                || !empty($validated['damage_notes'])
+                || $request->hasFile('damage_photo');
+
+            if ($hasDamageInput) {
+                if (empty($validated['location']) || empty($validated['part']) || empty($validated['damage_type'])) {
+                    throw ValidationException::withMessages([
+                        'damage' => 'Para guardar um dano, preencha Local, Peca e Tipo.',
+                    ]);
+                }
+                if (!$request->hasFile('damage_photo')) {
+                    throw ValidationException::withMessages(['damage_photo' => 'Cada dano deve ter pelo menos 1 foto.']);
+                }
+                $this->workflow->addDamage($inspection, [
+                    'scope' => $step === 8 ? 'exterior' : 'interior',
+                    'location' => $validated['location'],
+                    'part' => $validated['part'],
+                    'part_section' => $validated['part_section'] ?? null,
+                    'damage_type' => $validated['damage_type'],
+                    'notes' => $validated['damage_notes'] ?? null,
+                    'damage_photos' => (array) $request->file('damage_photo', []),
+                ]);
+            } elseif ($action === 'save') {
+                throw ValidationException::withMessages([
+                    'damage' => 'Nenhum dano foi submetido. Preencha os campos e anexe uma foto.',
+                ]);
+            }
+        }
+
+        if ($step === 10) {
+            $inspection->update(['extra_observations' => $validated['extra_observations'] ?? null]);
+            if ($request->hasFile('extra_photos')) {
+                foreach ((array) $request->file('extra_photos') as $extraPhoto) {
+                    if ($extraPhoto) {
+                        $this->workflow->uploadPhoto($inspection, $extraPhoto, 'extra');
+                    }
+                }
+            }
+        }
+
+        if ($step === 11) {
+            if (!empty($validated['inspector_name'])) {
+                $this->workflow->sign($inspection, 'responsible', $validated['inspector_name']);
+            }
+            if (!empty($validated['driver_signature_name'])) {
+                $this->workflow->sign($inspection, 'driver', $validated['driver_signature_name']);
+            }
+        }
+
+        if ($action === 'complete' && $step < 12) {
+            $this->workflow->completeStep($inspection, $step, [
+                'extra_observations' => $validated['extra_observations'] ?? null,
+            ]);
+        }
+
+        $inspection->refresh();
+
+        return response()->json([
+            'message' => $action === 'complete' ? 'Etapa concluida com sucesso.' : 'Dados guardados com sucesso.',
+            'inspection_id' => $inspection->id,
+            'current_step' => (int) $inspection->current_step,
+            'status' => $inspection->status,
+        ]);
+    }
+
+    public function backStep(Request $request, Inspection $inspection)
+    {
+        $this->ensureUserCanAccessInspection($request, $inspection);
+        $this->ensureInspectionIsScheduledRoutine($inspection);
+
+        if ($inspection->locked_at) {
+            throw ValidationException::withMessages(['inspection' => 'Inspecao fechada nao pode regredir etapas.']);
+        }
+
+        if ((int) $inspection->current_step <= 1) {
+            throw ValidationException::withMessages(['inspection' => 'A inspecao ja esta na primeira etapa.']);
+        }
+
+        $inspection->update([
+            'current_step' => max(1, ((int) $inspection->current_step) - 1),
+            'status' => 'in_progress',
+        ]);
+
+        return response()->json([
+            'message' => 'Regrediu para a etapa anterior.',
+            'current_step' => (int) $inspection->current_step,
+        ]);
+    }
+
+    public function resolveDamage(Request $request, Inspection $inspection, InspectionDamage $damage)
+    {
+        $this->ensureUserCanAccessInspection($request, $inspection);
+        $this->ensureInspectionIsScheduledRoutine($inspection);
+        if ((int) $damage->inspection_id !== (int) $inspection->id) {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
+        $this->workflow->resolveDamage($damage);
+
+        return response()->json(['message' => 'Dano marcado como reparado.']);
+    }
+
+    public function close(Request $request, Inspection $inspection)
+    {
+        $this->ensureUserCanAccessInspection($request, $inspection);
+        $this->ensureInspectionIsScheduledRoutine($inspection);
+
+        $this->workflow->close($inspection, false);
+        $inspection->load('report');
+
+        return response()->json([
+            'message' => 'Inspecao fechada e PDF gerado.',
+            'report_pdf_url' => $inspection->report ? asset('storage/' . $inspection->report->pdf_path) : null,
+        ]);
+    }
+
+    private function ensureUserCanAccessInspection(Request $request, Inspection $inspection): void
+    {
+        $user = $request->user();
+        $roles = $user->roles->pluck('title')->map(fn ($v) => mb_strtolower((string) $v))->toArray();
+        $isManager = in_array('admin', $roles, true) || in_array('gestor', $roles, true);
+
+        if ($isManager) {
+            return;
+        }
+
+        $driver = Driver::query()->where('user_id', $user->id)->first();
+        $isRelatedDriver = $driver && (
+            (int) $inspection->driver_id === (int) $driver->id
+            || (int) ($inspection->vehicle?->driver_id ?? 0) === (int) $driver->id
+        );
+
+        $isInspectionOwner = (int) $inspection->created_by_user_id === (int) $user->id
+            || (int) $inspection->responsible_user_id === (int) $user->id;
+
+        if (!$isRelatedDriver && !$isInspectionOwner) {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+    }
+
+    private function ensureInspectionIsScheduledRoutine(Inspection $inspection): void
+    {
+        if ((string) $inspection->type !== 'routine') {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
+        $isScheduledRoutine = $inspection->audits()
+            ->where('action', self::SCHEDULE_AUDIT_ACTION)
+            ->exists();
+
+        if (!$isScheduledRoutine) {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+    }
+
+    private function storeChecklist(Inspection $inspection, array $checklist): void
+    {
+        $rows = [];
+
+        foreach ($checklist as $groupKey => $items) {
+            if (!is_array($items)) {
+                continue;
+            }
+
+            foreach ($items as $itemKey => $value) {
+                $isNumericValue = in_array($groupKey, ['cleanliness', 'mileage', 'fuel_energy', 'tire_condition'], true) && is_numeric($value);
+                $isTextValue = is_string($value) && !is_numeric($value);
+
+                $rows[] = [
+                    'inspection_id' => $inspection->id,
+                    'group_key' => (string) $groupKey,
+                    'item_key' => (string) $itemKey,
+                    'value_bool' => ($isNumericValue || $isTextValue) ? null : (bool) $value,
+                    'value_int' => $isNumericValue ? (int) $value : null,
+                    'value_text' => $isTextValue ? trim($value) : null,
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ];
+            }
+        }
+
+        if (!empty($rows)) {
+            InspectionCheckItem::upsert($rows, ['inspection_id', 'group_key', 'item_key'], ['value_bool', 'value_int', 'value_text', 'updated_at']);
+        }
+    }
+
+    private function storeSlotPhotos(Inspection $inspection, array $filesBySlot, string $category): void
+    {
+        foreach ($filesBySlot as $slot => $slotFiles) {
+            foreach ($this->normalizeFiles($slotFiles) as $file) {
+                $this->workflow->uploadPhoto($inspection, $file, $category, (string) $slot);
+            }
+        }
+    }
+
+    private function storeChecklistPhotos(Inspection $inspection, array $filesByKey): void
+    {
+        foreach ($filesByKey as $key => $keyFiles) {
+            $slot = 'doc_' . (string) $key;
+            foreach ($this->normalizeFiles($keyFiles) as $file) {
+                $this->workflow->uploadPhoto($inspection, $file, 'document', $slot);
+            }
+        }
+    }
+
+    /**
+     * @param mixed $files
+     * @return UploadedFile[]
+     */
+    private function normalizeFiles($files): array
+    {
+        if ($files instanceof UploadedFile) {
+            return [$files];
+        }
+
+        if (!is_array($files)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($files as $file) {
+            if ($file instanceof UploadedFile) {
+                $normalized[] = $file;
+            }
+        }
+
+        return $normalized;
+    }
+
+    private function enforcePanelWarningEvidence(Inspection $inspection, array $checklist, array $checklistPhotos): void
+    {
+        $warnings = (array) ($checklist['panel_warnings'] ?? []);
+
+        if (empty($warnings['panel_warning'])) {
+            return;
+        }
+
+        $newPhotos = $this->normalizeFiles($checklistPhotos['panel_warning'] ?? []);
+        if (!empty($newPhotos)) {
+            return;
+        }
+
+        $hasExisting = $inspection->photos()
+            ->where('category', 'document')
+            ->where('slot', 'doc_panel_warning')
+            ->exists();
+
+        if (!$hasExisting) {
+            throw ValidationException::withMessages([
+                'checklist_photos.panel_warning' => 'Se assinalar avisos no painel, anexe pelo menos uma foto.',
+            ]);
+        }
+    }
+
+    private function enforceAccessoryEvidence(Inspection $inspection, array $checklist, array $checklistPhotos): void
+    {
+        $accessories = (array) ($checklist['accessories'] ?? []);
+        $missingPhotos = [];
+
+        foreach (array_keys(self::ACCESSORY_ITEMS) as $key) {
+            $presence = isset($accessories[$key . '_present']) ? (int) $accessories[$key . '_present'] : 0;
+            if ($presence !== 1) {
+                continue;
+            }
+
+            $newPhotos = $this->normalizeFiles($checklistPhotos[$key] ?? []);
+            if (!empty($newPhotos)) {
+                continue;
+            }
+
+            $hasExisting = $inspection->photos()
+                ->where('category', 'document')
+                ->where('slot', 'doc_' . $key)
+                ->exists();
+
+            if (!$hasExisting) {
+                $missingPhotos[] = self::ACCESSORY_ITEMS[$key];
+            }
+        }
+
+        if (!empty($missingPhotos)) {
+            throw ValidationException::withMessages([
+                'checklist_photos.accessories' => 'Falta foto para os acessorios presentes: ' . implode(', ', $missingPhotos) . '.',
+            ]);
+        }
+    }
+}

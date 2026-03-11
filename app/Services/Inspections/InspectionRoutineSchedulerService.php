@@ -10,7 +10,13 @@ use Illuminate\Support\Carbon;
 
 class InspectionRoutineSchedulerService
 {
-    public function __construct(private InspectionSequenceService $sequence)
+    private const SCHEDULE_AUDIT_ACTION = 'routine_generated_from_schedule';
+
+    public function __construct(
+        private InspectionSequenceService $sequence,
+        private AppInspectionMessageService $appInspectionMessageService,
+        private InspectionAuditService $auditService
+    )
     {
     }
 
@@ -26,7 +32,7 @@ class InspectionRoutineSchedulerService
             });
         }
 
-        $schedules = $query->with(['vehicle', 'driver'])->get();
+        $schedules = $query->with(['vehicle.driver', 'driver'])->get();
 
         $created = 0;
         $skipped = 0;
@@ -48,7 +54,7 @@ class InspectionRoutineSchedulerService
                     $inspection = Inspection::create([
                         'type' => 'routine',
                         'vehicle_id' => $schedule->vehicle_id,
-                        'driver_id' => $schedule->driver_id,
+                        'driver_id' => $this->resolveDriverId($schedule),
                         'created_by_user_id' => $creator->id,
                         'responsible_user_id' => $creator->id,
                         'status' => 'in_progress',
@@ -65,11 +71,16 @@ class InspectionRoutineSchedulerService
                     }
 
                     $this->sequence->cloneOpenDamages($inspection);
+                    $this->auditService->log($inspection, self::SCHEDULE_AUDIT_ACTION, [
+                        'schedule_id' => $schedule->id,
+                    ]);
 
                     $schedule->update([
                         'last_run_at' => now(),
                         'next_run_at' => $this->nextRunAt($schedule),
                     ]);
+
+                    $this->appInspectionMessageService->notifyRoutineGenerated($schedule, $inspection);
                 }
 
                 $created++;
@@ -91,6 +102,12 @@ class InspectionRoutineSchedulerService
     {
         if (!$schedule->vehicle_id) {
             return 'vehicle missing';
+        }
+
+        $previous = $this->sequence->resolvePreviousInspection((int) $schedule->vehicle_id);
+        $previousType = (string) ($previous?->type ?? '');
+        if (!in_array($previousType, ['handover', 'routine'], true)) {
+            return 'fora da janela Entrega->Rotina->Recolha';
         }
 
         $hasOpenRoutine = Inspection::query()
@@ -127,5 +144,18 @@ class InspectionRoutineSchedulerService
         }
 
         return $fallback;
+    }
+
+    private function resolveDriverId(InspectionSchedule $schedule): ?int
+    {
+        if ($schedule->driver_id) {
+            return (int) $schedule->driver_id;
+        }
+
+        if ($schedule->vehicle?->driver_id) {
+            return (int) $schedule->vehicle->driver_id;
+        }
+
+        return null;
     }
 }
