@@ -1,4 +1,4 @@
-﻿<div class="row">
+<div class="row">
   <div class="col-md-6 form-group">
     <label class="required">Viatura</label>
     <select name="vehicle_id" class="form-control select2" required>
@@ -43,3 +43,78 @@
   <label>Notas</label>
   <textarea class="form-control" name="notes">{{ old('notes', $inspectionSchedule->notes ?? '') }}</textarea>
 </div>
+
+@php
+  $selectedConfig = [
+    'documents' => old('routine_config.documents', $routineConfig['documents'] ?? []),
+    'operational_checks' => old('routine_config.operational_checks', $routineConfig['operational_checks'] ?? []),
+    'accessories' => old('routine_config.accessories', $routineConfig['accessories'] ?? []),
+    'exterior_slots' => old('routine_config.exterior_slots', $routineConfig['exterior_slots'] ?? []),
+    'interior_slots' => old('routine_config.interior_slots', $routineConfig['interior_slots'] ?? []),
+  ];
+@endphp
+
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <strong>Configuração da rotina na app do motorista</strong>
+    <br>
+    <small>Tudo começa selecionado. Retire só o que não interessa para este agendamento.</small>
+  </div>
+  <div class="panel-body">
+    @foreach([
+      'documents' => 'Etapa 3 - Documentação',
+      'operational_checks' => 'Etapa 4 - Estado operacional',
+      'accessories' => 'Etapa 5 - Acessórios e extras',
+      'exterior_slots' => 'Etapa 6 - Fotografias exteriores',
+      'interior_slots' => 'Etapa 7 - Fotografias interiores',
+    ] as $sectionKey => $sectionTitle)
+      <div class="routine-section panel panel-default">
+        <div class="panel-heading clearfix">
+          <span class="pull-left"><strong>{{ $sectionTitle }}</strong></span>
+          <div class="btn-group btn-group-xs pull-right" role="group">
+            <button type="button" class="btn btn-success js-section-toggle" data-target="{{ $sectionKey }}" data-check="1">Selecionar todos</button>
+            <button type="button" class="btn btn-default js-section-toggle" data-target="{{ $sectionKey }}" data-check="0">Remover todos</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            @foreach(($routineOptions[$sectionKey] ?? []) as $itemKey => $label)
+              <div class="col-sm-6 col-md-4">
+                <label class="checkbox-inline">
+                  <input
+                    type="checkbox"
+                    class="js-section-input"
+                    data-section="{{ $sectionKey }}"
+                    name="routine_config[{{ $sectionKey }}][]"
+                    value="{{ $itemKey }}"
+                    {{ in_array($itemKey, $selectedConfig[$sectionKey] ?? [], true) ? 'checked' : '' }}
+                  >
+                  {{ $label }}
+                </label>
+              </div>
+            @endforeach
+          </div>
+        </div>
+      </div>
+    @endforeach
+  </div>
+</div>
+
+@push('scripts')
+<script>
+  document.addEventListener('click', function (event) {
+    var target = event.target;
+    if (!target.classList.contains('js-section-toggle')) {
+      return;
+    }
+
+    var section = target.getAttribute('data-target');
+    var shouldCheck = target.getAttribute('data-check') === '1';
+    var inputs = document.querySelectorAll('.js-section-input[data-section="' + section + '"]');
+    inputs.forEach(function (input) {
+      input.checked = shouldCheck;
+    });
+  });
+</script>
+@endpush
+

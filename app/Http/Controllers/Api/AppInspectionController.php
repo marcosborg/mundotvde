@@ -7,6 +7,9 @@ use App\Models\Driver;
 use App\Models\Inspection;
 use App\Models\InspectionCheckItem;
 use App\Models\InspectionDamage;
+use App\Models\InspectionSchedule;
+use App\Models\VehicleItem;
+use App\Support\InspectionRoutineConfig;
 use App\Services\Inspections\InspectionWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -36,16 +39,22 @@ class AppInspectionController extends Controller
     {
         $user = $request->user();
         $driver = Driver::query()->where('user_id', $user->id)->first();
-        $roles = $user->roles->pluck('title')->map(fn ($v) => mb_strtolower((string) $v))->toArray();
-        $isManager = in_array('admin', $roles, true) || in_array('gestor', $roles, true);
+        $isManager = $this->isManager($user);
 
         $query = Inspection::query()
             ->with(['vehicle:id,license_plate', 'driver:id,name'])
-            ->where('type', 'routine')
-            ->whereHas('audits', function ($auditQuery) {
-                $auditQuery->where('action', self::SCHEDULE_AUDIT_ACTION);
-            })
             ->orderByDesc('id');
+
+        if ($isManager) {
+            $query->whereDoesntHave('audits', function ($auditQuery) {
+                $auditQuery->where('action', self::SCHEDULE_AUDIT_ACTION);
+            });
+        } else {
+            $query->where('type', 'routine')
+                ->whereHas('audits', function ($auditQuery) {
+                    $auditQuery->where('action', self::SCHEDULE_AUDIT_ACTION);
+                });
+        }
 
         $statusFilter = (string) $request->input('status', '');
 
@@ -98,6 +107,7 @@ class AppInspectionController extends Controller
                 'last_page' => $inspections->lastPage(),
                 'per_page' => $inspections->perPage(),
                 'total' => $inspections->total(),
+                'is_manager' => $isManager,
             ],
         ]);
     }
@@ -105,7 +115,7 @@ class AppInspectionController extends Controller
     public function show(Request $request, Inspection $inspection)
     {
         $this->ensureUserCanAccessInspection($request, $inspection);
-        $this->ensureInspectionIsScheduledRoutine($inspection);
+        $this->ensureInspectionIsAvailableInAppFlow($request, $inspection);
 
         $inspection->load([
             'vehicle.vehicle_brand',
@@ -152,6 +162,22 @@ class AppInspectionController extends Controller
             ];
         })->values();
 
+        $routineConfig = $this->resolveRoutineConfig($inspection);
+        $requiredSlots = [
+            'exterior' => $routineConfig['exterior_slots'],
+            'interior' => $routineConfig['interior_slots'],
+        ];
+        $slotLabels = [
+            'exterior' => array_intersect_key(
+                (array) config('inspections.slot_labels.exterior', []),
+                array_flip($requiredSlots['exterior'])
+            ),
+            'interior' => array_intersect_key(
+                (array) config('inspections.slot_labels.interior', []),
+                array_flip($requiredSlots['interior'])
+            ),
+        ];
+
         return response()->json([
             'inspection' => [
                 'id' => $inspection->id,
@@ -181,8 +207,11 @@ class AppInspectionController extends Controller
             ],
             'driver_options' => Driver::query()->orderBy('name')->get(['id', 'name']),
             'steps' => config('inspections.step_labels'),
-            'required_slots' => config('inspections.required_slots'),
-            'slot_labels' => config('inspections.slot_labels'),
+            'required_slots' => $requiredSlots,
+            'slot_labels' => $slotLabels,
+            'document_keys' => $routineConfig['documents'],
+            'operational_checks' => $routineConfig['operational_checks'],
+            'accessory_keys' => $routineConfig['accessories'],
             'damage_locations' => config('inspections.damage_locations'),
             'damage_types' => config('inspections.damage_types'),
             'checklist' => $checklist,
@@ -203,10 +232,68 @@ class AppInspectionController extends Controller
         ]);
     }
 
+    public function createOptions(Request $request)
+    {
+        $this->ensureUserIsManager($request);
+
+        return response()->json([
+            'types' => collect((array) config('inspections.type_labels', []))
+                ->map(function ($label, $key) {
+                    return ['key' => (string) $key, 'label' => (string) $label];
+                })
+                ->values(),
+            'vehicles' => VehicleItem::query()
+                ->with(['driver:id,name'])
+                ->orderBy('license_plate')
+                ->get(['id', 'license_plate', 'driver_id'])
+                ->map(function (VehicleItem $vehicle) {
+                    return [
+                        'id' => (int) $vehicle->id,
+                        'license_plate' => (string) $vehicle->license_plate,
+                        'driver_id' => $vehicle->driver_id ? (int) $vehicle->driver_id : null,
+                        'driver_name' => $vehicle->driver?->name,
+                    ];
+                })
+                ->values(),
+            'drivers' => Driver::query()
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(fn (Driver $driver) => [
+                    'id' => (int) $driver->id,
+                    'name' => (string) $driver->name,
+                ])
+                ->values(),
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $this->ensureUserIsManager($request);
+
+        $validated = Validator::make($request->all(), [
+            'type' => ['required', 'in:initial,handover,routine,return,fleet_exit'],
+            'vehicle_id' => ['required', 'integer', 'exists:vehicle_items,id'],
+            'driver_id' => ['nullable', 'integer', 'exists:drivers,id'],
+            'location_lat' => ['nullable', 'numeric'],
+            'location_lng' => ['nullable', 'numeric'],
+            'location_text' => ['nullable', 'string', 'max:255'],
+            'location_accuracy' => ['nullable', 'numeric'],
+            'location_timezone' => ['nullable', 'string', 'max:60'],
+        ])->validate();
+
+        $inspection = $this->workflow->create($validated, $request->user());
+
+        return response()->json([
+            'message' => 'Inspecao iniciada com sucesso.',
+            'inspection_id' => (int) $inspection->id,
+            'current_step' => (int) $inspection->current_step,
+        ], Response::HTTP_CREATED);
+    }
+
     public function updateStep(Request $request, Inspection $inspection)
     {
         $this->ensureUserCanAccessInspection($request, $inspection);
-        $this->ensureInspectionIsScheduledRoutine($inspection);
+        $this->ensureInspectionIsAvailableInAppFlow($request, $inspection);
 
         $validator = Validator::make($request->all(), [
             'step' => ['required', 'integer', 'min:1', 'max:12'],
@@ -229,6 +316,7 @@ class AppInspectionController extends Controller
 
         $step = (int) $validated['step'];
         $action = $validated['action'] ?? 'save';
+        $routineConfig = $this->resolveRoutineConfig($inspection);
 
         if ($step > (int) $inspection->current_step) {
             throw ValidationException::withMessages(['step' => 'Nao pode avancar sem concluir etapas anteriores.']);
@@ -244,9 +332,9 @@ class AppInspectionController extends Controller
 
             $this->storeChecklist($inspection, $checklistInput);
             $this->storeChecklistPhotos($inspection, $checklistPhotos);
-            $this->enforcePanelWarningEvidence($inspection, $checklistInput, $checklistPhotos);
+            $this->enforcePanelWarningEvidence($inspection, $checklistInput, $checklistPhotos, $routineConfig);
             if ($step === 5 && $action === 'complete') {
-                $this->enforceAccessoryEvidence($inspection, $checklistInput, $checklistPhotos);
+                $this->enforceAccessoryEvidence($inspection, $checklistInput, $checklistPhotos, $routineConfig);
             }
         }
 
@@ -330,18 +418,18 @@ class AppInspectionController extends Controller
     public function backStep(Request $request, Inspection $inspection)
     {
         $this->ensureUserCanAccessInspection($request, $inspection);
-        $this->ensureInspectionIsScheduledRoutine($inspection);
+        $this->ensureInspectionIsAvailableInAppFlow($request, $inspection);
 
         if ($inspection->locked_at) {
             throw ValidationException::withMessages(['inspection' => 'Inspecao fechada nao pode regredir etapas.']);
         }
 
-        if ((int) $inspection->current_step <= 1) {
+        if ((int) $inspection->current_step <= 3) {
             throw ValidationException::withMessages(['inspection' => 'A inspecao ja esta na primeira etapa.']);
         }
 
         $inspection->update([
-            'current_step' => max(1, ((int) $inspection->current_step) - 1),
+            'current_step' => max(3, ((int) $inspection->current_step) - 1),
             'status' => 'in_progress',
         ]);
 
@@ -354,7 +442,7 @@ class AppInspectionController extends Controller
     public function resolveDamage(Request $request, Inspection $inspection, InspectionDamage $damage)
     {
         $this->ensureUserCanAccessInspection($request, $inspection);
-        $this->ensureInspectionIsScheduledRoutine($inspection);
+        $this->ensureInspectionIsAvailableInAppFlow($request, $inspection);
         if ((int) $damage->inspection_id !== (int) $inspection->id) {
             abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
@@ -367,7 +455,7 @@ class AppInspectionController extends Controller
     public function close(Request $request, Inspection $inspection)
     {
         $this->ensureUserCanAccessInspection($request, $inspection);
-        $this->ensureInspectionIsScheduledRoutine($inspection);
+        $this->ensureInspectionIsAvailableInAppFlow($request, $inspection);
 
         $this->workflow->close($inspection, false);
         $inspection->load('report');
@@ -381,8 +469,7 @@ class AppInspectionController extends Controller
     private function ensureUserCanAccessInspection(Request $request, Inspection $inspection): void
     {
         $user = $request->user();
-        $roles = $user->roles->pluck('title')->map(fn ($v) => mb_strtolower((string) $v))->toArray();
-        $isManager = in_array('admin', $roles, true) || in_array('gestor', $roles, true);
+        $isManager = $this->isManager($user);
 
         if ($isManager) {
             return;
@@ -402,19 +489,42 @@ class AppInspectionController extends Controller
         }
     }
 
-    private function ensureInspectionIsScheduledRoutine(Inspection $inspection): void
+    private function ensureInspectionIsAvailableInAppFlow(Request $request, Inspection $inspection): void
     {
-        if ((string) $inspection->type !== 'routine') {
-            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $isManager = $this->isManager($request->user());
+        $isScheduledRoutine = $this->isScheduledRoutine($inspection);
+
+        if ($isManager) {
+            if ($isScheduledRoutine) {
+                abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+            }
+
+            return;
         }
 
-        $isScheduledRoutine = $inspection->audits()
+        if ((string) $inspection->type !== 'routine' || !$isScheduledRoutine) {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+    }
+
+    private function ensureUserIsManager(Request $request): void
+    {
+        if (!$this->isManager($request->user())) {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+    }
+
+    private function isManager($user): bool
+    {
+        $roles = $user->roles->pluck('title')->map(fn ($v) => mb_strtolower((string) $v))->toArray();
+        return in_array('admin', $roles, true) || in_array('gestor', $roles, true);
+    }
+
+    private function isScheduledRoutine(Inspection $inspection): bool
+    {
+        return $inspection->audits()
             ->where('action', self::SCHEDULE_AUDIT_ACTION)
             ->exists();
-
-        if (!$isScheduledRoutine) {
-            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
-        }
     }
 
     private function storeChecklist(Inspection $inspection, array $checklist): void
@@ -491,8 +601,12 @@ class AppInspectionController extends Controller
         return $normalized;
     }
 
-    private function enforcePanelWarningEvidence(Inspection $inspection, array $checklist, array $checklistPhotos): void
+    private function enforcePanelWarningEvidence(Inspection $inspection, array $checklist, array $checklistPhotos, array $routineConfig): void
     {
+        if (!in_array('panel_warnings', $routineConfig['operational_checks'], true)) {
+            return;
+        }
+
         $warnings = (array) ($checklist['panel_warnings'] ?? []);
 
         if (empty($warnings['panel_warning'])) {
@@ -516,12 +630,17 @@ class AppInspectionController extends Controller
         }
     }
 
-    private function enforceAccessoryEvidence(Inspection $inspection, array $checklist, array $checklistPhotos): void
+    private function enforceAccessoryEvidence(Inspection $inspection, array $checklist, array $checklistPhotos, array $routineConfig): void
     {
         $accessories = (array) ($checklist['accessories'] ?? []);
         $missingPhotos = [];
+        $enabledAccessories = (array) ($routineConfig['accessories'] ?? []);
 
-        foreach (array_keys(self::ACCESSORY_ITEMS) as $key) {
+        foreach ($enabledAccessories as $key) {
+            if (!isset(self::ACCESSORY_ITEMS[$key])) {
+                continue;
+            }
+
             $presence = isset($accessories[$key . '_present']) ? (int) $accessories[$key . '_present'] : 0;
             if ($presence !== 1) {
                 continue;
@@ -547,5 +666,32 @@ class AppInspectionController extends Controller
                 'checklist_photos.accessories' => 'Falta foto para os acessorios presentes: ' . implode(', ', $missingPhotos) . '.',
             ]);
         }
+    }
+
+    private function resolveRoutineConfig(Inspection $inspection): array
+    {
+        $audit = $inspection->audits()
+            ->where('action', self::SCHEDULE_AUDIT_ACTION)
+            ->latest('id')
+            ->first();
+
+        if (!$audit) {
+            return InspectionRoutineConfig::defaults();
+        }
+
+        $payload = (array) ($audit->payload ?? []);
+        if (!empty($payload['routine_config']) && is_array($payload['routine_config'])) {
+            return InspectionRoutineConfig::sanitize($payload['routine_config']);
+        }
+
+        $scheduleId = (int) ($payload['schedule_id'] ?? 0);
+        if ($scheduleId > 0) {
+            $schedule = InspectionSchedule::find($scheduleId);
+            if ($schedule) {
+                return InspectionRoutineConfig::sanitize($schedule->routine_config);
+            }
+        }
+
+        return InspectionRoutineConfig::defaults();
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\StoreInspectionScheduleRequest;
 use App\Http\Requests\UpdateInspectionScheduleRequest;
 use App\Models\Driver;
 use App\Models\InspectionSchedule;
+use App\Support\InspectionRoutineConfig;
 use App\Models\VehicleItem;
 use App\Services\Inspections\InspectionRoutineSchedulerService;
 use Gate;
@@ -67,8 +68,10 @@ class InspectionScheduleController extends Controller
         $vehicles = VehicleItem::with('driver')->orderBy('license_plate')->get();
         $drivers = Driver::orderBy('name')->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $inspectionSchedule = new InspectionSchedule();
+        $routineOptions = InspectionRoutineConfig::options();
+        $routineConfig = InspectionRoutineConfig::defaults();
 
-        return view('admin.inspectionSchedules.create', compact('vehicles', 'drivers', 'inspectionSchedule'));
+        return view('admin.inspectionSchedules.create', compact('vehicles', 'drivers', 'inspectionSchedule', 'routineOptions', 'routineConfig'));
     }
 
     public function store(StoreInspectionScheduleRequest $request)
@@ -92,6 +95,7 @@ class InspectionScheduleController extends Controller
             'start_at' => $data['start_at'] ?? now(),
             'next_run_at' => $data['next_run_at'] ?? ($data['start_at'] ?? now()),
             'is_active' => isset($data['is_active']) ? (bool) $data['is_active'] : true,
+            'routine_config' => InspectionRoutineConfig::sanitize($data['routine_config'] ?? null),
             'notes' => $data['notes'] ?? null,
             'created_by_user_id' => auth()->id(),
         ]);
@@ -105,8 +109,10 @@ class InspectionScheduleController extends Controller
 
         $vehicles = VehicleItem::with('driver')->orderBy('license_plate')->get();
         $drivers = Driver::orderBy('name')->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $routineOptions = InspectionRoutineConfig::options();
+        $routineConfig = InspectionRoutineConfig::sanitize($inspectionSchedule->routine_config);
 
-        return view('admin.inspectionSchedules.edit', compact('inspectionSchedule', 'vehicles', 'drivers'));
+        return view('admin.inspectionSchedules.edit', compact('inspectionSchedule', 'vehicles', 'drivers', 'routineOptions', 'routineConfig'));
     }
 
     public function update(UpdateInspectionScheduleRequest $request, InspectionSchedule $inspectionSchedule)
@@ -131,6 +137,7 @@ class InspectionScheduleController extends Controller
             'start_at' => $data['start_at'] ?? $inspectionSchedule->start_at,
             'next_run_at' => $data['next_run_at'] ?? $inspectionSchedule->next_run_at,
             'is_active' => isset($data['is_active']) ? (bool) $data['is_active'] : false,
+            'routine_config' => InspectionRoutineConfig::sanitize($data['routine_config'] ?? null),
             'notes' => $data['notes'] ?? null,
         ]);
 

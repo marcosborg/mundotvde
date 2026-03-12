@@ -5,6 +5,7 @@ namespace App\Services\Inspections;
 use App\Models\Inspection;
 use App\Models\InspectionSchedule;
 use App\Models\InspectionStepState;
+use App\Support\InspectionRoutineConfig;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 
@@ -58,21 +59,26 @@ class InspectionRoutineSchedulerService
                         'created_by_user_id' => $creator->id,
                         'responsible_user_id' => $creator->id,
                         'status' => 'in_progress',
-                        'current_step' => 1,
+                        'current_step' => 3,
                         'previous_inspection_id' => $previous?->id,
                         'started_at' => now(),
                     ]);
 
                     for ($step = 1; $step <= 12; $step++) {
+                        $autoCompleted = $step <= 2;
                         InspectionStepState::create([
                             'inspection_id' => $inspection->id,
                             'step' => $step,
+                            'is_completed' => $autoCompleted,
+                            'completed_at' => $autoCompleted ? now() : null,
+                            'completed_by_user_id' => $autoCompleted ? $creator->id : null,
                         ]);
                     }
 
                     $this->sequence->cloneOpenDamages($inspection);
                     $this->auditService->log($inspection, self::SCHEDULE_AUDIT_ACTION, [
                         'schedule_id' => $schedule->id,
+                        'routine_config' => InspectionRoutineConfig::sanitize($schedule->routine_config),
                     ]);
 
                     $schedule->update([

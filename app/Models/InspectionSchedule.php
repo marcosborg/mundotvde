@@ -20,6 +20,7 @@ class InspectionSchedule extends Model
         'next_run_at',
         'last_run_at',
         'is_active',
+        'routine_config',
         'notes',
         'created_by_user_id',
     ];
@@ -29,6 +30,7 @@ class InspectionSchedule extends Model
         'next_run_at' => 'datetime',
         'last_run_at' => 'datetime',
         'is_active' => 'boolean',
+        'routine_config' => 'array',
     ];
 
     protected function serializeDate(DateTimeInterface $date)

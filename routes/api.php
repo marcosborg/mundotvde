@@ -100,6 +100,8 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
     Route::get('contracts', 'Api\\AppController@contracts');
     Route::prefix('inspections')->group(function () {
         Route::get('/', 'Api\\AppInspectionController@index');
+        Route::get('create-options', 'Api\\AppInspectionController@createOptions');
+        Route::post('/', 'Api\\AppInspectionController@store');
         Route::get('{inspection}', 'Api\\AppInspectionController@show');
         Route::post('{inspection}/step', 'Api\\AppInspectionController@updateStep');
         Route::post('{inspection}/back-step', 'Api\\AppInspectionController@backStep');
