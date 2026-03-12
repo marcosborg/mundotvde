@@ -462,10 +462,26 @@
                   <div class="col-md-6">
                     <label>Nome de quem faz a vistoria (responsavel)</label>
                     <input class="form-control" name="inspector_name" value="{{ $signatureNames['responsible'] ?? '' }}">
+                    <label style="margin-top:10px;">Assinatura do responsavel (dedo/caneta)</label>
+                    <div class="signature-pad" data-signature-wrapper data-input-id="inspector_signature_data">
+                      <canvas class="signature-pad__canvas" data-signature-canvas></canvas>
+                      <div class="signature-pad__actions">
+                        <button type="button" class="btn btn-xs btn-default" data-signature-clear>Limpar assinatura</button>
+                      </div>
+                    </div>
+                    <input type="hidden" name="inspector_signature_data" id="inspector_signature_data">
                   </div>
                   <div class="col-md-6">
                     <label>Nome do condutor</label>
                     <input class="form-control" name="driver_signature_name" value="{{ $signatureNames['driver'] ?? '' }}">
+                    <label style="margin-top:10px;">Assinatura do condutor (dedo/caneta)</label>
+                    <div class="signature-pad" data-signature-wrapper data-input-id="driver_signature_data">
+                      <canvas class="signature-pad__canvas" data-signature-canvas></canvas>
+                      <div class="signature-pad__actions">
+                        <button type="button" class="btn btn-xs btn-default" data-signature-clear>Limpar assinatura</button>
+                      </div>
+                    </div>
+                    <input type="hidden" name="driver_signature_data" id="driver_signature_data">
                   </div>
                 </div>
                 <div style="margin-top:10px;">
@@ -533,6 +549,24 @@
     color: #607d8b;
     margin-bottom: 6px;
   }
+  .signature-pad {
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    background: #fff;
+    margin-top: 6px;
+    padding: 8px;
+  }
+  .signature-pad__canvas {
+    width: 100%;
+    height: 180px;
+    border: 1px dashed #b0bec5;
+    border-radius: 4px;
+    touch-action: none;
+    cursor: crosshair;
+  }
+  .signature-pad__actions {
+    margin-top: 8px;
+  }
 </style>
 @endsection
 
@@ -587,6 +621,77 @@
     }
     range.addEventListener('input', sync);
     sync();
+  });
+
+  document.querySelectorAll('[data-signature-wrapper]').forEach(function (wrapper) {
+    var canvas = wrapper.querySelector('[data-signature-canvas]');
+    var clearButton = wrapper.querySelector('[data-signature-clear]');
+    var hiddenInput = document.getElementById(wrapper.getAttribute('data-input-id'));
+    if (!canvas || !hiddenInput) return;
+
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    function resizeCanvas() {
+      var rect = canvas.getBoundingClientRect();
+      var ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+      canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#111';
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      hiddenInput.value = '';
+    }
+
+    function getPoint(event) {
+      var rect = canvas.getBoundingClientRect();
+      return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      };
+    }
+
+    var drawing = false;
+    canvas.addEventListener('pointerdown', function (event) {
+      event.preventDefault();
+      drawing = true;
+      var point = getPoint(event);
+      ctx.beginPath();
+      ctx.moveTo(point.x, point.y);
+    });
+
+    canvas.addEventListener('pointermove', function (event) {
+      if (!drawing) return;
+      event.preventDefault();
+      var point = getPoint(event);
+      ctx.lineTo(point.x, point.y);
+      ctx.stroke();
+    });
+
+    function finishDrawing(event) {
+      if (!drawing) return;
+      if (event) event.preventDefault();
+      drawing = false;
+      hiddenInput.value = canvas.toDataURL('image/png');
+    }
+
+    canvas.addEventListener('pointerup', finishDrawing);
+    canvas.addEventListener('pointerleave', finishDrawing);
+    canvas.addEventListener('pointercancel', finishDrawing);
+
+    if (clearButton) {
+      clearButton.addEventListener('click', function () {
+        var rect = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        hiddenInput.value = '';
+      });
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
   });
 
 })();

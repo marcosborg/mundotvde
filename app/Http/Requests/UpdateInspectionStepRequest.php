@@ -68,6 +68,10 @@ class UpdateInspectionStepRequest extends FormRequest
 
             'inspector_name' => ['nullable', 'string', 'max:255'],
             'driver_signature_name' => ['nullable', 'string', 'max:255'],
+            'inspector_signature' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+            'driver_signature' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+            'inspector_signature_data' => ['nullable', 'string'],
+            'driver_signature_data' => ['nullable', 'string'],
         ];
     }
 }

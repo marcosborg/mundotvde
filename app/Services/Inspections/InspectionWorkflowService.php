@@ -183,13 +183,22 @@ class InspectionWorkflowService
         $this->audit->log($damage->inspection, 'damage_resolved', ['damage_id' => $damage->id]);
     }
 
-    public function sign(Inspection $inspection, string $role, string $name, ?string $document = null, ?UploadedFile $signature = null): InspectionSignature
+    public function sign(
+        Inspection $inspection,
+        string $role,
+        string $name,
+        ?string $document = null,
+        ?UploadedFile $signature = null,
+        ?string $signatureDataUrl = null
+    ): InspectionSignature
     {
         $this->permissions->ensureCanEdit($inspection);
 
         if ($signature) {
             $path = $signature->store('inspections/signatures', 'public');
             $hash = hash_file('sha256', Storage::disk('public')->path($path));
+        } elseif (!empty($signatureDataUrl)) {
+            [$path, $hash] = $this->storeSignatureDataUrl($signatureDataUrl, $role);
         } else {
             $path = 'typed-signature:' . $role;
             $hash = hash('sha256', $inspection->id . '|' . $role . '|' . $name . '|' . now()->toIso8601String());
@@ -211,6 +220,28 @@ class InspectionWorkflowService
         $this->audit->log($inspection, 'inspection_signed', ['role' => $role]);
 
         return $record;
+    }
+
+    private function storeSignatureDataUrl(string $dataUrl, string $role): array
+    {
+        if (!preg_match('/^data:image\/([a-zA-Z0-9]+);base64,/', $dataUrl, $matches)) {
+            throw ValidationException::withMessages(['signature' => 'Formato de assinatura invalido.']);
+        }
+
+        $raw = substr($dataUrl, strpos($dataUrl, ',') + 1);
+        $binary = base64_decode($raw, true);
+        if ($binary === false) {
+            throw ValidationException::withMessages(['signature' => 'Assinatura invalida.']);
+        }
+
+        $extRaw = strtolower((string) ($matches[1] ?? 'png'));
+        $ext = in_array($extRaw, ['png', 'jpg', 'jpeg', 'webp'], true) ? $extRaw : 'png';
+        $filename = 'inspections/signatures/' . now()->format('YmdHis') . '-' . $role . '-' . bin2hex(random_bytes(8)) . '.' . $ext;
+
+        Storage::disk('public')->put($filename, $binary);
+        $hash = hash('sha256', $binary);
+
+        return [$filename, $hash];
     }
 
     public function close(Inspection $inspection, bool $strict = true): void

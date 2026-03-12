@@ -308,6 +308,10 @@ class AppInspectionController extends Controller
             'damage_photo.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
             'inspector_name' => ['nullable', 'string', 'max:255'],
             'driver_signature_name' => ['nullable', 'string', 'max:255'],
+            'inspector_signature' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+            'driver_signature' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+            'inspector_signature_data' => ['nullable', 'string'],
+            'driver_signature_data' => ['nullable', 'string'],
             'extra_observations' => ['nullable', 'string'],
             'extra_photos' => ['nullable', 'array'],
             'extra_photos.*' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
@@ -391,11 +395,38 @@ class AppInspectionController extends Controller
         }
 
         if ($step === 11) {
-            if (!empty($validated['inspector_name'])) {
-                $this->workflow->sign($inspection, 'responsible', $validated['inspector_name']);
+            $inspectorSignatureFile = $request->file('inspector_signature');
+            $driverSignatureFile = $request->file('driver_signature');
+            $inspectorSignatureData = $request->input('inspector_signature_data');
+            $driverSignatureData = $request->input('driver_signature_data');
+
+            if (!empty($validated['inspector_name']) || $inspectorSignatureFile || !empty($inspectorSignatureData)) {
+                $responsibleName = (string) ($validated['inspector_name'] ?? optional($inspection->signatures->firstWhere('role', 'responsible'))->signed_by_name ?? '');
+                if ($responsibleName === '') {
+                    throw ValidationException::withMessages(['inspector_name' => 'Indique o nome do responsavel para assinar.']);
+                }
+                $this->workflow->sign(
+                    $inspection,
+                    'responsible',
+                    $responsibleName,
+                    null,
+                    $inspectorSignatureFile,
+                    $inspectorSignatureData
+                );
             }
-            if (!empty($validated['driver_signature_name'])) {
-                $this->workflow->sign($inspection, 'driver', $validated['driver_signature_name']);
+            if (!empty($validated['driver_signature_name']) || $driverSignatureFile || !empty($driverSignatureData)) {
+                $driverName = (string) ($validated['driver_signature_name'] ?? optional($inspection->signatures->firstWhere('role', 'driver'))->signed_by_name ?? '');
+                if ($driverName === '') {
+                    throw ValidationException::withMessages(['driver_signature_name' => 'Indique o nome do condutor para assinar.']);
+                }
+                $this->workflow->sign(
+                    $inspection,
+                    'driver',
+                    $driverName,
+                    null,
+                    $driverSignatureFile,
+                    $driverSignatureData
+                );
             }
         }
 
