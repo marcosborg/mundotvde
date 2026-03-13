@@ -108,18 +108,23 @@ class InspectionReportService
     {
         $damageTypes = (array) config('inspections.damage_types', []);
         $damageLocations = (array) config('inspections.damage_locations', []);
+        $damageParts = (array) config('inspections.damage_parts', []);
 
-        return $inspection->damages->map(function ($damage) use ($damageTypes, $damageLocations) {
+        return $inspection->damages->map(function ($damage) use ($damageTypes, $damageLocations, $damageParts) {
             $photos = [];
             foreach ($damage->photos as $photo) {
                 $photos[] = $this->storageImageToDataUri((string) $photo->path, 760, 66);
             }
 
+            $locationKey = (string) $damage->location;
+            $pieceKey = (string) $damage->part;
+            $pieceLabel = $damageParts[$locationKey]['sections'][$pieceKey] ?? $pieceKey;
+
             return [
                 'id' => (int) $damage->id,
                 'scope' => (string) $damage->scope,
-                'location' => $damageLocations[$damage->location] ?? (string) $damage->location,
-                'part' => (string) $damage->part,
+                'location' => $damageLocations[$locationKey] ?? $locationKey,
+                'part' => (string) $pieceLabel,
                 'part_section' => (string) ($damage->part_section ?? ''),
                 'damage_type' => $damageTypes[$damage->damage_type] ?? (string) $damage->damage_type,
                 'notes' => (string) ($damage->notes ?? ''),

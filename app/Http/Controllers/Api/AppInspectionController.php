@@ -116,6 +116,7 @@ class AppInspectionController extends Controller
     {
         $this->ensureUserCanAccessInspection($request, $inspection);
         $this->ensureInspectionIsAvailableInAppFlow($request, $inspection);
+        $isManager = $this->isManager($request->user());
 
         $inspection->load([
             'vehicle.vehicle_brand',
@@ -214,6 +215,7 @@ class AppInspectionController extends Controller
             'accessory_keys' => $routineConfig['accessories'],
             'damage_locations' => config('inspections.damage_locations'),
             'damage_types' => config('inspections.damage_types'),
+            'damage_parts' => config('inspections.damage_parts'),
             'checklist' => $checklist,
             'photos' => $inspection->photos->map(function ($photo) {
                 return [
@@ -228,6 +230,9 @@ class AppInspectionController extends Controller
             'signatures' => [
                 'responsible' => optional($inspection->signatures->firstWhere('role', 'responsible'))->signed_by_name,
                 'driver' => optional($inspection->signatures->firstWhere('role', 'driver'))->signed_by_name,
+            ],
+            'meta' => [
+                'is_manager' => $isManager,
             ],
         ]);
     }
@@ -472,6 +477,7 @@ class AppInspectionController extends Controller
 
     public function resolveDamage(Request $request, Inspection $inspection, InspectionDamage $damage)
     {
+        $this->ensureUserIsManager($request);
         $this->ensureUserCanAccessInspection($request, $inspection);
         $this->ensureInspectionIsAvailableInAppFlow($request, $inspection);
         if ((int) $damage->inspection_id !== (int) $inspection->id) {

@@ -23,8 +23,13 @@
         .table { width: 100%; border-collapse: collapse; }
         .table th, .table td { border: 1px solid #dde6ef; padding: 4px 5px; vertical-align: top; }
         .table th { background: #f0f6fb; color: #2a3c4f; font-weight: 700; }
-        .thumb { width: 118px; height: 82px; object-fit: cover; border: 1px solid #d3deea; border-radius: 4px; background: #fff; margin: 2px 4px 2px 0; }
-        .sign-img { width: 160px; height: 52px; object-fit: contain; border: 1px solid #d3deea; background: #fff; border-radius: 4px; }
+        .table thead { display: table-header-group; }
+        .table tr { page-break-inside: avoid; }
+        .section { page-break-inside: avoid; }
+        .thumb-wrap { display: inline-block; width: 118px; height: 82px; border: 1px solid #d3deea; border-radius: 4px; background: #fff; margin: 2px 4px 2px 0; text-align: center; vertical-align: middle; line-height: 78px; overflow: hidden; }
+        .thumb { max-width: 116px; max-height: 80px; width: auto; height: auto; vertical-align: middle; }
+        .sign-wrap { display: inline-block; width: 160px; height: 52px; border: 1px solid #d3deea; background: #fff; border-radius: 4px; text-align: center; line-height: 48px; overflow: hidden; }
+        .sign-img { max-width: 158px; max-height: 50px; width: auto; height: auto; vertical-align: middle; }
         .small { font-size: 9px; color: #5f6f80; }
         .muted { color: #6f8093; }
     </style>
@@ -111,7 +116,7 @@
                                 <td>{{ $signature['name'] ?: '-' }}<br><span class="small">{{ $signature['signed_at'] ?: '-' }}</span></td>
                                 <td>
                                     @if(!empty($signature['image']))
-                                        <img class="sign-img" src="{{ $signature['image'] }}" alt="assinatura">
+                                        <span class="sign-wrap"><img class="sign-img" src="{{ $signature['image'] }}" alt="assinatura"></span>
                                     @else
                                         <span class="small muted">Assinatura textual</span>
                                     @endif
@@ -142,34 +147,38 @@
             <span class="chip chip-ok">Sem danos</span>
         @else
             <table class="table">
-                <tr>
-                    <th>ID</th>
-                    <th>Scope</th>
-                    <th>Localizacao</th>
-                    <th>Peca</th>
-                    <th>Tipo</th>
-                    <th>Estado</th>
-                    <th>Fotos</th>
-                </tr>
-                @foreach($damages as $damage)
+                <thead>
                     <tr>
-                        <td>{{ $damage['id'] }}</td>
-                        <td>{{ ucfirst($damage['scope']) }}</td>
-                        <td>{{ $damage['location'] }}</td>
-                        <td>{{ $damage['part'] }}{{ $damage['part_section'] ? ' / ' . $damage['part_section'] : '' }}</td>
-                        <td>{{ $damage['damage_type'] }}</td>
-                        <td>{{ $damage['resolved'] ? 'Resolvido' : 'Aberto' }}</td>
-                        <td>
-                            @if(!empty($damage['photos']))
-                                @foreach($damage['photos'] as $photoUri)
-                                    <img class="thumb" src="{{ $photoUri }}" alt="dano">
-                                @endforeach
-                            @else
-                                <span class="small muted">Sem foto</span>
-                            @endif
-                        </td>
+                        <th>ID</th>
+                        <th>Scope</th>
+                        <th>Localizacao</th>
+                        <th>Peca</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Fotos</th>
                     </tr>
-                @endforeach
+                </thead>
+                <tbody>
+                    @foreach($damages as $damage)
+                        <tr>
+                            <td>{{ $damage['id'] }}</td>
+                            <td>{{ ucfirst($damage['scope']) }}</td>
+                            <td>{{ $damage['location'] }}</td>
+                            <td>{{ $damage['part'] }}{{ $damage['part_section'] ? ' / ' . $damage['part_section'] : '' }}</td>
+                            <td>{{ $damage['damage_type'] }}</td>
+                            <td>{{ $damage['resolved'] ? 'Resolvido' : 'Aberto' }}</td>
+                            <td>
+                                @if(!empty($damage['photos']))
+                                    @foreach($damage['photos'] as $photoUri)
+                                        <span class="thumb-wrap"><img class="thumb" src="{{ $photoUri }}" alt="dano"></span>
+                                    @endforeach
+                                @else
+                                    <span class="small muted">Sem foto</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         @endif
     </div>
@@ -181,20 +190,24 @@
                 <span class="small muted">Sem fotos nesta secao.</span>
             @else
                 <table class="table">
-                    <tr><th>Item</th><th>Slot</th><th>Imagem</th></tr>
-                    @foreach($section['items'] as $item)
-                        <tr>
-                            <td>{{ $item['label'] }}</td>
-                            <td class="small">{{ $item['slot'] }}</td>
-                            <td>
-                                @if(!empty($item['thumb']))
-                                    <img class="thumb" src="{{ $item['thumb'] }}" alt="{{ $item['label'] }}">
-                                @else
-                                    <span class="small muted">Imagem nao disponivel</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
+                    <thead>
+                        <tr><th>Item</th><th>Slot</th><th>Imagem</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach($section['items'] as $item)
+                            <tr>
+                                <td>{{ $item['label'] }}</td>
+                                <td class="small">{{ $item['slot'] }}</td>
+                                <td>
+                                    @if(!empty($item['thumb']))
+                                        <span class="thumb-wrap"><img class="thumb" src="{{ $item['thumb'] }}" alt="{{ $item['label'] }}"></span>
+                                    @else
+                                        <span class="small muted">Imagem nao disponivel</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             @endif
         </div>

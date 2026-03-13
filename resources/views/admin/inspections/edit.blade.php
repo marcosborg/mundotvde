@@ -24,6 +24,13 @@
             <strong>Tipo:</strong> {{ config('inspections.type_labels.' . $inspection->type, $inspection->type) }}
           </div>
 
+          <p style="margin-bottom:12px;">
+            <a class="btn btn-primary" href="{{ route('admin.inspections.show', $inspection->id) }}">Ver inspecao online</a>
+            @if($inspection->report)
+              <a class="btn btn-default" href="{{ asset('storage/' . $inspection->report->pdf_path) }}" target="_blank">Abrir PDF</a>
+            @endif
+          </p>
+
           <div class="row" style="margin-bottom:12px;">
             @foreach($steps as $stepNumber => $stepLabel)
               <div class="col-md-3" style="margin-bottom:8px;">
@@ -367,8 +374,8 @@
                 @csrf
                 <input type="hidden" name="step" value="{{ $activeStep }}">
                 <div class="row">
-                  <div class="col-md-2"><label>Local</label><select class="form-control" name="location"><option value="">Selecione</option>@foreach($damageLocations as $k => $v)<option value="{{ $k }}">{{ $v }}</option>@endforeach</select></div>
-                  <div class="col-md-2"><label>Peca</label><input class="form-control" name="part"></div>
+                  <div class="col-md-2"><label>Local</label><select class="form-control" name="location" data-damage-location><option value="">Selecione</option>@foreach($damageLocations as $k => $v)<option value="{{ $k }}">{{ $v }}</option>@endforeach</select></div>
+                  <div class="col-md-2"><label>Peca</label><select class="form-control" name="part" data-damage-piece><option value="">Selecione</option></select></div>
                   <div class="col-md-2"><label>Parte</label><input class="form-control" name="part_section"></div>
                   <div class="col-md-2"><label>Tipo</label><select class="form-control" name="damage_type"><option value="">Selecione</option>@foreach($damageTypes as $k => $v)<option value="{{ $k }}">{{ $v }}</option>@endforeach</select></div>
                   <div class="col-md-4">
@@ -574,6 +581,35 @@
 @parent
 <script>
 (function () {
+  var damageParts = @json($damageParts ?? []);
+
+  function populateDamagePieces() {
+    var locationSelect = document.querySelector('[data-damage-location]');
+    var pieceSelect = document.querySelector('[data-damage-piece]');
+    if (!locationSelect || !pieceSelect) return;
+
+    var selectedLocation = locationSelect.value || '';
+    var pieces = (damageParts[selectedLocation] && damageParts[selectedLocation].sections) || {};
+    var currentValue = pieceSelect.value || '';
+
+    pieceSelect.innerHTML = '';
+
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Selecione';
+    pieceSelect.appendChild(placeholder);
+
+    Object.keys(pieces).forEach(function (key) {
+      var option = document.createElement('option');
+      option.value = key;
+      option.textContent = pieces[key];
+      if (currentValue === key) {
+        option.selected = true;
+      }
+      pieceSelect.appendChild(option);
+    });
+  }
+
   function asFiles(fileList) {
     if (!fileList || !fileList.length) return [];
     return Array.prototype.slice.call(fileList);
@@ -693,6 +729,14 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
   });
+
+  var locationSelect = document.querySelector('[data-damage-location]');
+  if (locationSelect) {
+    locationSelect.addEventListener('change', function () {
+      populateDamagePieces();
+    });
+    populateDamagePieces();
+  }
 
 })();
 </script>

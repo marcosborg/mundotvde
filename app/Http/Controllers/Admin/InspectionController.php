@@ -132,11 +132,38 @@ class InspectionController extends Controller
             'damages.photos',
             'signatures',
             'report',
+            'createdBy',
+            'responsibleUser',
             'audits.user',
             'previousInspection',
+            'checkItems',
         ]);
 
-        return view('admin.inspections.show', compact('inspection'));
+        $checklist = [];
+        foreach ($inspection->checkItems as $item) {
+            if ($item->value_int !== null) {
+                $checklist[$item->group_key][$item->item_key] = (int) $item->value_int;
+                continue;
+            }
+
+            if ($item->value_text !== null) {
+                $checklist[$item->group_key][$item->item_key] = (string) $item->value_text;
+                continue;
+            }
+
+            $checklist[$item->group_key][$item->item_key] = (bool) $item->value_bool;
+        }
+
+        $missingItems = $this->buildMissingItems($inspection);
+
+        return view('admin.inspections.show', [
+            'inspection' => $inspection,
+            'checklist' => $checklist,
+            'missingItems' => $missingItems,
+            'damageItems' => $this->buildDamageItems($inspection),
+            'photoSections' => $this->buildPhotoSections($inspection),
+            'signatureItems' => $this->buildSignatureItems($inspection),
+        ]);
     }
 
     public function edit(Inspection $inspection)
@@ -218,6 +245,7 @@ class InspectionController extends Controller
             'exteriorBySlot' => $exteriorBySlot,
             'interiorBySlot' => $interiorBySlot,
             'damageLocations' => config('inspections.damage_locations'),
+            'damageParts' => config('inspections.damage_parts'),
             'damageTypes' => config('inspections.damage_types'),
             'checklist' => $checklist,
             'checklistPhotoBySlot' => $checklistPhotoBySlot,
@@ -627,5 +655,97 @@ class InspectionController extends Controller
         }
 
         return $missing;
+    }
+
+    private function buildDamageItems(Inspection $inspection): array
+    {
+        $damageLocations = (array) config('inspections.damage_locations', []);
+        $damageTypes = (array) config('inspections.damage_types', []);
+        $damageParts = (array) config('inspections.damage_parts', []);
+
+        return $inspection->damages
+            ->sortByDesc('id')
+            ->map(function ($damage) use ($damageLocations, $damageTypes, $damageParts) {
+                $locationKey = (string) $damage->location;
+                $pieceKey = (string) $damage->part;
+
+                return [
+                    'id' => (int) $damage->id,
+                    'scope' => ucfirst((string) $damage->scope),
+                    'location' => $damageLocations[$locationKey] ?? $locationKey,
+                    'piece' => $damageParts[$locationKey]['sections'][$pieceKey] ?? $pieceKey,
+                    'part' => (string) ($damage->part_section ?? ''),
+                    'type' => $damageTypes[$damage->damage_type] ?? (string) $damage->damage_type,
+                    'status' => $damage->is_resolved ? 'Resolvido' : 'Aberto',
+                    'photos' => $damage->photos->map(function ($photo) use ($damage) {
+                        return [
+                            'url' => asset('storage/' . $photo->path),
+                            'thumb' => asset('storage/' . $photo->path),
+                            'title' => 'Dano #' . $damage->id,
+                        ];
+                    })->values()->all(),
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    private function buildPhotoSections(Inspection $inspection): array
+    {
+        $slotLabels = (array) config('inspections.slot_labels', []);
+
+        return $inspection->photos
+            ->groupBy(fn ($photo) => (string) $photo->category)
+            ->map(function ($photos, $category) use ($slotLabels) {
+                return [
+                    'title' => match ((string) $category) {
+                        'document' => 'Documentacao',
+                        'exterior' => 'Fotografias exteriores',
+                        'interior' => 'Fotografias interiores',
+                        'extra' => 'Fotos extra',
+                        default => ucfirst(str_replace('_', ' ', (string) $category)),
+                    },
+                    'items' => $photos->map(function ($photo) use ($category, $slotLabels) {
+                        $slot = (string) ($photo->slot ?? '');
+                        $label = $slot;
+
+                        if ((string) $category === 'exterior') {
+                            $label = $slotLabels['exterior'][$slot] ?? $slot;
+                        } elseif ((string) $category === 'interior') {
+                            $label = $slotLabels['interior'][$slot] ?? $slot;
+                        } elseif (str_starts_with($slot, 'doc_')) {
+                            $label = ucfirst(str_replace('_', ' ', substr($slot, 4)));
+                        }
+
+                        return [
+                            'label' => $label,
+                            'url' => asset('storage/' . $photo->path),
+                            'thumb' => asset('storage/' . $photo->path),
+                        ];
+                    })->values()->all(),
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    private function buildSignatureItems(Inspection $inspection): array
+    {
+        return $inspection->signatures
+            ->map(function ($signature) {
+                $path = (string) ($signature->signature_path ?? '');
+                $imageUrl = $path !== '' && !str_starts_with($path, 'typed-signature:')
+                    ? asset('storage/' . $path)
+                    : null;
+
+                return [
+                    'role' => strtoupper((string) $signature->role),
+                    'name' => (string) ($signature->signed_by_name ?? ''),
+                    'signed_at' => optional($signature->signed_at)->format('Y-m-d H:i:s'),
+                    'image' => $imageUrl,
+                ];
+            })
+            ->values()
+            ->all();
     }
 }
