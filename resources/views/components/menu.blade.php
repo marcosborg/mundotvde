@@ -32,6 +32,8 @@
         return null;
     };
 
+    $rentACarPage = $pages->firstWhere('id', 8);
+
     $pageUrl = function (?Page $page) {
         if (!$page) {
             return '#';
@@ -40,6 +42,7 @@
         return '/pagina/' . $page->id . '/' . Str::slug($page->title, '-');
     };
 
+    $rentACarPage = $pages->firstWhere('id', 8);
     $aboutPage = $findPage(['Sobre nós', 'Sobre nos']);
     $partnersPage = $findPage(['Parceiros']);
     $contactsPage = $findPage(['Contactos', 'Contato', 'Contactos da empresa']);
@@ -125,7 +128,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#" title="Área em desenvolvimento">
+                    <a class="nav-link {{ request()->is('pagina/8/*') ? 'active' : '' }}" href="{{ $pageUrl($rentACarPage) }}">
                         Rent a Car
                     </a>
                 </li>
@@ -197,3 +200,5 @@
 <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
     {{ csrf_field() }}
 </form>
+
+
