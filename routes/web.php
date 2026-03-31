@@ -117,6 +117,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Activities
     Route::delete('activities/destroy', 'ActivitiesController@massDestroy')->name('activities.massDestroy');
+    Route::patch('activities/reorder', 'ActivitiesController@reorder')->name('activities.reorder');
     Route::resource('activities', 'ActivitiesController');
 
     // Testimonials

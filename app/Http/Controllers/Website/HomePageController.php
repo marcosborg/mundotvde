@@ -20,7 +20,7 @@ class HomePageController extends Controller
         //INFO
         $info = HomeInfo::first();
         //Activities
-        $activities = Activity::all();
+        $activities = Activity::orderBy('position')->orderBy('id')->get();
         //Testimonials
         $testimonials = Testimonial::all();
 

@@ -33,6 +33,10 @@ class StoreActivityRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'position' => [
+                'integer',
+                'nullable',
+            ],
         ];
     }
 }

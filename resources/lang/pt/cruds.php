@@ -263,6 +263,8 @@ return [
             'link_helper'        => ' ',
             'icon'               => 'Icon',
             'icon_helper'        => ' ',
+            'position'           => 'Posição',
+            'position_helper'    => ' ',
             'created_at'         => 'Created at',
             'created_at_helper'  => ' ',
             'updated_at'         => 'Updated at',

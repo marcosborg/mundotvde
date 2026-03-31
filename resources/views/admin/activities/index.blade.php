@@ -17,6 +17,7 @@
                     {{ trans('cruds.activity.title_singular') }} {{ trans('global.list') }}
                 </div>
                 <div class="panel-body">
+                    <p class="text-muted">Arraste as linhas para alterar a ordem dos serviços no site.</p>
                     <div class="table-responsive">
                         <table class=" table table-bordered table-striped table-hover datatable datatable-Activity">
                             <thead>
@@ -24,8 +25,8 @@
                                     <th width="10">
 
                                     </th>
-                                    <th>
-                                        {{ trans('cruds.activity.fields.id') }}
+                                    <th width="40">
+
                                     </th>
                                     <th>
                                         {{ trans('cruds.activity.fields.title') }}
@@ -54,7 +55,7 @@
 
                                         </td>
                                         <td>
-                                            {{ $activity->id ?? '' }}
+                                            <span class="activity-drag-handle" title="Arrastar para ordenar" style="cursor: move; font-size: 18px; line-height: 1;">&#9776;</span>
                                         </td>
                                         <td>
                                             {{ $activity->title ?? '' }}
@@ -110,6 +111,7 @@
 @endsection
 @section('scripts')
 @parent
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
@@ -145,7 +147,7 @@
 
   $.extend(true, $.fn.dataTable.defaults, {
     orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
+    ordering: false,
     pageLength: 100,
   });
   let table = $('.datatable-Activity:not(.ajaxTable)').DataTable({ buttons: dtButtons })
@@ -153,6 +155,26 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
+
+  const tbody = document.querySelector('.datatable-Activity tbody');
+  if (tbody) {
+    new Sortable(tbody, {
+      animation: 150,
+      handle: '.activity-drag-handle',
+      onEnd: function () {
+        const orderedIds = Array.from(tbody.querySelectorAll('tr[data-entry-id]'))
+          .map((row) => parseInt(row.getAttribute('data-entry-id'), 10))
+          .filter((value) => !Number.isNaN(value));
+
+        $.ajax({
+          headers: {'x-csrf-token': _token},
+          method: 'PATCH',
+          url: "{{ route('admin.activities.reorder') }}",
+          data: { ordered_ids: orderedIds }
+        });
+      }
+    });
+  }
   
 })
 

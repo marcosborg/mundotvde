@@ -87,7 +87,7 @@
             <ul class="navbar-nav ms-auto gap-lg-1 align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('tvde/aluguer-de-viaturas') ? 'active' : '' }}" href="/tvde/aluguer-de-viaturas">
-                        Aluguer
+                        Aluguer de viaturas
                     </a>
                 </li>
 

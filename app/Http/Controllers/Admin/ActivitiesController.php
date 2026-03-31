@@ -8,6 +8,7 @@ use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use Gate;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ActivitiesController extends Controller
@@ -16,7 +17,7 @@ class ActivitiesController extends Controller
     {
         abort_if(Gate::denies('activity_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $activities = Activity::all();
+        $activities = Activity::orderBy('position')->orderBy('id')->get();
 
         return view('admin.activities.index', compact('activities'));
     }
@@ -30,7 +31,12 @@ class ActivitiesController extends Controller
 
     public function store(StoreActivityRequest $request)
     {
-        $activity = Activity::create($request->all());
+        $data = $request->all();
+        if (!isset($data['position']) || $data['position'] === null || $data['position'] === '') {
+            $data['position'] = ((int) Activity::max('position')) + 1;
+        }
+
+        $activity = Activity::create($data);
 
         return redirect()->route('admin.activities.index');
     }
@@ -44,7 +50,12 @@ class ActivitiesController extends Controller
 
     public function update(UpdateActivityRequest $request, Activity $activity)
     {
-        $activity->update($request->all());
+        $data = $request->all();
+        if (!isset($data['position']) || $data['position'] === null || $data['position'] === '') {
+            $data['position'] = $activity->position;
+        }
+
+        $activity->update($data);
 
         return redirect()->route('admin.activities.index');
     }
@@ -74,5 +85,21 @@ class ActivitiesController extends Controller
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function reorder(Request $request)
+    {
+        abort_if(Gate::denies('activity_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $data = $request->validate([
+            'ordered_ids' => ['required', 'array'],
+            'ordered_ids.*' => ['integer', 'exists:activities,id'],
+        ]);
+
+        foreach ($data['ordered_ids'] as $index => $id) {
+            Activity::where('id', $id)->update(['position' => $index + 1]);
+        }
+
+        return response()->json(['ok' => true]);
     }
 }

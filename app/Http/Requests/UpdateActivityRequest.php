@@ -33,6 +33,10 @@ class UpdateActivityRequest extends FormRequest
                 'string',
                 'nullable',
             ],
+            'position' => [
+                'integer',
+                'nullable',
+            ],
         ];
     }
 }
