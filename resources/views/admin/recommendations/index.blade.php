@@ -31,6 +31,9 @@
                                         {{ trans('cruds.recommendation.fields.name') }}
                                     </th>
                                     <th>
+                                        {{ trans('cruds.recommendation.fields.recommendation_status') }}
+                                    </th>
+                                    <th>
                                         Data
                                     </th>
                                     <th style="min-width: 280px;">
@@ -52,6 +55,9 @@
                                         </td>
                                         <td>
                                             {{ $recommendation->name ?? '' }}
+                                        </td>
+                                        <td>
+                                            {{ $recommendation->recommendation_status->name ?? '' }}
                                         </td>
                                         <td data-order="{{ optional($recommendation->created_at)->timestamp ?? 0 }}">
                                             {{ optional($recommendation->created_at)->format('d/m/Y') }}
@@ -127,7 +133,7 @@
 
   $.extend(true, $.fn.dataTable.defaults, {
     orderCellsTop: true,
-    order: [[ 3, 'desc' ]],
+    order: [[ 4, 'desc' ]],
     pageLength: 100,
   });
   let table = $('.datatable-Recommendation:not(.ajaxTable)').DataTable({ buttons: dtButtons })

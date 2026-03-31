@@ -121,9 +121,16 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', '
 Route::prefix('public')->group(function () {
     Route::get('home', 'Api\\PublicController@home');
     Route::get('article/{article_id}', 'Api\\PublicController@article');
+    Route::get('page/{id}', 'Api\\PublicController@page');
     Route::get('cars', 'Api\\PublicController@cars');
     Route::get('car/{car_id}', 'Api\\PublicController@car');
     Route::get('stand-cars', 'Api\\PublicController@standCars');
+    Route::get('own-car', 'Api\\PublicController@ownCar');
+    Route::get('courier/{id}', 'Api\\PublicController@courier');
+    Route::get('training', 'Api\\PublicController@training');
+    Route::get('consulting', 'Api\\PublicController@consulting');
+    Route::get('transfer-tours', 'Api\\PublicController@transferTours');
+    Route::get('transfer-tour/{id}', 'Api\\PublicController@transferTour');
     Route::post('car-rental-contact', 'Api\\PublicController@carRentalContact');
 });
 

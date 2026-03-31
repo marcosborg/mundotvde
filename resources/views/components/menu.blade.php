@@ -1,3 +1,77 @@
+@php
+    use App\Models\Courier;
+    use App\Models\Page;
+    use Illuminate\Support\Str;
+
+    $pages = Page::all();
+
+    $findPage = function (array $titles) use ($pages) {
+        foreach ($titles as $title) {
+            $page = $pages->first(function ($item) use ($title) {
+                return mb_strtolower(trim((string) $item->title)) === mb_strtolower(trim($title));
+            });
+
+            if ($page) {
+                return $page;
+            }
+        }
+
+        foreach ($titles as $title) {
+            $page = $pages->first(function ($item) use ($title) {
+                return Str::contains(
+                    Str::lower((string) $item->title),
+                    Str::lower($title)
+                );
+            });
+
+            if ($page) {
+                return $page;
+            }
+        }
+
+        return null;
+    };
+
+    $pageUrl = function (?Page $page) {
+        if (!$page) {
+            return '#';
+        }
+
+        return '/pagina/' . $page->id . '/' . Str::slug($page->title, '-');
+    };
+
+    $aboutPage = $findPage(['Sobre nós', 'Sobre nos']);
+    $partnersPage = $findPage(['Parceiros']);
+    $contactsPage = $findPage(['Contactos', 'Contato', 'Contactos da empresa']);
+
+    $couriers = Courier::all();
+    $ownersCourier = $couriers->first(function ($item) {
+        return Str::contains(Str::lower((string) $item->title), ['propriet', 'proprietar']);
+    });
+    $driversCourier = $couriers->first(function ($item) {
+        return Str::contains(Str::lower((string) $item->title), ['motorist', 'condutor']);
+    });
+
+    $remainingCouriers = $couriers->filter(function ($item) use ($ownersCourier, $driversCourier) {
+        return (!$ownersCourier || $item->id !== $ownersCourier->id)
+            && (!$driversCourier || $item->id !== $driversCourier->id);
+    })->values();
+
+    if (!$ownersCourier && $remainingCouriers->count() > 0) {
+        $ownersCourier = $remainingCouriers->shift();
+    }
+
+    if (!$driversCourier && $remainingCouriers->count() > 0) {
+        $driversCourier = $remainingCouriers->shift();
+    }
+
+    $isAEmpresaActive =
+        request()->is('pagina/*')
+        || request()->is('tvde/formacao')
+        || request()->is('tvde/consultadoria')
+        || request()->is('tvde/transfers-tours');
+@endphp
+
 <nav class="navbar navbar-expand-lg fixed-top site-navbar">
     <div class="container py-1">
         <a class="navbar-brand" href="/">
@@ -11,16 +85,16 @@
 
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav ms-auto gap-lg-1 align-items-lg-center">
-                <li class="nav-item dropdown">
-                    <a class="nav-link {{ request()->is('tvde/aluguer-de-viaturas') || request()->is('tvde/consultadoria') || request()->is('tvde/formacao') ? 'active' : '' }}"
-                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        TVDE <i class="bi bi-chevron-down ms-1"></i>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('tvde/aluguer-de-viaturas') ? 'active' : '' }}" href="/tvde/aluguer-de-viaturas">
+                        Aluguer
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/tvde/aluguer-de-viaturas">Aluguer de viaturas</a></li>
-                        <li><a class="dropdown-item" href="/tvde/formacao">Formação</a></li>
-                        <li><a class="dropdown-item" href="/tvde/consultadoria">Consultadoria</a></li>
-                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('tvde/trabalhar-com-viatura-propria') ? 'active' : '' }}" href="/tvde/trabalhar-com-viatura-propria">
+                        Slot
+                    </a>
                 </li>
 
                 <li class="nav-item">
@@ -33,39 +107,57 @@
                         Bolsa TVDE <i class="bi bi-chevron-down ms-1"></i>
                     </a>
                     <ul class="dropdown-menu">
-                        @foreach (\App\Models\Courier::all() as $item)
-                            <li><a class="dropdown-item" href="/tvde/estafetas/{{ $item->id }}">{{ $item->title }}</a></li>
-                        @endforeach
+                        @if ($ownersCourier)
+                            <li>
+                                <a class="dropdown-item" href="/tvde/estafetas/{{ $ownersCourier->id }}">
+                                    Bolsa de proprietários TVDE
+                                </a>
+                            </li>
+                        @endif
+                        @if ($driversCourier)
+                            <li>
+                                <a class="dropdown-item" href="/tvde/estafetas/{{ $driversCourier->id }}">
+                                    Bolsa de motoristas TVDE
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('tvde/transfers-tours') ? 'active' : '' }}" href="/tvde/transfers-tours">Transfers e Tours</a>
+                    <a class="nav-link" href="#" title="Área em desenvolvimento">
+                        Rent a Car
+                    </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('tvde/stand') || request()->is('tvde/stand/*') ? 'active' : '' }}" href="/tvde/stand">Stand</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('tvde/trabalhar-com-viatura-propria') ? 'active' : '' }}" href="/tvde/trabalhar-com-viatura-propria">
-                        Viatura própria
-                    </a>
-                </li>
-
                 <li class="nav-item dropdown">
-                    <a class="nav-link {{ request()->is('pagina/*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="nav-link {{ $isAEmpresaActive ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         A empresa <i class="bi bi-chevron-down ms-1"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        @foreach (App\Models\Page::get() as $page)
-                            <li>
-                                <a class="dropdown-item" href="/pagina/{{ $page->id }}/{{ Illuminate\Support\Str::slug($page->title, '-') }}">
-                                    {{ $page->title }}
-                                </a>
-                            </li>
-                        @endforeach
+                        <li>
+                            <a class="dropdown-item" href="{{ $pageUrl($aboutPage) }}">
+                                Sobre nós
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ $pageUrl($partnersPage) }}">
+                                Parceiros
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ $pageUrl($contactsPage) }}">
+                                Contactos
+                            </a>
+                        </li>
+                        <li><a class="dropdown-item" href="/tvde/formacao">Formação</a></li>
+                        <li><a class="dropdown-item" href="/tvde/consultadoria">Consultadoria</a></li>
+                        <li><a class="dropdown-item" href="/tvde/transfers-tours">Transfers e Tours</a></li>
                     </ul>
                 </li>
 
@@ -105,4 +197,3 @@
 <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
     {{ csrf_field() }}
 </form>
-

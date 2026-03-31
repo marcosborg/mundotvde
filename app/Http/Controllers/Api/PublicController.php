@@ -7,7 +7,13 @@ use App\Models\HeroBanner;
 use App\Models\HomeInfo;
 use App\Models\Article;
 use App\Models\Car;
+use App\Models\Consulting;
+use App\Models\Courier;
+use App\Models\OwnCar;
+use App\Models\Page;
 use App\Models\StandCar;
+use App\Models\Training;
+use App\Models\TransferTour;
 use Illuminate\Http\Request;
 use App\Models\CarRentalContactRequest;
 use Illuminate\Support\Facades\Notification;
@@ -32,6 +38,11 @@ class PublicController extends Controller
         return Article::find($article_id);
     }
 
+    public function page($id)
+    {
+        return Page::findOrFail($id);
+    }
+
     public function cars()
     {
         return Car::where('is_active', 1)->orderBy('position', 'asc')->get();
@@ -52,6 +63,36 @@ class PublicController extends Controller
             'origin',
             'status',
         ]);
+    }
+
+    public function ownCar()
+    {
+        return OwnCar::first();
+    }
+
+    public function courier($id)
+    {
+        return Courier::findOrFail($id);
+    }
+
+    public function training()
+    {
+        return Training::first();
+    }
+
+    public function consulting()
+    {
+        return Consulting::first();
+    }
+
+    public function transferTours()
+    {
+        return TransferTour::all();
+    }
+
+    public function transferTour($id)
+    {
+        return TransferTour::findOrFail($id);
     }
 
     public function carRentalContact(Request $request)
