@@ -195,6 +195,16 @@ class AppController extends Controller
             ])
             ->first();
 
+        if ($activityLaunch && $activityLaunch->week && $activityLaunch->week->isClosed()) {
+            $snapshot = $activityLaunch->statementSnapshots()
+                ->orderByDesc('version')
+                ->first();
+
+            if ($snapshot && Storage::disk('public')->exists($snapshot->pdf_path)) {
+                return response()->file(Storage::disk('public')->path($snapshot->pdf_path));
+            }
+        }
+
         $driver_id = $activityLaunch->driver_id;
 
         $sub = [

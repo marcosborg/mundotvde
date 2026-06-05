@@ -57,6 +57,8 @@ class TvdeDriverManagementController extends Controller
         }
 
         $selectedMonth = TvdeMonth::with([
+            'weeks.lockedBy',
+            'weeks.reopenedBy',
             'weeks.activityLaunches.driver.card',
             'weeks.activityLaunches.driver.operation',
             'weeks.activityLaunches.activityPerOperators.tvde_operator',
@@ -104,6 +106,8 @@ class TvdeDriverManagementController extends Controller
     public function updateActivity(Request $request)
     {
         $activityLaunch = ActivityLaunch::find($request->activity_launch_id);
+        $this->abortIfWeekClosed($activityLaunch ? $activityLaunch->week_id : null);
+
         $activityLaunch->rent = $request->rent ? $request->rent : 0;
         $activityLaunch->management = $request->management ? $request->management : 0; // mantém management
         $activityLaunch->insurance = $request->insurance ? $request->insurance : 0;
@@ -139,6 +143,8 @@ class TvdeDriverManagementController extends Controller
             'driver_id' => 'required',
         ]);
 
+        $this->abortIfWeekClosed($request->week_id);
+
         $driver = Driver::where('id', $request->driver_id)
             ->with('tvde_operators')
             ->first()->load('card');
@@ -171,6 +177,8 @@ class TvdeDriverManagementController extends Controller
 
     public function createActivity(Request $request)
     {
+        $this->abortIfWeekClosed($request->week_id);
+
         $activityLaunch = new ActivityLaunch;
         $activityLaunch->driver_id = $request->driver_id;
         $activityLaunch->week_id = $request->week_id;
@@ -222,12 +230,19 @@ class TvdeDriverManagementController extends Controller
 
     public function deleteActivityLaunch(Request $request)
     {
-        ActivityLaunch::find($request->activity_louch_id)->delete();
-        ActivityPerOperator::where('activity_launch_id', $request->activity_launch_id)->delete();
+        $activityLaunch = ActivityLaunch::find($request->activity_louch_id);
+        abort_if(!$activityLaunch, Response::HTTP_NOT_FOUND, '404 Not Found');
+
+        $this->abortIfWeekClosed($activityLaunch ? $activityLaunch->week_id : null);
+
+        $activityLaunch->delete();
+        ActivityPerOperator::where('activity_launch_id', $activityLaunch->id)->delete();
     }
 
     public function launchAllActivities($tvde_week_id)
     {
+        $this->abortIfWeekClosed($tvde_week_id);
+
         $drivers = Driver::with(['tvde_operators', 'card'])->get();
 
         $drivers = $drivers->map(function ($driver) use ($tvde_week_id) {
@@ -281,6 +296,8 @@ class TvdeDriverManagementController extends Controller
     public function createSelectedDriverActivity(Request $request)
     {
         $weekId = $request->input('week_id');
+        $this->abortIfWeekClosed($weekId);
+
         $driverIds = $request->input('driver_ids', []);
         // PASSA A LER 'management[...]' EM VEZ DE 'management_fee[...]'
         $managementFlags = $request->input('management', []);
@@ -354,5 +371,12 @@ class TvdeDriverManagementController extends Controller
         }
 
         return redirect()->back()->with('success', 'Atividades criadas com sucesso!');
+    }
+
+    private function abortIfWeekClosed($weekId): void
+    {
+        $week = $weekId ? \App\Models\TvdeWeek::find($weekId) : null;
+
+        abort_if($week && $week->isClosed(), Response::HTTP_FORBIDDEN, 'Semana fechada. Reabra a semana para alterar atividades.');
     }
 }

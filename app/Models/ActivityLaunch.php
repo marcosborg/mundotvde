@@ -68,4 +68,14 @@ class ActivityLaunch extends Model
     {
         return $this->hasMany(ActivityPerOperator::class, 'activity_launch_id', 'id');
     }
+
+    public function statementSnapshots()
+    {
+        return $this->hasMany(WeeklyStatementSnapshot::class, 'activity_launch_id');
+    }
+
+    public function latestStatementSnapshot()
+    {
+        return $this->hasOne(WeeklyStatementSnapshot::class, 'activity_launch_id')->latestOfMany('version');
+    }
 }

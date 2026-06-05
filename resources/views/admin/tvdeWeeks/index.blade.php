@@ -40,6 +40,12 @@
                                         {{ trans('cruds.tvdeWeek.fields.end_date') }}
                                     </th>
                                     <th>
+                                        Estado
+                                    </th>
+                                    <th>
+                                        Fecho
+                                    </th>
+                                    <th>
                                         &nbsp;
                                     </th>
                                 </tr>
@@ -66,6 +72,23 @@
                                             {{ $tvdeWeek->end_date ?? '' }}
                                         </td>
                                         <td>
+                                            @if($tvdeWeek->isClosed())
+                                                <span class="label label-danger">Fechada</span>
+                                            @else
+                                                <span class="label label-success">Aberta</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($tvdeWeek->isClosed())
+                                                Fechada por: {{ $tvdeWeek->lockedBy->name ?? '-' }}<br>
+                                                @if($tvdeWeek->locked_at)
+                                                    {{ \Carbon\Carbon::parse($tvdeWeek->locked_at)->format('d/m/Y H:i') }}
+                                                @endif
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>
                                             @can('tvde_week_show')
                                                 <a class="btn btn-xs btn-primary" href="{{ route('admin.tvde-weeks.show', $tvdeWeek->id) }}">
                                                     {{ trans('global.view') }}
@@ -73,18 +96,38 @@
                                             @endcan
 
                                             @can('tvde_week_edit')
+                                                @if($tvdeWeek->isOpen())
                                                 <a class="btn btn-xs btn-info" href="{{ route('admin.tvde-weeks.edit', $tvdeWeek->id) }}">
                                                     {{ trans('global.edit') }}
                                                 </a>
+                                                @endif
                                             @endcan
 
                                             @can('tvde_week_delete')
+                                                @if($tvdeWeek->isOpen())
                                                 <form action="{{ route('admin.tvde-weeks.destroy', $tvdeWeek->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                                     <input type="hidden" name="_method" value="DELETE">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                     <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                                 </form>
+                                                @endif
                                             @endcan
+
+                                            @if($tvdeWeek->isOpen())
+                                                @can('tvde_week_close')
+                                                    <form action="{{ route('admin.tvde-weeks.close', $tvdeWeek->id) }}" method="POST" onsubmit="return confirm('Fechar esta semana e arquivar todos os extratos?');" style="display: inline-block;">
+                                                        @csrf
+                                                        <input type="submit" class="btn btn-xs btn-warning" value="Fechar Semana">
+                                                    </form>
+                                                @endcan
+                                            @else
+                                                @can('tvde_week_reopen')
+                                                    <form action="{{ route('admin.tvde-weeks.reopen', $tvdeWeek->id) }}" method="POST" onsubmit="return confirm('Reabrir esta semana para edicao?');" style="display: inline-block;">
+                                                        @csrf
+                                                        <input type="submit" class="btn btn-xs btn-danger" value="Reabrir Semana">
+                                                    </form>
+                                                @endcan
+                                            @endif
 
                                         </td>
 

@@ -113,13 +113,15 @@ class ActivityLaunchController extends Controller
 
         $drivers = Driver::pluck('code', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $weeks = TvdeWeek::pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $weeks = TvdeWeek::where('status', 'open')->pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         return view('admin.activityLaunches.create', compact('drivers', 'weeks'));
     }
 
     public function store(StoreActivityLaunchRequest $request)
     {
+        $this->abortIfWeekClosed($request->week_id);
+
         $activityLaunch = ActivityLaunch::create($request->all());
 
         return redirect()->route('admin.activity-launches.index');
@@ -128,10 +130,11 @@ class ActivityLaunchController extends Controller
     public function edit(ActivityLaunch $activityLaunch)
     {
         abort_if(Gate::denies('activity_launch_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $this->abortIfWeekClosed($activityLaunch->week_id);
 
         $drivers = Driver::pluck('code', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $weeks = TvdeWeek::pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $weeks = TvdeWeek::where('status', 'open')->orWhere('id', $activityLaunch->week_id)->pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $activityLaunch->load('driver', 'week');
 
@@ -140,6 +143,9 @@ class ActivityLaunchController extends Controller
 
     public function update(UpdateActivityLaunchRequest $request, ActivityLaunch $activityLaunch)
     {
+        $this->abortIfWeekClosed($activityLaunch->week_id);
+        $this->abortIfWeekClosed($request->week_id);
+
         $activityLaunch->update($request->all());
 
         return redirect()->route('admin.activity-launches.index');
@@ -157,6 +163,7 @@ class ActivityLaunchController extends Controller
     public function destroy(ActivityLaunch $activityLaunch)
     {
         abort_if(Gate::denies('activity_launch_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $this->abortIfWeekClosed($activityLaunch->week_id);
 
         $activityLaunch->delete();
 
@@ -168,9 +175,17 @@ class ActivityLaunchController extends Controller
         $activityLaunches = ActivityLaunch::find(request('ids'));
 
         foreach ($activityLaunches as $activityLaunch) {
+            $this->abortIfWeekClosed($activityLaunch->week_id);
             $activityLaunch->delete();
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    private function abortIfWeekClosed($weekId): void
+    {
+        $week = $weekId ? TvdeWeek::find($weekId) : null;
+
+        abort_if($week && $week->isClosed(), Response::HTTP_FORBIDDEN, 'Semana fechada. Reabra a semana para alterar lancamentos.');
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\StoreTvdeWeekRequest;
 use App\Http\Requests\UpdateTvdeWeekRequest;
 use App\Models\TvdeMonth;
 use App\Models\TvdeWeek;
+use App\Services\WeeklyStatements\TvdeWeekLockService;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,7 @@ class TvdeWeekController extends Controller
     {
         abort_if(Gate::denies('tvde_week_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $tvdeWeeks = TvdeWeek::with(['tvde_month'])->get();
+        $tvdeWeeks = TvdeWeek::with(['tvde_month', 'lockedBy', 'reopenedBy'])->get();
 
         return view('admin.tvdeWeeks.index', compact('tvdeWeeks'));
     }
@@ -42,6 +43,7 @@ class TvdeWeekController extends Controller
     public function edit(TvdeWeek $tvdeWeek)
     {
         abort_if(Gate::denies('tvde_week_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if($tvdeWeek->isClosed(), Response::HTTP_FORBIDDEN, 'Semanas fechadas nao podem ser editadas.');
 
         $tvde_months = TvdeMonth::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -52,6 +54,8 @@ class TvdeWeekController extends Controller
 
     public function update(UpdateTvdeWeekRequest $request, TvdeWeek $tvdeWeek)
     {
+        abort_if($tvdeWeek->isClosed(), Response::HTTP_FORBIDDEN, 'Semanas fechadas nao podem ser editadas.');
+
         $tvdeWeek->update($request->all());
 
         return redirect()->route('admin.tvde-weeks.index');
@@ -61,7 +65,7 @@ class TvdeWeekController extends Controller
     {
         abort_if(Gate::denies('tvde_week_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $tvdeWeek->load('tvde_month');
+        $tvdeWeek->load('tvde_month', 'lockedBy', 'reopenedBy', 'statementSnapshots');
 
         return view('admin.tvdeWeeks.show', compact('tvdeWeek'));
     }
@@ -69,6 +73,7 @@ class TvdeWeekController extends Controller
     public function destroy(TvdeWeek $tvdeWeek)
     {
         abort_if(Gate::denies('tvde_week_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if($tvdeWeek->isClosed(), Response::HTTP_FORBIDDEN, 'Semanas fechadas nao podem ser apagadas.');
 
         $tvdeWeek->delete();
 
@@ -80,9 +85,28 @@ class TvdeWeekController extends Controller
         $tvdeWeeks = TvdeWeek::find(request('ids'));
 
         foreach ($tvdeWeeks as $tvdeWeek) {
+            abort_if($tvdeWeek->isClosed(), Response::HTTP_FORBIDDEN, 'Semanas fechadas nao podem ser apagadas.');
             $tvdeWeek->delete();
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function close(TvdeWeek $tvdeWeek, TvdeWeekLockService $lockService)
+    {
+        abort_if(Gate::denies('tvde_week_close'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $lockService->close($tvdeWeek, auth()->user());
+
+        return redirect()->back()->with('success', 'Semana fechada e extratos arquivados com sucesso.');
+    }
+
+    public function reopen(TvdeWeek $tvdeWeek, TvdeWeekLockService $lockService)
+    {
+        abort_if(Gate::denies('tvde_week_reopen'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $lockService->reopen($tvdeWeek, auth()->user());
+
+        return redirect()->back()->with('success', 'Semana reaberta com sucesso.');
     }
 }

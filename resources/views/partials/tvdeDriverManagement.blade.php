@@ -40,13 +40,19 @@
                         <li role="presentation" class="{{ $week->id === $activeWeekId ? 'active' : '' }}"><a
                                 href="#week-{{ $week->id }}" aria-controls="week-{{ $week->id }}" role="tab"
                                 data-toggle="tab"><span class="badge">Semana {{ $week->number }}</span> de {{ \Carbon\Carbon::parse($week->start_date)->format('d') }} a
-                                {{ \Carbon\Carbon::parse($week->end_date)->format('d') }}</a></li>
+                                {{ \Carbon\Carbon::parse($week->end_date)->format('d') }}
+                                @if($week->isClosed())
+                                    <span class="label label-danger">Fechada</span>
+                                @else
+                                    <span class="label label-success">Aberta</span>
+                                @endif
+                            </a></li>
                         @endforeach
                     </ul>
                     
                     <div class="row" style="margin-top: 20px;">
                         <div class="col-md-4">
-                            @if($activeWeek)
+                            @if($activeWeek && $activeWeek->isOpen())
                             <form action="/admin/tvde-driver-managements/driver" method="post" class="driver_form">
                                 @csrf
                                 <input type="hidden" name="week_id" value="{{ $activeWeek->id }}">
@@ -72,7 +78,7 @@
                             @endif
                         </div>
                         <div class="col-md-4">
-                            @if($activeWeek)
+                            @if($activeWeek && $activeWeek->isOpen())
                             <a href="/admin/tvde-driver-managements/launch-all-activities/{{ $activeWeek->id }}" class="btn btn-primary">Lan&ccedil;ar todas as atividades</a>
                             @endif
                         </div>
@@ -82,6 +88,38 @@
                         @foreach ($weeks as $week)
                         <div role="tabpanel" class="tab-pane {{ $week->id === $activeWeekId ? 'active' : '' }}"
                             id="week-{{ $week->id }}">
+                            <div class="clearfix" style="margin-bottom: 15px;">
+                                <div class="pull-left">
+                                    @if($week->isClosed())
+                                        <span class="label label-danger" style="font-size: 13px;">Semana Fechada</span>
+                                        <span style="margin-left: 8px;">
+                                            Fechada por: {{ $week->lockedBy->name ?? '-' }}
+                                            @if($week->locked_at)
+                                                | Data: {{ \Carbon\Carbon::parse($week->locked_at)->format('d/m/Y H:i') }}
+                                            @endif
+                                        </span>
+                                    @else
+                                        <span class="label label-success" style="font-size: 13px;">Semana Aberta</span>
+                                    @endif
+                                </div>
+                                <div class="pull-right">
+                                    @if($week->isOpen())
+                                        @can('tvde_week_close')
+                                            <form action="{{ route('admin.tvde-weeks.close', $week->id) }}" method="POST" onsubmit="return confirm('Fechar esta semana e arquivar todos os extratos?');" style="display: inline-block;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-warning btn-sm">Fechar Semana</button>
+                                            </form>
+                                        @endcan
+                                    @else
+                                        @can('tvde_week_reopen')
+                                            <form action="{{ route('admin.tvde-weeks.reopen', $week->id) }}" method="POST" onsubmit="return confirm('Reabrir esta semana para edicao? Os snapshots antigos serao mantidos.');" style="display: inline-block;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger btn-sm">Reabrir Semana</button>
+                                            </form>
+                                        @endcan
+                                    @endif
+                                </div>
+                            </div>
                             <button class="btn btn-default" onclick="exportCsv('week_{{ $week->id }}')" style="margin-bottom: 20px;">Exportar CSV</button>
                             <div style="overflow-x: auto; width: 100%;">
                             <table class="table table-bordered table-striped">
@@ -173,14 +211,18 @@
                                             {{ $total }}
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-xs btn-info"
-                                                onclick="showActivityLaunch({{ $activityLaunch->id }})">
-                                                Editar
-                                            </button>
-                                            <button type="button" class="btn btn-xs btn-danger"
-                                                onclick="deleteActivityLaunch({{ $activityLaunch->id }})">
-                                                Eliminar
-                                            </button>
+                                            @if($week->isOpen())
+                                                <button type="button" class="btn btn-xs btn-info"
+                                                    onclick="showActivityLaunch({{ $activityLaunch->id }})">
+                                                    Editar
+                                                </button>
+                                                <button type="button" class="btn btn-xs btn-danger"
+                                                    onclick="deleteActivityLaunch({{ $activityLaunch->id }})">
+                                                    Eliminar
+                                                </button>
+                                            @else
+                                                <span class="label label-danger">Bloqueado</span>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach

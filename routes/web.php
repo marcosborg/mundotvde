@@ -283,6 +283,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Tvde Week
     Route::delete('tvde-weeks/destroy', 'TvdeWeekController@massDestroy')->name('tvde-weeks.massDestroy');
+    Route::post('tvde-weeks/{tvdeWeek}/close', 'TvdeWeekController@close')->name('tvde-weeks.close');
+    Route::post('tvde-weeks/{tvdeWeek}/reopen', 'TvdeWeekController@reopen')->name('tvde-weeks.reopen');
     Route::resource('tvde-weeks', 'TvdeWeekController');
 
     // Tvde Operator

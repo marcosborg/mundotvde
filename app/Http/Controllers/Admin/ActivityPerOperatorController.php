@@ -89,7 +89,9 @@ class ActivityPerOperatorController extends Controller
     {
         abort_if(Gate::denies('activity_per_operator_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $activity_launches = ActivityLaunch::pluck('rent', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $activity_launches = ActivityLaunch::whereHas('week', function ($query) {
+            $query->where('status', 'open');
+        })->pluck('rent', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $tvde_operators = TvdeOperator::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -98,6 +100,8 @@ class ActivityPerOperatorController extends Controller
 
     public function store(StoreActivityPerOperatorRequest $request)
     {
+        $this->abortIfLaunchWeekClosed($request->activity_launch_id);
+
         $activityPerOperator = ActivityPerOperator::create($request->all());
 
         return redirect()->route('admin.activity-per-operators.index');
@@ -106,8 +110,11 @@ class ActivityPerOperatorController extends Controller
     public function edit(ActivityPerOperator $activityPerOperator)
     {
         abort_if(Gate::denies('activity_per_operator_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $this->abortIfLaunchWeekClosed($activityPerOperator->activity_launch_id);
 
-        $activity_launches = ActivityLaunch::pluck('rent', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $activity_launches = ActivityLaunch::whereHas('week', function ($query) {
+            $query->where('status', 'open');
+        })->orWhere('id', $activityPerOperator->activity_launch_id)->pluck('rent', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $tvde_operators = TvdeOperator::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -118,6 +125,9 @@ class ActivityPerOperatorController extends Controller
 
     public function update(UpdateActivityPerOperatorRequest $request, ActivityPerOperator $activityPerOperator)
     {
+        $this->abortIfLaunchWeekClosed($activityPerOperator->activity_launch_id);
+        $this->abortIfLaunchWeekClosed($request->activity_launch_id);
+
         $activityPerOperator->update($request->all());
 
         return redirect()->route('admin.activity-per-operators.index');
@@ -135,6 +145,7 @@ class ActivityPerOperatorController extends Controller
     public function destroy(ActivityPerOperator $activityPerOperator)
     {
         abort_if(Gate::denies('activity_per_operator_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $this->abortIfLaunchWeekClosed($activityPerOperator->activity_launch_id);
 
         $activityPerOperator->delete();
 
@@ -146,9 +157,17 @@ class ActivityPerOperatorController extends Controller
         $activityPerOperators = ActivityPerOperator::find(request('ids'));
 
         foreach ($activityPerOperators as $activityPerOperator) {
+            $this->abortIfLaunchWeekClosed($activityPerOperator->activity_launch_id);
             $activityPerOperator->delete();
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    private function abortIfLaunchWeekClosed($activityLaunchId): void
+    {
+        $activityLaunch = $activityLaunchId ? ActivityLaunch::with('week')->find($activityLaunchId) : null;
+
+        abort_if($activityLaunch && $activityLaunch->week && $activityLaunch->week->isClosed(), Response::HTTP_FORBIDDEN, 'Semana fechada. Reabra a semana para alterar rendimentos.');
     }
 }

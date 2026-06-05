@@ -9,6 +9,7 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class FinancialStatementController extends Controller
 {
@@ -73,6 +74,12 @@ class FinancialStatementController extends Controller
                 'activityPerOperators.tvde_operator',
             ])
             ->first();
+
+        abort_if(!$activityLaunch, Response::HTTP_NOT_FOUND, '404 Not Found');
+
+        if ($archivedPdf = $this->archivedPdfResponse($activityLaunch, (bool) $request->stream)) {
+            return $archivedPdf;
+        }
 
         $driver_id = $activityLaunch->driver_id;
 
@@ -183,6 +190,28 @@ class FinancialStatementController extends Controller
             return $pdf->download($activityLaunch->created_at . '.pdf');
         }
         
+    }
+
+    private function archivedPdfResponse(ActivityLaunch $activityLaunch, bool $stream)
+    {
+        if (!$activityLaunch->week || !$activityLaunch->week->isClosed()) {
+            return null;
+        }
+
+        $snapshot = $activityLaunch->statementSnapshots()
+            ->orderByDesc('version')
+            ->first();
+
+        if (!$snapshot || !Storage::disk('public')->exists($snapshot->pdf_path)) {
+            return null;
+        }
+
+        $path = Storage::disk('public')->path($snapshot->pdf_path);
+        $fileName = sprintf('extrato_%d_v%d.pdf', $activityLaunch->id, $snapshot->version);
+
+        return $stream
+            ? response()->file($path)
+            : response()->download($path, $fileName);
     }
 
 }

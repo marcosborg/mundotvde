@@ -17,6 +17,8 @@ class TvdeWeek extends Model
     protected $dates = [
         'start_date',
         'end_date',
+        'locked_at',
+        'reopened_at',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -25,6 +27,11 @@ class TvdeWeek extends Model
     protected $fillable = [
         'tvde_month_id',
         'number',
+        'status',
+        'locked_at',
+        'locked_by',
+        'reopened_at',
+        'reopened_by',
         'start_date',
         'end_date',
         'created_at',
@@ -45,6 +52,31 @@ class TvdeWeek extends Model
     public function activityLaunches()
     {
         return $this->hasMany(ActivityLaunch::class, 'week_id');
+    }
+
+    public function statementSnapshots()
+    {
+        return $this->hasMany(WeeklyStatementSnapshot::class, 'tvde_week_id');
+    }
+
+    public function lockedBy()
+    {
+        return $this->belongsTo(User::class, 'locked_by');
+    }
+
+    public function reopenedBy()
+    {
+        return $this->belongsTo(User::class, 'reopened_by');
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->status === 'closed';
+    }
+
+    public function isOpen(): bool
+    {
+        return !$this->isClosed();
     }
 
     public function getStartDateAttribute($value)

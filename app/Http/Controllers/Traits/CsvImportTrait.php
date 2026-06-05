@@ -6,6 +6,7 @@ use \SpreadsheetReader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 trait CsvImportTrait
 {
@@ -41,6 +42,13 @@ trait CsvImportTrait
                 if (count($tmp) > 0) {
                     $insert[] = $tmp;
                 }
+            }
+
+            if ($modelName === 'TvdeActivity') {
+                $weekIds = collect($insert)->pluck('tvde_week_id')->filter()->unique()->values();
+                $closedWeek = \App\Models\TvdeWeek::whereIn('id', $weekIds)->where('status', 'closed')->exists();
+
+                abort_if($closedWeek, Response::HTTP_FORBIDDEN, 'Semana fechada. Reabra a semana para importar atividades.');
             }
 
             $for_insert = array_chunk($insert, 100);

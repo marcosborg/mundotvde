@@ -83,13 +83,15 @@ class TvdeActivityController extends Controller
     {
         abort_if(Gate::denies('tvde_activity_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $tvde_weeks = TvdeWeek::pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $tvde_weeks = TvdeWeek::where('status', 'open')->pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         return view('admin.tvdeActivities.create', compact('tvde_weeks'));
     }
 
     public function store(StoreTvdeActivityRequest $request)
     {
+        $this->abortIfWeekClosed($request->tvde_week_id);
+
         $tvdeActivity = TvdeActivity::create($request->all());
 
         return redirect()->route('admin.tvde-activities.index');
@@ -98,8 +100,9 @@ class TvdeActivityController extends Controller
     public function edit(TvdeActivity $tvdeActivity)
     {
         abort_if(Gate::denies('tvde_activity_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $this->abortIfWeekClosed($tvdeActivity->tvde_week_id);
 
-        $tvde_weeks = TvdeWeek::pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $tvde_weeks = TvdeWeek::where('status', 'open')->orWhere('id', $tvdeActivity->tvde_week_id)->pluck('start_date', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $tvdeActivity->load('tvde_week');
 
@@ -108,6 +111,9 @@ class TvdeActivityController extends Controller
 
     public function update(UpdateTvdeActivityRequest $request, TvdeActivity $tvdeActivity)
     {
+        $this->abortIfWeekClosed($tvdeActivity->tvde_week_id);
+        $this->abortIfWeekClosed($request->tvde_week_id);
+
         $tvdeActivity->update($request->all());
 
         return redirect()->route('admin.tvde-activities.index');
@@ -125,6 +131,7 @@ class TvdeActivityController extends Controller
     public function destroy(TvdeActivity $tvdeActivity)
     {
         abort_if(Gate::denies('tvde_activity_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $this->abortIfWeekClosed($tvdeActivity->tvde_week_id);
 
         $tvdeActivity->delete();
 
@@ -136,9 +143,17 @@ class TvdeActivityController extends Controller
         $tvdeActivities = TvdeActivity::find(request('ids'));
 
         foreach ($tvdeActivities as $tvdeActivity) {
+            $this->abortIfWeekClosed($tvdeActivity->tvde_week_id);
             $tvdeActivity->delete();
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    private function abortIfWeekClosed($weekId): void
+    {
+        $week = $weekId ? TvdeWeek::find($weekId) : null;
+
+        abort_if($week && $week->isClosed(), Response::HTTP_FORBIDDEN, 'Semana fechada. Reabra a semana para alterar atividades.');
     }
 }
