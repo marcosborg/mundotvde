@@ -501,6 +501,15 @@
     return a;
   }
 
+  function updateCardTimestamp(c){
+    if (!c || !c.updated_at_html) return;
+    const card = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
+    if (!card) return;
+    card.setAttribute('data-updated_at', c.updated_at_html);
+    const date = card.querySelector('.kc-date-item:last-child strong');
+    if (date) date.textContent = c.updated_at_html;
+  }
+
   function upsertCard(c){
     let cardEl = document.querySelector(`.kanban-card[data-card="${c.id}"]`);
     const targetCol = document.querySelector(`.kanban-col[data-stage="${c.stage_id}"]`);
@@ -613,6 +622,7 @@
           if (data && data.ok && data.card) {
             el.dataset.stage_id = String(data.card.stage_id);
             el.dataset.pos = String(data.card.position || '');
+            updateCardTimestamp(data.card);
           }
         })
         .catch(() => {});
@@ -811,7 +821,7 @@
     const $err = $('#editNotesErrors');
     if (!content) return;
     addNote(id, content)
-      .then(resp=>{ if(!resp.ok) throw new Error('Falhou ao gravar nota.'); $('#noteContent').val(''); loadNotes(id); })
+      .then(resp=>{ if(!resp.ok) throw new Error('Falhou ao gravar nota.'); updateCardTimestamp(resp.card); $('#noteContent').val(''); loadNotes(id); })
       .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
   });
   $('#btnUploadFile').on('click', function(){
@@ -819,7 +829,7 @@
     const f = document.getElementById('attachFile').files[0];
     const $err = $('#editFilesErrors'); if (!f) return;
     uploadFile(id, f)
-      .then(resp=>{ if(!resp.ok) throw new Error('Falhou upload.'); document.getElementById('attachFile').value=''; loadFiles(id); })
+      .then(resp=>{ if(!resp.ok) throw new Error('Falhou upload.'); updateCardTimestamp(resp.card); document.getElementById('attachFile').value=''; loadFiles(id); })
       .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
   });
   $(document).on('click', '.btn-del-file', function(){
@@ -827,7 +837,7 @@
     const mediaId = $(this).closest('li').data('mediaId');
     const $err = $('#editFilesErrors');
     deleteFile(id, mediaId)
-      .then(resp=>{ if(!resp.ok) throw new Error('Falhou ao remover.'); loadFiles(id); })
+      .then(resp=>{ if(!resp.ok) throw new Error('Falhou ao remover.'); updateCardTimestamp(resp.card); loadFiles(id); })
       .catch(err=>{ $err.text(err.message).show(); setTimeout(()=> $err.hide().empty(), 3000); });
   });
 </script>

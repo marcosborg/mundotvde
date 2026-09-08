@@ -13,6 +13,8 @@ class CrmCardNote extends Model
 
     public $table = 'crm_card_notes';
 
+    protected $touches = ['card'];
+
     protected $dates = [
         'created_at',
         'updated_at',

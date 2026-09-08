@@ -126,6 +126,7 @@ class CrmKanbanController extends Controller
                 'stage_id'  => $card->stage_id,
                 'position'  => $card->position,
                 'status'    => $card->status,
+                'updated_at_html' => $card->updated_at->format('d/m/Y H:i'),
             ],
         ]);
     }

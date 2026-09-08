@@ -173,6 +173,7 @@ class CrmCardsController extends Controller
     public function update(UpdateCrmCardRequest $request, CrmCard $crmCard)
     {
         $crmCard->update($request->all());
+        $crmCard->touch();
 
         if (count($crmCard->crm_card_attachments) > 0) {
             foreach ($crmCard->crm_card_attachments as $media) {
@@ -361,6 +362,7 @@ class CrmCardsController extends Controller
                 'due_at'   => $raw ? \Carbon\Carbon::parse($raw)->format('Y-m-d') : null,
                 'fields_snapshot_json' => $crm_card->fields_snapshot_json,
                 'show_url' => route('admin.crm-cards.show', $crm_card->id),
+                'updated_at_html' => $crm_card->updated_at->format('d/m/Y H:i'),
             ],
         ]);
     }
@@ -410,7 +412,8 @@ class CrmCardsController extends Controller
                 'user_name' => optional($note->user)->name,
                 'content' => $note->content,
                 'created_at' => $note->created_at->diffForHumans(),
-            ]
+            ],
+            'card' => $this->updatedCardTimestamp($crm_card),
         ], 201);
     }
 
@@ -439,6 +442,7 @@ class CrmCardsController extends Controller
         ]);
 
         $media = $crm_card->addMediaFromRequest('file')->toMediaCollection('crm_card_attachments');
+        $crm_card->touch();
 
         // atividade
         CrmCardActivity::create([
@@ -455,7 +459,8 @@ class CrmCardsController extends Controller
                 'name' => $media->file_name,
                 'size' => $media->human_readable_size,
                 'url' => $media->getUrl(),
-            ]
+            ],
+            'card' => $this->updatedCardTimestamp($crm_card),
         ], 201);
     }
 
@@ -467,6 +472,7 @@ class CrmCardsController extends Controller
         abort_unless($media->model_type === CrmCard::class && (int)$media->model_id === (int)$crm_card->id, 404);
 
         $media->delete();
+        $crm_card->touch();
 
         CrmCardActivity::create([
             'card_id'       => $crm_card->id,
@@ -475,7 +481,17 @@ class CrmCardsController extends Controller
             'created_by_id' => Auth::id(),
         ]);
 
-        return response()->json(['ok' => true]);
+        return response()->json(['ok' => true, 'card' => $this->updatedCardTimestamp($crm_card)]);
+    }
+
+    private function updatedCardTimestamp(CrmCard $card): array
+    {
+        $card->refresh();
+
+        return [
+            'id' => $card->id,
+            'updated_at_html' => $card->updated_at->format('d/m/Y H:i'),
+        ];
     }
 
     public function quickListActivities(CrmCard $crm_card)
