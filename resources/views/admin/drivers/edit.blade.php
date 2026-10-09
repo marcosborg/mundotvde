@@ -310,6 +310,9 @@
                             </button>
                         </div>
                     </form>
+                    @if(config('driver_onboarding.enabled'))
+                        @include('admin.driverOnboarding.panel')
+                    @endif
                 </div>
             </div>
 

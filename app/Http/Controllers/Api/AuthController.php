@@ -33,6 +33,8 @@ class AuthController extends Controller
 
         return response()->json([
             'access_token' => $authToken,
+            'contract_acceptance_required' => (bool) \App\Models\DriverContractVersion::pendingFor($user),
+            'contract_url' => url('/api/app/contract'),
         ]);
     }
 

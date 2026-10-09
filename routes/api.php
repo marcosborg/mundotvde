@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VirtualAssistantController;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {});
+Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum', \App\Http\Middleware\RequireDriverContract::class]], function () {});
 
 Route::get('stand-cars', function () {
     return StandCar::all()->load([
@@ -83,7 +83,7 @@ Route::post('contact', function (Request $request) {
 //APP
 
 Route::post('login', 'Api\\AuthController@login');
-Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
+Route::prefix('app')->middleware(['auth:sanctum', \App\Http\Middleware\RequireDriverContract::class])->group(function () {
     Route::get('user', 'Api\\AuthController@user');
     Route::get('admin', 'Api\\AppController@admin');
     Route::get('my-receipts', 'Api\\AppController@myReceipts');
@@ -112,7 +112,7 @@ Route::prefix('app')->middleware(['auth:sanctum'])->group(function () {
 
 Route::get('app/reports/pdf/{activity_launch_id}', 'Api\\AppController@pdf');
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', 'middleware' => ['auth:sanctum', \App\Http\Middleware\RequireDriverContract::class]], function () {
     // News
     Route::post('newss/media', 'NewsApiController@storeMedia')->name('newss.storeMedia');
     Route::apiResource('newss', 'NewsApiController');
@@ -144,9 +144,9 @@ Route::get('website-messages/{email}', function ($email) {
     return $message ? json_decode($message->messages, true) : [];
 });
 
-Route::middleware('auth:sanctum')->post('assistente-motorista', [VirtualAssistantController::class, 'handleMotoristaMessage'])->name('assistente.motorista');
+Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireDriverContract::class])->post('assistente-motorista', [VirtualAssistantController::class, 'handleMotoristaMessage'])->name('assistente.motorista');
 
-Route::middleware('auth:sanctum')->get('motorista-messages', function (Request $request) {
+Route::middleware(['auth:sanctum', \App\Http\Middleware\RequireDriverContract::class])->get('motorista-messages', function (Request $request) {
     $user = $request->user();
     $message = \App\Models\AppMessage::where('user_id', $user->id)->first();
     return $message ? json_decode($message->messages, true) : [];
@@ -156,3 +156,9 @@ use App\Http\Controllers\Api\PublicCrmFormsController;
 
 Route::post('crm/forms/{slug}/submit', [PublicCrmFormsController::class, 'submit'])
     ->name('api.crm.forms.submit');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('app/contract', [\App\Http\Controllers\DriverContractController::class, 'show'])->name('api.driver-contract.show');
+    Route::post('app/contract/accept', [\App\Http\Controllers\DriverContractController::class, 'accept'])->name('api.driver-contract.accept');
+    Route::get('app/contract/pdf', [\App\Http\Controllers\DriverContractController::class, 'pdf'])->name('api.driver-contract.pdf');
+});

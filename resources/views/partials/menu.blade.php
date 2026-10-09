@@ -1173,6 +1173,11 @@
                 </a>
             </li>
             @endcan
+            @if(config('driver_onboarding.enabled'))
+            @can('admin_contract_edit')
+            <li><a href="{{ route('admin.driver-templates.index') }}"><i class="fa-fw fas fa-file-alt"></i> Templates e boas-vindas</a></li>
+            @endcan
+            @endif
             @can('admin_contract_access')
             <li class="{{ request()->is("admin/admin-contracts") || request()->is("admin/admin-contracts/*") ? "active"
                 : "" }}">

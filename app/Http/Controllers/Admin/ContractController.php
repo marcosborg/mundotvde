@@ -15,6 +15,7 @@ class ContractController extends Controller
 {
     public function index()
     {
+        if (config('driver_onboarding.enabled') && \App\Models\DriverContractVersion::where('user_id', auth()->id())->current()->exists()) return redirect()->route('driver-contract.show');
         abort_if(Gate::denies('contract_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $driver = Driver::where([
@@ -32,6 +33,7 @@ class ContractController extends Controller
 
     public function pdf(Request $request)
     {
+        if (config('driver_onboarding.enabled') && \App\Models\DriverContractVersion::where('user_id', auth()->id())->current()->exists()) return redirect()->route('driver-contract.pdf');
 
         $driver = Driver::where([
             'user_id' => auth()->user()->id

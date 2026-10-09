@@ -427,6 +427,17 @@ class AppController extends Controller
             return response()->json(['error' => 'Driver not found'], 404);
         }
 
+        $version = config('driver_onboarding.enabled') ? \App\Models\DriverContractVersion::where('driver_id', $driver->id)->where('user_id', $user->id)->current()->latest('id')->first() : null;
+        if ($version) {
+            return response()->json([
+                'contract' => url('/api/app/contract/pdf'),
+                'contract_details' => url('/api/app/contract'),
+                'version' => $version->version,
+                'accepted_at' => $version->accepted_at,
+                'requires_authentication' => true,
+            ]);
+        }
+
         $adminStatementResponsibility = AdminStatementResponsibility::where([
             'driver_id' => $driver->id
         ])

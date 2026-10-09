@@ -208,7 +208,9 @@ class DriverController extends Controller
         $driver = Driver::create($request->all());
         $driver->tvde_operators()->sync($request->input('tvde_operators', []));
 
-        return redirect()->route('admin.drivers.index');
+        return config('driver_onboarding.enabled') && Gate::allows('driver_edit')
+            ? redirect()->route('admin.drivers.edit', $driver)
+            : redirect()->route('admin.drivers.index');
     }
 
     public function edit(Driver $driver)
@@ -237,7 +239,9 @@ class DriverController extends Controller
         $driver->update($request->all());
         $driver->tvde_operators()->sync($request->input('tvde_operators', []));
 
-        return redirect()->route('admin.drivers.index');
+        return config('driver_onboarding.enabled') && Gate::allows('driver_edit')
+            ? redirect()->route('admin.drivers.edit', $driver)
+            : redirect()->route('admin.drivers.index');
     }
 
     public function show(Driver $driver)

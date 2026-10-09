@@ -654,3 +654,14 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 
 Route::post('/forms/submit', [PublicFormsController::class, 'submit'])
     ->name('public-forms.submit');
     
+
+Route::middleware('auth')->group(function () {
+    Route::get('driver-contract', [\App\Http\Controllers\DriverContractController::class, 'show'])->name('driver-contract.show');
+    Route::post('driver-contract/accept', [\App\Http\Controllers\DriverContractController::class, 'accept'])->name('driver-contract.accept');
+    Route::get('driver-contract/pdf', [\App\Http\Controllers\DriverContractController::class, 'pdf'])->name('driver-contract.pdf');
+    Route::get('admin/driver-templates', [\App\Http\Controllers\Admin\DriverOnboardingController::class, 'templates'])->name('admin.driver-templates.index');
+    Route::put('admin/driver-templates/{template}', [\App\Http\Controllers\Admin\DriverOnboardingController::class, 'saveTemplate'])->name('admin.driver-templates.save');
+    Route::post('admin/drivers/{driver}/generate-contract', [\App\Http\Controllers\Admin\DriverOnboardingController::class, 'generate'])->name('admin.drivers.generate-contract');
+    Route::post('admin/drivers/{driver}/welcome', [\App\Http\Controllers\Admin\DriverOnboardingController::class, 'welcome'])->name('admin.drivers.welcome');
+    Route::get('admin/driver-contracts/{contract}/document', [\App\Http\Controllers\Admin\DriverOnboardingController::class, 'document'])->name('admin.driver-contracts.document');
+});
