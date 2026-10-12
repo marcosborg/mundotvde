@@ -16,7 +16,9 @@ class DriversBalanceController extends Controller
 
         $drivers = Driver::with([
             'operation',
-            'activity_launches.activityPerOperators'
+            'activity_launches' => function ($query) {
+                $query->where('paid', 0)->with('activityPerOperators');
+            },
         ])
             ->whereHas('activity_launches', function ($query) {
                 $query->where('paid', 0);
