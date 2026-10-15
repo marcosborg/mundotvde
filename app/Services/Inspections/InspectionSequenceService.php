@@ -34,7 +34,7 @@ class InspectionSequenceService
 
         $allowedByPreviousType = [
             'initial' => ['handover'],
-            'handover' => ['routine'],
+            'handover' => ['routine', 'return'],
             'routine' => ['routine', 'return'],
             'return' => ['handover', 'fleet_exit'],
             'fleet_exit' => ['initial'],
