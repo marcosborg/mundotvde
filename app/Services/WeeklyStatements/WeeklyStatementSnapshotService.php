@@ -81,7 +81,7 @@ class WeeklyStatementSnapshotService
         $sub = (float) array_sum($expenses);
         $total = $incomeAfterTaxes - $sub + (float) $activityLaunch->refund;
 
-        $movements = $this->buildLast60Days($activityLaunch->driver_id);
+        $movements = $this->buildOpenMovements($activityLaunch->driver_id);
         $balance = $this->buildOpenBalance($activityLaunch->driver_id);
 
         return [
@@ -130,7 +130,7 @@ class WeeklyStatementSnapshotService
                 'refund' => (float) $activityLaunch->refund,
                 'total' => $total,
                 'balance' => $balance,
-                'movements_60_days' => $movements,
+                'open_movements' => $movements,
             ],
             'company' => [
                 'name' => 'Mundo TVDE',
@@ -143,6 +143,15 @@ class WeeklyStatementSnapshotService
                 'generated_at' => now()->format('Y-m-d H:i:s'),
             ],
         ];
+    }
+
+    public function refreshOpenMovements(array $statement, ?int $driverId): array
+    {
+        $statement['amounts']['open_movements'] = $this->buildOpenMovements($driverId);
+        $statement['amounts']['balance'] = $this->buildOpenBalance($driverId);
+        unset($statement['amounts']['movements_60_days']);
+
+        return $statement;
     }
 
     private function expenses(ActivityLaunch $activityLaunch): array
@@ -159,7 +168,7 @@ class WeeklyStatementSnapshotService
         ];
     }
 
-    private function buildLast60Days(?int $driverId): array
+    private function buildOpenMovements(?int $driverId): array
     {
         if (!$driverId) {
             return [];
@@ -168,22 +177,19 @@ class WeeklyStatementSnapshotService
         $budget = 0;
 
         return ActivityLaunch::where('driver_id', $driverId)
-            ->where('send', 1)
-            ->whereDate('created_at', '>=', now()->subDays(60)->format('Y-m-d H:i:s'))
+            ->openStatements()
             ->with('activityPerOperators.tvde_operator')
             ->orderBy('id', 'asc')
             ->get()
             ->map(function (ActivityLaunch $launch) use (&$budget) {
                 $total = $this->calculateTotal($launch);
-                if (!$launch->paid) {
-                    $budget += $total;
-                }
+                $budget += $total;
 
                 return [
                     'id' => $launch->id,
                     'date' => optional($launch->created_at)->format('Y-m-d'),
-                    'paid' => (bool) $launch->paid,
-                    'status' => $launch->paid ? 'Pago' : 'Em saldo',
+                    'paid' => false,
+                    'status' => 'Em saldo',
                     'total' => $total,
                     'balance' => $budget,
                 ];
@@ -199,11 +205,10 @@ class WeeklyStatementSnapshotService
         }
 
         return (float) ActivityLaunch::where('driver_id', $driverId)
+            ->openStatements()
             ->with('activityPerOperators')
             ->get()
-            ->sum(function (ActivityLaunch $launch) {
-                return $launch->paid ? 0 : $this->calculateTotal($launch);
-            });
+            ->sum(fn (ActivityLaunch $launch) => $this->calculateTotal($launch));
     }
 
     private function calculateTotal(ActivityLaunch $launch): float

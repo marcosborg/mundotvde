@@ -201,8 +201,7 @@
     <table width="100%" style="margin-top: 30px; background: #cccccc;">
         <thead>
             <tr>
-                <th colspan="4" style="text-align: left; border-bottom: solid 1px #aaaaaa;">Movimentos dos últimos 60
-                    dias</th>
+                <th colspan="4" style="text-align: left; border-bottom: solid 1px #aaaaaa;">Movimentos em aberto</th>
             </tr>
             <tr>
                 <th>Data</th>
@@ -215,20 +214,16 @@
             @php
             $budget = 0;
             @endphp
-            @foreach ($activityLaunches60 as $activityLaunch60)
+            @foreach ($openActivityLaunches as $openActivityLaunch)
             <tr style="text-align: center;">
-                <td>{{ \Carbon\Carbon::parse($activityLaunch60->created_at)->format('d-m-Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($openActivityLaunch->created_at)->format('d-m-Y') }}</td>
                 <td>
-                    @if ($activityLaunch60->paid == 0)
                     @php
-                    $budget += $activityLaunch60->total;
+                    $budget += $openActivityLaunch->total;
                     @endphp
                     Em saldo
-                    @else
-                    Pago
-                    @endif
                 </td>
-                <td>€ {{ $activityLaunch60->total }}</td>
+                <td>€ {{ $openActivityLaunch->total }}</td>
                 <td>€ {{ $budget }}</td>
             </tr>
             @endforeach

@@ -17,6 +17,7 @@ use App\Models\TimeLog;
 use \Carbon\Carbon;
 use App\Models\AdminStatementResponsibility;
 use App\Models\AdminContract;
+use App\Services\WeeklyStatements\WeeklyStatementSnapshotService;
 use Illuminate\Support\Facades\Storage;
 
 class AppController extends Controller
@@ -200,8 +201,15 @@ class AppController extends Controller
                 ->orderByDesc('version')
                 ->first();
 
-            if ($snapshot && Storage::disk('public')->exists($snapshot->pdf_path)) {
-                return response()->file(Storage::disk('public')->path($snapshot->pdf_path));
+            if ($snapshot && $snapshot->data_json) {
+                $statement = app(WeeklyStatementSnapshotService::class)
+                    ->refreshOpenMovements($snapshot->data_json, $activityLaunch->driver_id);
+
+                return Pdf::loadView('admin.financialStatements.snapshot_pdf', [
+                    'statement' => $statement,
+                ])->setOption([
+                    'isRemoteEnabled' => true,
+                ])->stream();
             }
         }
 
@@ -234,12 +242,8 @@ class AppController extends Controller
         $activityLaunch->net = $net;
         $activityLaunch->taxes = $taxes;
 
-        //LAST 60 DAYS
-        $activityLaunches60 = ActivityLaunch::where([
-            'driver_id' => $driver_id,
-            'send' => 1
-        ])
-            ->whereDate('created_at', '>=', now()->subDays(60)->format('Y-m-d H:i:s'))
+        $openActivityLaunches = ActivityLaunch::where('driver_id', $driver_id)
+            ->openStatements()
             ->with([
                 'week.tvde_month.year',
                 'activityPerOperators.tvde_operator',
@@ -247,30 +251,33 @@ class AppController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
-        foreach ($activityLaunches60 as $activityLaunch60) {
+        foreach ($openActivityLaunches as $openActivityLaunch) {
             $sub = [
-                $activityLaunch60->rent,
-                $activityLaunch60->management,
-                $activityLaunch60->insurance,
-                $activityLaunch60->fuel,
-                $activityLaunch60->tolls,
-                $activityLaunch60->others,
-                $activityLaunch60->management_fee,
+                $openActivityLaunch->rent,
+                $openActivityLaunch->management,
+                $openActivityLaunch->insurance,
+                $openActivityLaunch->fuel,
+                $openActivityLaunch->tolls,
+                $openActivityLaunch->others,
+                $openActivityLaunch->management_fee,
             ];
             $sub = array_sum($sub);
             $sum = [];
-            foreach ($activityLaunch60->activityPerOperators as $activityPerOperator) {
+            foreach ($openActivityLaunch->activityPerOperators as $activityPerOperator) {
                 $sum[] = $activityPerOperator->net - $activityPerOperator->taxes;
             }
             $sum = array_sum($sum);
-            $activityLaunch60->total = $sum - $sub + $activityLaunch60->refund;
-            $activityLaunch60->sum = $sum;
-            $activityLaunch60->sub = $sub;
+            $openActivityLaunch->total = $sum - $sub + $openActivityLaunch->refund;
+            $openActivityLaunch->sum = $sum;
+            $openActivityLaunch->sub = $sub;
         }
+
+        $balance = $openActivityLaunches->sum('total');
 
         $pdf = Pdf::loadView('admin.financialStatements.pdf', [
             'activityLaunch' => $activityLaunch,
-            'activityLaunches60' => $activityLaunches60,
+            'openActivityLaunches' => $openActivityLaunches,
+            'balance' => $balance,
         ])->setOption([
             'isRemoteEnabled' => true,
         ]);

@@ -49,6 +49,13 @@ class ActivityLaunch extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
+    public function scopeOpenStatements($query)
+    {
+        return $query
+            ->where('send', 1)
+            ->where('paid', 0);
+    }
+
     public function driver()
     {
         return $this->belongsTo(Driver::class, 'driver_id');

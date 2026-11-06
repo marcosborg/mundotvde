@@ -1,5 +1,4 @@
 @php
-    use App\Models\Courier;
     use App\Models\Page;
     use Illuminate\Support\Str;
 
@@ -47,27 +46,6 @@
     $partnersPage = $findPage(['Parceiros']);
     $contactsPage = $findPage(['Contactos', 'Contato', 'Contactos da empresa']);
 
-    $couriers = Courier::all();
-    $ownersCourier = $couriers->first(function ($item) {
-        return Str::contains(Str::lower((string) $item->title), ['propriet', 'proprietar']);
-    });
-    $driversCourier = $couriers->first(function ($item) {
-        return Str::contains(Str::lower((string) $item->title), ['motorist', 'condutor']);
-    });
-
-    $remainingCouriers = $couriers->filter(function ($item) use ($ownersCourier, $driversCourier) {
-        return (!$ownersCourier || $item->id !== $ownersCourier->id)
-            && (!$driversCourier || $item->id !== $driversCourier->id);
-    })->values();
-
-    if (!$ownersCourier && $remainingCouriers->count() > 0) {
-        $ownersCourier = $remainingCouriers->shift();
-    }
-
-    if (!$driversCourier && $remainingCouriers->count() > 0) {
-        $driversCourier = $remainingCouriers->shift();
-    }
-
     $isAEmpresaActive =
         request()->is('pagina/*')
         || request()->is('tvde/formacao')
@@ -102,29 +80,6 @@
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('pagina/7/seguros') ? 'active' : '' }}" href="/pagina/7/seguros">Seguros</a>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link {{ request()->is('tvde/estafetas') || request()->is('tvde/estafetas/*') ? 'active' : '' }}"
-                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Bolsa TVDE <i class="bi bi-chevron-down ms-1"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        @if ($ownersCourier)
-                            <li>
-                                <a class="dropdown-item" href="/tvde/estafetas/{{ $ownersCourier->id }}">
-                                    Bolsa de proprietários TVDE
-                                </a>
-                            </li>
-                        @endif
-                        @if ($driversCourier)
-                            <li>
-                                <a class="dropdown-item" href="/tvde/estafetas/{{ $driversCourier->id }}">
-                                    Bolsa de motoristas TVDE
-                                </a>
-                            </li>
-                        @endif
-                    </ul>
                 </li>
 
                 <li class="nav-item">

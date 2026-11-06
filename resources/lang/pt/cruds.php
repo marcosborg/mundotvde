@@ -468,12 +468,12 @@ return [
         ],
     ],
     'menuCourier' => [
-        'title'          => 'Bolsa TVDE',
-        'title_singular' => 'Bolsa TVDE',
+        'title'          => 'Estafetas',
+        'title_singular' => 'Estafeta',
     ],
     'courier' => [
-        'title'          => 'Bolsa TVDE',
-        'title_singular' => 'Bolsa TVDE',
+        'title'          => 'Páginas de estafetas',
+        'title_singular' => 'Página de estafeta',
         'fields'         => [
             'id'                 => 'ID',
             'id_helper'          => ' ',

@@ -149,11 +149,11 @@
     </table>
     <table width="100%" style="margin-top: 30px; background: #cccccc;">
         <thead>
-            <tr><th colspan="4" style="text-align: left; border-bottom: solid 1px #aaaaaa;">Movimentos dos ultimos 60 dias</th></tr>
+            <tr><th colspan="4" style="text-align: left; border-bottom: solid 1px #aaaaaa;">Movimentos em aberto</th></tr>
             <tr><th>Data</th><th>Estado do movimento</th><th>Valor</th><th>Saldo</th></tr>
         </thead>
         <tbody>
-            @foreach (($statement['amounts']['movements_60_days'] ?? []) as $movement)
+            @foreach (($statement['amounts']['open_movements'] ?? $statement['amounts']['movements_60_days'] ?? []) as $movement)
             <tr style="text-align: center;">
                 <td>{{ !empty($movement['date']) ? \Carbon\Carbon::parse($movement['date'])->format('d-m-Y') : '' }}</td>
                 <td>{{ $movement['status'] ?? '' }}</td>
